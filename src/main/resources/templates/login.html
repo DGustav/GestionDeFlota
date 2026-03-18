@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Flota</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="bg-warning">
+
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center p-3">
+    <div class="card shadow-lg border-0 overflow-hidden" style="max-width: 900px; width: 100%;">
+        <div class="row g-0">
+            <!-- LADO IZQUIERDO -->
+            <div class="col-md-6 bg-warning p-4 p-lg-5 d-flex flex-column justify-content-between text-secondary">
+                <div class="brand d-flex align-items-center gap-3">
+                    <img th:src="@{/images/logo.png}" alt="Logo BIOSIDUS" style="width: 55px; height: auto;">
+                    <div class="brand-text">
+                        <h1 class="h3 fw-bold mb-0">BIOSIDUS</h1>
+                        <p class="small mb-0">Biotegnología Argentina</p>
+                    </div>
+                </div>
+
+                <div class="title my-5 text-center">
+                    <h2 class="display-6 fw-normal">Sistema de<br>Gestión de Flota</h2>
+                </div>
+            </div>
+
+            <!-- LADO DERECHO -->
+            <div class="col-md-6 bg-light p-4 p-lg-5 d-flex align-items-center justify-content-center">
+                <div class="login-box w-100" style="max-width: 320px;">
+                    <h3 class="h5 text-muted mb-4 text-center">Ingrese sus credenciales</h3>
+
+                    <div class="input-group mb-3 position-relative">
+                        <input type="text" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Usuario">
+                        <img th:src="@{/images/user.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
+                    </div>
+
+                    <div class="input-group mb-4 position-relative">
+                        <input type="password" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Contraseña">
+                        <img th:src="@{/images/key.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
+                    </div>
+
+                    <button class="btn btn-warning w-100 fw-bold py-2 shadow-sm">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
