@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Crear Vehículo - Gestión de Flota',
+        currentPage='vehiculos',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <form action="#" method="POST">
+            <section class="panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-car-side"></i>
+                    Crear Nuevo Vehículo
+                </h2>
+                <div class="row">
+                    <!-- Datos del Vehículo -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Patente</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-id-card"></i>
+                                <input type="text" class="form-control-custom" placeholder="ABC-123" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Modelo</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-car"></i>
+                                <input type="text" class="form-control-custom form-multi-select" list="modelosList" placeholder="Seleccione o ingrese un modelo" required>
+                                <datalist id="modelosList">
+                                    <option value="Toyota Corolla (2022)">
+                                    <option value="Ford Ranger (2023)">
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Kilometraje Actual</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                <input type="number" class="form-control-custom" placeholder="0" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Adquisición</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <input type="date" class="form-control-custom" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Último Service</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-wrench"></i>
+                                <input type="date" class="form-control-custom" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch ms-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="disponible" checked>
+                            <label class="form-check-label fw-bold" for="disponible">DISPONIBLE</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <a th:href="@{/listadoVehiculos}" class="btn btn-secondary-custom text-decoration-none">
+                        <i class="fa-solid fa-xmark"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Vehículo
+                    </button>
+                </div>
+            </section>
+        </form>
+    </section>
+
+</body>
+</html>

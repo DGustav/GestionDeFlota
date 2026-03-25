@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Listado de Conductores - Gestión de Flota',
+        currentPage='conductores',
+        searchPlaceholder='Buscar conductores',
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/crearConductor}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-plus"></i>
+        <span>Nuevo <span class="d-none d-sm-inline">conductor</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <div class="table-responsive">
+            <table class="fleet-table table align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre y Apellido</th>
+                    <th class="d-none d-sm-table-cell">DNI</th>
+                    <th class="d-none d-md-table-cell">Legajo</th>
+                    <th class="d-none d-lg-table-cell">Usuario</th>
+                    <th class="d-none d-lg-table-cell">E-mail</th>
+                    <th class="d-none d-lg-table-cell">Área</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!-- Ejemplo de dato estático para previsualización -->
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <div class="desc-title">Gustavo Porcel</div>
+                    </td>
+                    <td class="d-none d-sm-table-cell">20123456</td>
+                    <td class="d-none d-md-table-cell">1001</td>
+                    <td class="d-none d-lg-table-cell">gporcel</td>
+                    <td class="d-none d-lg-table-cell">gustavo.porcel@biosidus.com.ar</td>
+                    <td class="d-none d-lg-table-cell">VENTAS</td>
+                    <td class="text-center">
+                        <a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <p class="m-0">1 conductores en total</p>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+            <button class="btn btn-primary-custom btn-report">
+                <i class="fa-solid fa-print"></i>
+                Imprimir reporte
+            </button>
+        </div>
+    </section>
+
+</body>
+</html>

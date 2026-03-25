@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Editar Conductor - Gestión de Flota',
+        currentPage='conductores',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/modificarConductor.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <form action="#" method="POST">
+            <section class="panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-user-pen"></i>
+                    Editar Datos del Conductor
+                </h2>
+                <div class="row">
+                    <!-- Datos Personales -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Nombre y Apellido</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" class="form-control-custom" placeholder="Ej: Juan Pérez" required name="nomApe">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">DNI</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-id-card"></i>
+                                <input type="number" class="form-control-custom" placeholder="Número de documento" required name="dni">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">Legajo</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <input type="number" class="form-control-custom" placeholder="Número de legajo" required name="legajo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Correo Electrónico</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" class="form-control-custom" placeholder="ejemplo@biosidus.com" required name="mail">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Área</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-building"></i>
+                                <select class="form-select-custom" required name="area">
+                                    <option value="" disabled selected>Seleccionar área</option>
+                                    <option value="VENTAS">VENTAS</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <!-- Datos de Usuario -->
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-key"></i>
+                    Datos de Acceso
+                </h2>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Nickname</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-user-tag"></i>
+                                <input type="text" class="form-control-custom" placeholder="Nombre de usuario" required name="nickname">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Usuario (Rango)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <select class="form-select-custom" required name="rango">
+                                    <option value="" disabled selected>Seleccionar tipo</option>
+                                    <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                                    <option value="OPERATIVO">OPERATIVO</option>
+                                    <option value="EMPLEADO">EMPLEADO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Nueva Contraseña (opcional)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" class="form-control-custom" placeholder="Dejar en blanco para no cambiar" name="contrasena">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Verificar Contraseña</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-lock-open"></i>
+                                <input type="password" class="form-control-custom" placeholder="********" name="verificacionContrasena">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <a th:href="@{/listadoConductores}" class="btn btn-secondary-custom text-decoration-none">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom px-4">
+                        <i class="fa-solid fa-save"></i>
+                        Actualizar Conductor
+                    </button>
+                </div>
+            </section>
+        </form>
+    </section>
+
+</body>
+</html>
