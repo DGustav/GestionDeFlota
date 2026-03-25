@@ -26,4 +26,19 @@ public class AuthController {
     public String modificarConductor(Model model) {
         return "modificarConductor";
     }
+
+    @GetMapping("/listadoVehiculos")
+    public String listadoVehiculos(Model model) {
+        return "listadoVehiculos";
+    }
+
+    @GetMapping("/crearVehiculo")
+    public String crearVehiculo(Model model) {
+        return "crearVehiculo";
+    }
+
+    @GetMapping("/modificarVehiculo/{id}")
+    public String modificarVehiculo(Model model) {
+        return "modificarVehiculo";
+    }
 }

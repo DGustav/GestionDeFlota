@@ -57,7 +57,7 @@
                     <span>Asignaciones</span>
                 </a>
 
-                <a href="#" class="menu-item">
+                <a th:href="@{/listadoVehiculos}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}">
                     <i class="fa-solid fa-bus"></i>
                     <span>Vehículos</span>
                 </a>
@@ -93,18 +93,18 @@
         <main class="main-content col ps-md-2 pt-2">
             <header class="topbar d-flex flex-column flex-md-row">
                 <div class="search-container mb-3 mb-md-0 d-flex w-50 me-md-3" th:if="${searchPlaceholder != null}">
-    <div class="search-box flex-grow-1">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input
-                type="text"
-                th:placeholder="${searchPlaceholder}"
-        />
-    </div>
-    <button class="btn btn-primary-custom ms-2 px-4">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <span class="d-none d-sm-inline">Buscar</span>
-    </button>
-</div>
+                    <div class="search-box flex-grow-1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input
+                                type="text"
+                                th:placeholder="${searchPlaceholder}"
+                        />
+                    </div>
+                    <button class="btn btn-primary-custom ms-2 px-4">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span class="d-none d-sm-inline">Buscar</span>
+                    </button>
+                </div>
 <div class="flex-grow-1" th:unless="${searchPlaceholder != null}"></div>
 
                 <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end w-auto">
