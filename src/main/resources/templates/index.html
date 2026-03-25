@@ -1,293 +1,187 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Gestión de Flota',
+        currentPage='index',
+        searchPlaceholder='Buscar',
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Flota</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-    >
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 <body>
-<div class="app container-fluid p-0">
-    <!-- Navbar para móviles -->
-    <nav class="navbar navbar-expand-lg d-lg-none mobile-navbar">
-        <div class="container-fluid">
-            <div class="brand-mobile">
-                <div class="brand-icon">
-                    <i class="fa-solid fa-b"></i>
+
+    <a th:href="@{/crearConductor}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-plus"></i>
+        <span>Nueva <span class="d-none d-sm-inline">asignación</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <div class="row g-3">
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group">
+                        <label>Fecha Desde</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <input type="date" class="form-control-custom" placeholder="Desde">
+                        </div>
+                    </div>
                 </div>
-                <span class="brand-text">BIOSIDUS</span>
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group">
+                        <label>Fecha Hasta</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <input type="date" class="form-control-custom" placeholder="Hasta">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group">
+                        <label>Vehículo</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-car"></i>
+                            <input type="text" class="form-control-custom form-multi-select" list="vehiculosList" placeholder="Seleccionar vehículo">
+                            <datalist id="vehiculosList">
+                                <option value="Renault Kangoo">
+                                <option value="VW Amarok">
+                                <option value="Toyota Hilux">
+                                <option value="Citroen Berlingo">
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group">
+                        <label>Conductor</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <input type="text" class="form-control-custom form-multi-select" list="conductoresList" placeholder="Seleccionar conductor">
+                            <datalist id="conductoresList">
+                                <option value="S. Gomez">
+                                <option value="Sat Lucero">
+                                <option value="Raul Peretta">
+                                <option value="Gustavo Porcel">
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group">
+                        <label>Estado</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <select class="form-select-custom">
+                                <option value="" disabled selected>Seleccionar estado</option>
+                                <option value="ACTIVA">ACTIVA</option>
+                                <option value="FINALIZADA">FINALIZADA</option>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                        <button class="btn btn-primary-custom w-100 py-2 mt-auto">
+                            <i class="fa-solid fa-filter"></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fa-solid fa-bars text-white"></i>
+        </div>
+
+        <div class="table-responsive">
+            <table class="fleet-table table align-middle">
+                <thead>
+                <tr>
+                    <th>N° de asignación</th>
+                    <th>Vehículo</th>
+                    <th class="d-none d-sm-table-cell">Empleado</th>
+                    <th class="d-none d-md-table-cell">Estado</th>
+                    <th class="d-none d-lg-table-cell">Fecha de asignación</th>
+                    <th class="d-none d-lg-table-cell">Fecha de devolución estimada</th>
+                    <th class="d-none d-lg-table-cell">Fecha de devolución real</th>
+                    <th class="d-none d-lg-table-cell">Kilometraje inicial</th>
+                    <th class="d-none d-lg-table-cell">Kilometros recorridos</th>
+                    <th class="d-none d-lg-table-cell">Kilometraje final</th>
+                    <th class="d-none d-lg-table-cell text-center">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>#1</td>
+                    <td>
+                        <div class="desc-title">Ford Mustang 2025</div>
+                    </td>
+                    <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
+                    <td><span class="badge badge-priority activa verde">ACTIVA</span></td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">10.000</td>
+                    <td class="d-none d-lg-table-cell">5.000</td>
+                    <td class="d-none d-lg-table-cell">15.000</td>
+                    <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                </tr>
+                <tr>
+                    <td>#1</td>
+                    <td>
+                        <div class="desc-title">Ford Mustang 2025</div>
+                    </td>
+                    <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
+                    <td><span class="badge badge-priority finalizada rojo">FINALIZADA</span></td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">10.000</td>
+                    <td class="d-none d-lg-table-cell">5.000</td>
+                    <td class="d-none d-lg-table-cell">15.000</td>
+                    <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                </tr>
+
+                <tr>
+                    <td>#1</td>
+                    <td>
+                        <div class="desc-title">Ford Mustang 2025</div>
+                    </td>
+                    <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
+                    <td><span class="badge badge-priority pendiente naranja">PENDIENTE</span></td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">15/03/2025</td>
+                    <td class="d-none d-lg-table-cell">10.000</td>
+                    <td class="d-none d-lg-table-cell">5.000</td>
+                    <td class="d-none d-lg-table-cell">15.000</td>
+                    <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <p class="m-0">100 registros en total</p>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+            <button class="btn btn-primary-custom btn-report">
+                <i class="fa-solid fa-print"></i>
+                Imprimir reporte
             </button>
         </div>
-    </nav>
+    </section>
 
-    <div class="row g-0 flex-nowrap">
-        <!-- Sidebar -->
-        <aside class="sidebar col-auto collapse d-lg-flex flex-column" id="sidebarMenu">
-            <div class="brand d-none d-lg-flex">
-                <div class="brand-icon">
-                    <img th:src="@{/images/logo.png}" alt="Logo BIOSIDUS" style="width: 55px; height: auto;">
-                </div>
-
-            </div>
-
-            <nav class="menu">
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-table-cells-large"></i>
-                    <span>Métricas generales</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-car-side"></i>
-                    <span>Asignaciones</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-bus"></i>
-                    <span>Vehículos</span>
-                </a>
-
-                <a href="/listadoConductores" class="menu-item">
-                    <i class="fa-solid fa-id-badge"></i>
-                    <span>Conductores</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-gauge-high"></i>
-                    <span>Services</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Siniestros</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-folder"></i>
-                    <span>Documentos</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>Parámetros de Alertas</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content col ps-md-2 pt-2">
-            <header class="topbar d-flex flex-column flex-md-row">
-                <div class="search-container mb-3 mb-md-0 d-flex w-50 me-md-3">
-                    <div class="search-box flex-grow-1">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input
-                                type="text"
-                                placeholder="Buscar"
-                        />
-                    </div>
-                    <button class="btn btn-primary-custom ms-2 px-4">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span class="d-none d-sm-inline">Buscar</span>
-                    </button>
-                </div>
-
-                <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end w-auto">
-                    <a th:href="@{/crearConductor}" class="btn btn-primary-custom me-2 text-decoration-none">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Nueva <span class="d-none d-sm-inline">asignación</span></span>
-                    </a>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-danger-custom d-none d-sm-flex">Cerrar Sesión</button>
-                        <span class="user-label d-none d-md-flex">Gustavo Porcel</span>
-                        <div class="avatar">BI</div>
-                    </div>
-                </div>
-            </header>
-
-            <section class="panel mt-4">
-                <!-- Filtros -->
-                <div class="filters-bar">
-                    <div class="row g-3">
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group">
-                                <label>Fecha Desde</label>
-                                <div class="filter-input-group">
-                                    <i class="fa-solid fa-calendar-day"></i>
-                                    <input type="date" class="form-control-custom" placeholder="Desde">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group">
-                                <label>Fecha Hasta</label>
-                                <div class="filter-input-group">
-                                    <i class="fa-solid fa-calendar-check"></i>
-                                    <input type="date" class="form-control-custom" placeholder="Hasta">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group">
-                                <label>Vehículo</label>
-                                <div class="filter-input-group">
-                                    <i class="fa-solid fa-car"></i>
-                                    <input type="text" class="form-control-custom form-multi-select" list="vehiculosList" placeholder="Seleccionar vehículo">
-                                    <datalist id="vehiculosList">
-                                        <option value="Renault Kangoo">
-                                        <option value="VW Amarok">
-                                        <option value="Toyota Hilux">
-                                        <option value="Citroen Berlingo">
-                                    </datalist>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group">
-                                <label>Conductor</label>
-                                <div class="filter-input-group">
-                                    <i class="fa-solid fa-user-tie"></i>
-                                    <input type="text" class="form-control-custom form-multi-select" list="conductoresList" placeholder="Seleccionar conductor">
-                                    <datalist id="conductoresList">
-                                        <option value="S. Gomez">
-                                        <option value="Sat Lucero">
-                                        <option value="Raul Peretta">
-                                        <option value="Gustavo Porcel">
-                                    </datalist>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group">
-                                <label>Estado</label>
-                                <div class="filter-input-group">
-                                    <i class="fa-solid fa-circle-info"></i>
-                                    <select class="form-select-custom">
-                                        <option value="" disabled selected>Seleccionar estado</option>
-                                        <option value="ACTIVA">ACTIVA</option>
-                                        <option value="FINALIZADA">FINALIZADA</option>
-                                        <option value="PENDIENTE">PENDIENTE</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4 col-lg-2">
-                            <div class="filter-group h-100 d-flex flex-column justify-content-end">
-                                <button class="btn btn-primary-custom w-100 py-2 mt-auto">
-                                    <i class="fa-solid fa-filter"></i>
-                                    Filtrar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="fleet-table table align-middle">
-                        <thead>
-                        <tr>
-                            <th>N° de asignación</th>
-                            <th>Vehículo</th>
-                            <th class="d-none d-sm-table-cell">Empleado</th>
-                            <th class="d-none d-md-table-cell">Estado</th>
-                            <th class="d-none d-lg-table-cell">Fecha de asignación</th>
-                            <th class="d-none d-lg-table-cell">Fecha de devolución estimada</th>
-                            <th class="d-none d-lg-table-cell">Fecha de devolución real</th>
-                            <th class="d-none d-lg-table-cell">Kilometraje inicial</th>
-                            <th class="d-none d-lg-table-cell">Kilometros recorridos</th>
-                            <th class="d-none d-lg-table-cell">Kilometraje final</th>
-                            <th class="d-none d-lg-table-cell text-center">Acciones</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr>
-                            <td>#1</td>
-                            <td>
-                                <div class="desc-title">Ford Mustang 2025</div>
-                            </td>
-                            <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
-                            <td><span class="badge badge-priority activa verde">ACTIVA</span></td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">10.000</td>
-                            <td class="d-none d-lg-table-cell">5.000</td>
-                            <td class="d-none d-lg-table-cell">15.000</td>
-                            <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        </tr>
-                        <tr>
-                            <td>#1</td>
-                            <td>
-                                <div class="desc-title">Ford Mustang 2025</div>
-                            </td>
-                            <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
-                            <td><span class="badge badge-priority finalizada rojo">FINALIZADA</span></td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">10.000</td>
-                            <td class="d-none d-lg-table-cell">5.000</td>
-                            <td class="d-none d-lg-table-cell">15.000</td>
-                            <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        </tr>
-
-                        <tr>
-                            <td>#1</td>
-                            <td>
-                                <div class="desc-title">Ford Mustang 2025</div>
-                            </td>
-                            <td class="d-none d-sm-table-cell">Gustavo Porcel</td>
-                            <td><span class="badge badge-priority pendiente naranja">PENDIENTE</span></td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">15/03/2025</td>
-                            <td class="d-none d-lg-table-cell">10.000</td>
-                            <td class="d-none d-lg-table-cell">5.000</td>
-                            <td class="d-none d-lg-table-cell">15.000</td>
-                            <td class="d-none d-lg-table-cell text-center"><a th:href="@{/modificarConductor/1}" class="text-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-                    <p class="m-0">100 registros en total</p>
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                    <button class="btn btn-primary-custom btn-report">
-                        <i class="fa-solid fa-print"></i>
-                        Imprimir reporte
-                    </button>
-                </div>
-            </section>
-        </main>
-    </div>
-</div>
-
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, currentPage, searchPlaceholder, topbar_action, content, extra_css, extra_scripts)">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} ?: 'Gestión de Flota'">Gestión de Flota</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+    >
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
+    <!-- CSS adicional si es necesario -->
+    <th:block th:replace="${extra_css} ?: ~{}"></th:block>
+</head>
+<body>
+<div class="app container-fluid p-0">
+    <!-- Navbar para móviles -->
+    <nav class="navbar navbar-expand-lg d-lg-none mobile-navbar">
+        <div class="container-fluid">
+            <div class="brand-mobile">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-b"></i>
+                </div>
+                <span class="brand-text">BIOSIDUS</span>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars text-white"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="row g-0 flex-nowrap">
+        <!-- Sidebar -->
+        <aside class="sidebar col-auto collapse d-lg-flex flex-column" id="sidebarMenu">
+            <div class="brand d-none d-lg-flex">
+                <div class="brand-icon">
+                    <img th:src="@{/images/logo.png}" alt="Logo BIOSIDUS" style="width: 55px; height: auto;">
+                </div>
+            </div>
+
+            <nav class="menu">
+                <a th:href="@{/}" class="menu-item" th:classappend="${currentPage == 'index' ? 'active' : ''}">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    <span>Métricas generales</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-car-side"></i>
+                    <span>Asignaciones</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-bus"></i>
+                    <span>Vehículos</span>
+                </a>
+
+                <a th:href="@{/listadoConductores}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}">
+                    <i class="fa-solid fa-id-badge"></i>
+                    <span>Conductores</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Services</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Siniestros</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-folder"></i>
+                    <span>Documentos</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Parámetros de Alertas</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content col ps-md-2 pt-2">
+            <header class="topbar d-flex flex-column flex-md-row">
+                <div class="search-container mb-3 mb-md-0 d-flex w-50 me-md-3" th:if="${searchPlaceholder != null}">
+    <div class="search-box flex-grow-1">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+                type="text"
+                th:placeholder="${searchPlaceholder}"
+        />
+    </div>
+    <button class="btn btn-primary-custom ms-2 px-4">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span class="d-none d-sm-inline">Buscar</span>
+    </button>
+</div>
+<div class="flex-grow-1" th:unless="${searchPlaceholder != null}"></div>
+
+                <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end w-auto">
+                    <!-- Fragmento para botón de acción principal variable -->
+                    <th:block th:replace="${topbar_action} ?: ~{}"></th:block>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-danger-custom d-none d-sm-flex">Cerrar Sesión</button>
+                        <span class="user-label d-none d-md-flex">Gustavo Porcel</span>
+                        <div class="avatar">BI</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenido principal variable -->
+            <th:block th:replace="${content}"></th:block>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Scripts adicionales -->
+<th:block th:replace="${extra_scripts} ?: ~{}"></th:block>
+</body>
+</html>
