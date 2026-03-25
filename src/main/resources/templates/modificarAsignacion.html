@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Modificar Asignación - Gestión de Flota',
+        currentPage='asignaciones',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/modificarAsignacion.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <h2 class="panel-title">
+            <i class="fa-solid fa-car-side"></i>
+            Modificar Asignación #<span th:text="${id ?: '1'}">1</span>
+        </h2>
+
+        <form action="#" method="POST">
+            <div class="row g-4">
+                <!-- Conductor -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Conductor</label>
+                        <select class="form-select-custom" name="conductor" required>
+                            <option value="" disabled>Seleccionar conductor</option>
+                            <option value="1">S. Gomez</option>
+                            <option value="2">Sat Lucero</option>
+                            <option value="3">Raul Peretta</option>
+                            <option value="4" selected>Gustavo Porcel</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Vehículo -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Vehículo</label>
+                        <select class="form-select-custom" name="vehiculo" required>
+                            <option value="" disabled>Seleccionar vehículo</option>
+                            <option value="1" selected>Renault Kangoo (ABC-123)</option>
+                            <option value="2">VW Amarok (DEF-456)</option>
+                            <option value="3">Toyota Hilux (GHI-789)</option>
+                            <option value="4">Citroen Berlingo (JKL-012)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select-custom" name="estado" required>
+                            <option value="" disabled>Seleccionar estado</option>
+                            <option value="ACTIVA" selected>ACTIVA</option>
+                            <option value="PENDIENTE">PENDIENTE</option>
+                            <option value="FINALIZADA">FINALIZADA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fecha de Asignación -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Asignación</label>
+                        <input type="datetime-local" class="form-control-custom" name="fechaAsignacion" value="2025-03-15T10:00" required>
+                    </div>
+                </div>
+
+                <!-- Kilometraje Inicial -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kilometraje Inicial</label>
+                        <input type="number" class="form-control-custom" name="kilometrajeInicial" value="10000" required>
+                    </div>
+                </div>
+
+                <!-- Fecha de Devolución Estimada -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Devolución Estimada</label>
+                        <input type="datetime-local" class="form-control-custom" name="fechaDevolucionEstimada" value="2025-03-15T18:00" required>
+                    </div>
+                </div>
+
+                <!-- Kilometros Recorridos (Solo lectura o edición según estado) -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kilometros Recorridos</label>
+                        <input type="number" class="form-control-custom" name="kilometrosRecorridos" value="5000">
+                    </div>
+                </div>
+
+                <!-- Kilometraje Final -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kilometraje Final</label>
+                        <input type="number" class="form-control-custom" name="kilometrajeFinal" value="15000">
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="col-12 d-flex justify-content-end gap-3 mt-4">
+                    <a th:href="@{/}" class="btn btn-secondary-custom text-decoration-none">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-save"></i>
+                        Actualizar Asignación
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>

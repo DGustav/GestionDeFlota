@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AuthController {
     @GetMapping
     public String login(Model model) {
-        return "index";
+        return "asignaciones";
     }
 
     @RequestMapping("/crearConductor")
@@ -40,5 +40,15 @@ public class AuthController {
     @GetMapping("/modificarVehiculo/{id}")
     public String modificarVehiculo(Model model) {
         return "modificarVehiculo";
+    }
+
+    @GetMapping("/crearAsignacion")
+    public String crearAsignacion(Model model) {
+        return "crearAsignacion";
+    }
+
+    @GetMapping("/modificarAsignacion/{id}")
+    public String modificarAsignacion(Model model) {
+        return "modificarAsignacion";
     }
 }
