@@ -25,27 +25,24 @@ public class Asignacion {
     @OneToOne
     @JoinColumn(name = "empleado", referencedColumnName = "id")
     private Conductor empleado;
-    @OneToOne
-    @JoinColumn(name = "service", referencedColumnName = "id")
-    private Service service;
-    @JoinColumn(name = "fecha_asignacion", nullable = false)
+    @Column(name = "fecha_asignacion", nullable = false)
     private LocalDateTime fechaAsignacion;
-    @JoinColumn(name = "fecha_devolucion", nullable = false)
+    @Column(name = "fecha_devolucion", nullable = false)
     private LocalDateTime fechaDevolucion;
-    @JoinColumn(name = "fecha_devolucion_estimada", nullable = false)
+    @Column(name = "fecha_devolucion_estimada", nullable = false)
     private LocalDateTime fechaDevolucionEstimada;
     @Enumerated(EnumType.STRING)
     private EstadoAsignacion estado;
-    @JoinColumn(name = "kilometraje_inicial", nullable = false)
+    @Column(name = "kilometraje_inicial", nullable = false)
     private Integer kilometrajeInicial;
-    @JoinColumn(name = "kilometraje_final", nullable = false)
+    @Column(name = "kilometraje_final", nullable = false)
     private Integer kilometrajeFinal;
-    @JoinColumn(name = "kilometros_recorridos", nullable = false)
+    @Column(name = "kilometros_recorridos", nullable = false)
     private Integer kilometrosRecorridos;
 
 
     public void actualizarVehiculo() {
-        this.vehiculo.setKilometrajeActual(this.kilometrosRecorridos);
+        this.vehiculo.setKilometrajeActual(this.kilometrajeFinal);
         if(estado!=EstadoAsignacion.FINALIZADA){
             this.vehiculo.setDisponible(Boolean.FALSE);
         }
