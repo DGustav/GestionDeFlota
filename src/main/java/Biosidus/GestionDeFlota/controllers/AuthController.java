@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class AuthController {
     @GetMapping
-    public String login(Model model) {
-        return "asignaciones";
+    public String listadoAsignaciones(){
+        return "listadoAsignaciones";
+    }
+
+    @GetMapping("/listadoAsignaciones")
+    public String listadoAsignacionesRedirect(Model model) {
+        return "listadoAsignaciones";
     }
 
     @RequestMapping("/crearConductor")
