@@ -7,6 +7,6 @@ import java.util.List;
 public interface UsuarioServiceI {
     Usuario saveUsuario(Usuario usuario);
     List<Usuario> fetchUsuarioList();
-    void deleteUsuario(Long usuarioId);
+    void deleteUsuario(Long id);
     Usuario findUsuarioById(Long id);
 }
