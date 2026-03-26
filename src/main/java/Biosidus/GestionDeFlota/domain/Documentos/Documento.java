@@ -19,8 +19,6 @@ public class Documento {
     private TipoDocumento tipoDocumento;
     @Column(name="fecha_vencimiento",nullable = false)
     private LocalDateTime fechaVencimiento;
-    @Column(name="rutaArchivo")
-    private String rutaArchivo;
-    @Column(name="descripcion")
-    private String descripcion;
+    @Column(name="archivo",nullable = false)
+    private String archivo;
 }
