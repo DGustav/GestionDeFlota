@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Gestión de Siniestros',
+        currentPage='siniestros',
+        searchPlaceholder='Buscar siniestro...',
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/crearSiniestro}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-plus"></i>
+        <span>Nuevo <span class="d-none d-sm-inline">siniestro</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <div class="row g-3">
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Fecha del Siniestro</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <input type="date" class="form-control-custom">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Vehículo</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-car"></i>
+                            <input type="text" class="form-control-custom" list="vehiculosList" placeholder="Filtrar por vehículo">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Conductor</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <input type="text" class="form-control-custom" list="conductoresList" placeholder="Filtrar por conductor">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-lg-3">
+                    <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                        <button class="btn btn-primary-custom w-100 py-2 mt-auto">
+                            <i class="fa-solid fa-filter"></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="fleet-table table align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Vehículo</th>
+                    <th>Conductor</th>
+                    <th class="d-none d-md-table-cell">Descripción</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>#1</td>
+                    <td>15/03/2026</td>
+                    <td>
+                        <div class="desc-title">Ford Mustang 2025</div>
+                        <small class="text-muted">AB 123 CD</small>
+                    </td>
+                    <td>Gustavo Porcel</td>
+                    <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;">Choque leve en estacionamiento</td>
+                    <td class="text-center">
+                        <a th:href="@{/modificarSiniestro/1}" class="text-primary mx-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#2</td>
+                    <td>20/03/2026</td>
+                    <td>
+                        <div class="desc-title">Toyota Hilux</div>
+                        <small class="text-muted">XY 987 ZW</small>
+                    </td>
+                    <td>Raul Peretta</td>
+                    <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;">Rotura de parabrisas por piedra</td>
+                    <td class="text-center">
+                        <a th:href="@{/modificarSiniestro/2}" class="text-primary mx-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <p class="m-0">2 registros en total</p>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+                </ul>
+            </nav>
+            <button class="btn btn-primary-custom btn-report">
+                <i class="fa-solid fa-print"></i>
+                Exportar
+            </button>
+        </div>
+    </section>
+
+</body>
+</html>

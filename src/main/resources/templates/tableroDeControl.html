@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Tablero de Control - Gestión de Flota',
+        currentPage='tableroDeControl',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/tableroDeControl.css}" />
+</head>
+<body>
+
+    <section class="content-section">
+        <h2 class="section-title">
+            <i class="fa-solid fa-chart-line"></i>
+            Estado de Documentación
+        </h2>
+        
+        <div class="dashboard-grid">
+            <!-- Documentos Vencidos (Rojo) -->
+            <div class="metric-card bg-red text-white">
+                <div class="metric-icon">
+                    <i class="fa-solid fa-file-circle-xmark"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label text-white">Documentos Vencidos</div>
+                    <div class="metric-value text-white" th:text="${vencidosCount ?: 12}">12</div>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation card-decoration"></i>
+            </div>
+
+            <!-- Documentos a vencer (Naranja) -->
+            <div class="metric-card bg-orange text-white">
+                <div class="metric-icon">
+                    <i class="fa-solid fa-file-circle-exclamation"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label text-white">Próximos a Vencer</div>
+                    <div class="metric-value text-white" th:text="${aVencerCount ?: 5}">5</div>
+                </div>
+                <i class="fa-solid fa-clock card-decoration"></i>
+            </div>
+
+            <!-- Documentos al día (Verde) -->
+            <div class="metric-card bg-green text-white">
+                <div class="metric-icon">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label text-white">Documentos al Día</div>
+                    <div class="metric-value text-white" th:text="${alDiaCount ?: 84}">84</div>
+                </div>
+                <i class="fa-solid fa-circle-check card-decoration"></i>
+            </div>
+        </div>
+
+        <h2 class="section-title">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            Métricas Generales
+        </h2>
+
+        <div class="dashboard-grid">
+            <!-- Total de Asignaciones -->
+            <div class="metric-card">
+                <div class="metric-icon metric-blue">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">Total Asignaciones</div>
+                    <div class="metric-value" th:text="${asignacionesTotal ?: 45}">45</div>
+                </div>
+                <i class="fa-solid fa-car-side card-decoration"></i>
+            </div>
+
+            <!-- Total de Vehículos -->
+            <div class="metric-card">
+                <div class="metric-icon metric-yellow">
+                    <i class="fa-solid fa-bus"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">Total Vehículos</div>
+                    <div class="metric-value" th:text="${vehiculosTotal ?: 52}">52</div>
+                </div>
+                <i class="fa-solid fa-truck-front card-decoration"></i>
+            </div>
+
+            <!-- Total de Siniestros -->
+            <div class="metric-card">
+                <div class="metric-icon metric-red">
+                    <i class="fa-solid fa-burst"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">Total Siniestros</div>
+                    <div class="metric-value" th:text="${siniestrosTotal ?: 8}">8</div>
+                </div>
+                <i class="fa-solid fa-car-burst card-decoration"></i>
+            </div>
+
+            <!-- Total de Usuarios -->
+            <div class="metric-card">
+                <div class="metric-icon metric-purple">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">Total Usuarios</div>
+                    <div class="metric-value" th:text="${usuariosTotal ?: 120}">120</div>
+                </div>
+                <i class="fa-solid fa-user-gear card-decoration"></i>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+</html>

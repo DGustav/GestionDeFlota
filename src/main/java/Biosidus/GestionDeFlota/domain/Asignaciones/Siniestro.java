@@ -25,5 +25,5 @@ public class Siniestro {
     private String descripcion;
     @ElementCollection
     @CollectionTable(name = "prueba",joinColumns = @JoinColumn(name = "siniestro_id"))
-    private List<String> prubeas;
+    private List<String> pruebas;
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Registrar Siniestro - Gestión de Flota',
+        currentPage='siniestros',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <!-- Reutilizamos el CSS de crearAsignacion ya que los componentes de formulario son iguales -->
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearAsignacion.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <h2 class="panel-title">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Registrar Nuevo Siniestro
+        </h2>
+
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="row g-4">
+                <!-- Asignación / Contexto -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Asignación Relacionada (Vehículo - Conductor)</label>
+                        <select class="form-select-custom" name="contexto" required>
+                            <option value="" disabled selected>Seleccionar asignación</option>
+                            <option value="1">Ford Mustang (AB 123 CD) - Gustavo Porcel</option>
+                            <option value="2">Toyota Hilux (XY 987 ZW) - Raul Peretta</option>
+                            <option value="3">VW Amarok (JK 456 LM) - Sat Lucero</option>
+                        </select>
+                        <small class="text-muted">El siniestro debe estar vinculado a una asignación activa o pasada.</small>
+                    </div>
+                </div>
+
+                <!-- Fecha del Siniestro -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fecha y Hora del Siniestro</label>
+                        <input type="datetime-local" class="form-control-custom" name="fechaSiniestro" required>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Descripción del Siniestro</label>
+                        <textarea class="form-control-custom" name="descripcion" rows="4" placeholder="Detalle lo sucedido..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- Pruebas / Archivos -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Carga de Pruebas (Fotos/Documentos)</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control-custom" name="pruebas" multiple accept="image/*,.pdf">
+                        </div>
+                        <small class="text-muted">Puede seleccionar varios archivos a la vez (fotos o PDF).</small>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="col-12 d-flex justify-content-end gap-3 mt-4">
+                    <a th:href="@{/listadoSiniestros}" class="btn btn-secondary-custom text-decoration-none">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-save"></i>
+                        Guardar Siniestro
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>
