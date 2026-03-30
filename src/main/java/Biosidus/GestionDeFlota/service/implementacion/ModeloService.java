@@ -10,8 +10,7 @@ import java.util.List;
 
 @Service
 public class ModeloService implements ModeloServiceI {
-
-    @Autowired
+    //@Autowired
     private ModeloRepositorio repositorio;
 
     @Override

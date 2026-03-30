@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class DocumentoService implements DocumentoServiceI {
-    @Autowired
+    //@Autowired
     private DocumentoRepositorio repositorio;
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class AsignacionService implements AsignacionServiceI {
-    @Autowired
+    //@Autowired
     private AsignacionRepositorio repositorio;
 
     @Override

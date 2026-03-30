@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class ConductorService implements ConductorServiceI {
-    @Autowired
+    //@Autowired
     private ConductorRepositorio repositorio;
 
     @Override

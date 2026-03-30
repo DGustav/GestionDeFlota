@@ -11,7 +11,7 @@ import java.util.List;
 @org.springframework.stereotype.Service
 
 public class ServiceService implements ServiceServiceI {
-    @Autowired
+    //@Autowired
     private ServiceRepositorio repositorio;
 
     @Override

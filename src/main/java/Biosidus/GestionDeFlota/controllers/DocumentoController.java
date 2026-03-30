@@ -5,14 +5,15 @@ import Biosidus.GestionDeFlota.domain.Documentos.Documento;
 import Biosidus.GestionDeFlota.domain.Documentos.TipoDocumento;
 import Biosidus.GestionDeFlota.service.implementacion.DocumentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController
+@Controller
 public class DocumentoController {
-    @Autowired
+    //@Autowired
     private DocumentoService service;
 
     public void crearDocumento(TipoDocumento tipo, String path, LocalDateTime fecha){

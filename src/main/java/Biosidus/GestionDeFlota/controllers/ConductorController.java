@@ -6,11 +6,12 @@ import Biosidus.GestionDeFlota.domain.Empleados.Conductor;
 import Biosidus.GestionDeFlota.domain.Empleados.Usuario;
 import Biosidus.GestionDeFlota.service.implementacion.ConductorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class ConductorController {
-    @Autowired
+    //@Autowired
     private ConductorService service;
 
     public void crearConductor(String nombre, String dni, String mail, String legajo,

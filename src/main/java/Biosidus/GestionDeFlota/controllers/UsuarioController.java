@@ -4,15 +4,15 @@ import Biosidus.GestionDeFlota.domain.Empleados.Rango;
 import Biosidus.GestionDeFlota.domain.Empleados.Usuario;
 import Biosidus.GestionDeFlota.service.implementacion.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 
-@RestController
-
+@Controller
 public class UsuarioController {
-    @Autowired
+    //@Autowired
     private UsuarioService service;
 
     public void crearUsuario(String nick, String cont, Rango rango){

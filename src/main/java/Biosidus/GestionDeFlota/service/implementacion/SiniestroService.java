@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class SiniestroService implements SiniestroServiceI {
-    @Autowired
+    //@Autowired
     private SiniestroRepositorio repositorio;
 
     @Override

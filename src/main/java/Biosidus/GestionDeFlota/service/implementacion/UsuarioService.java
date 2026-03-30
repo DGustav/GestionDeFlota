@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class UsuarioService implements UsuarioServiceI {
-    @Autowired
+    //@Autowired
     private UsuarioRepositorio repositorio;
 
     @Override
@@ -32,4 +32,4 @@ public class UsuarioService implements UsuarioServiceI {
     public void deleteUsuario(Long usuarioId) {
         repositorio.deleteById(usuarioId);
     }
-}
+    }

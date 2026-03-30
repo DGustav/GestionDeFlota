@@ -10,9 +10,8 @@ import java.util.List;
 
 @Service
 public class VehiculoService implements VehiculoServiceI {
-    @Autowired
+    //@Autowired
     private VehiculoRepositorio repositorio;
-
 
     @Override
     public Vehiculo saveVehiculo(Vehiculo vehiculo) {
