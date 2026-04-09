@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Detalle del Vehículo - Gestión de Flota',
+        currentPage='vehiculos',
+        searchPlaceholder=null,
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/listadoVehiculos}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-car me-2"></i>Información del Vehículo</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Patente:</div>
+                            <div class="col-sm-8">ABC-123</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Marca y Modelo:</div>
+                            <div class="col-sm-8">Toyota Corolla</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Año:</div>
+                            <div class="col-sm-8">2022</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Kilometraje:</div>
+                            <div class="col-sm-8">15.000 km</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Leasing:</div>
+                            <div class="col-sm-8"><span class="badge bg-info">Sí</span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Estado:</div>
+                            <div class="col-sm-8"><span class="badge bg-success">Disponible</span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Último Service:</div>
+                            <div class="col-sm-8">10/01/2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-folder-open me-2"></i>Documentos Asociados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Vencimiento</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>VTV</td>
+                                        <td>15/12/2026</td>
+                                        <td><span class="badge bg-success">Vigente</span></td>
+                                        <td class="text-center">
+                                            <a th:href="@{/detalleDocumento/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cédula</td>
+                                        <td>01/01/2025</td>
+                                        <td><span class="badge bg-success">Vigente</span></td>
+                                        <td class="text-center">
+                                            <a th:href="@{/detalleDocumento/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Seguro</td>
+                                        <td>20/06/2024</td>
+                                        <td><span class="badge bg-success">Vigente</span></td>
+                                        <td class="text-center">
+                                            <a th:href="@{/detalleDocumento/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

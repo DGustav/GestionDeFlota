@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Detalle del Conductor - Gestión de Flota',
+        currentPage='conductores',
+        searchPlaceholder=null,
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/listadoConductores}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-user-tie me-2"></i>Información del Conductor</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Nombre y Apellido:</div>
+                            <div class="col-sm-8">Gustavo Porcel</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">DNI:</div>
+                            <div class="col-sm-8">20123456</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Legajo:</div>
+                            <div class="col-sm-8">1001</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Usuario:</div>
+                            <div class="col-sm-8">gporcel</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">E-mail:</div>
+                            <div class="col-sm-8">gustavo.porcel@biosidus.com.ar</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Área:</div>
+                            <div class="col-sm-8">VENTAS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-folder-open me-2"></i>Documentos del Registro</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Vencimiento</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Licencia</td>
+                                        <td>01/03/2024</td>
+                                        <td><span class="badge bg-danger">Vencido</span></td>
+                                        <td class="text-center">
+                                            <a th:href="@{/detalleDocumento/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

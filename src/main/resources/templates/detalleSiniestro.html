@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Detalle de Siniestro - Gestión de Flota',
+        currentPage='siniestros',
+        searchPlaceholder=null,
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/listadoSiniestros}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fa-solid fa-triangle-exclamation me-2"></i>Detalle de Siniestro #1</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 mb-3">Información del Hecho</h6>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Fecha:</div>
+                                    <div class="col-sm-8">20/03/2025</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Vehículo:</div>
+                                    <div class="col-sm-8">Toyota Hilux (AB 456 XY)</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Conductor:</div>
+                                    <div class="col-sm-8">Juan Pérez</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h6 class="border-bottom pb-2 mb-3">Descripción del Siniestro</h6>
+                                <div class="p-3 bg-light rounded">
+                                    <p class="mb-0">Colisión lateral con otro vehículo al realizar maniobra de giro. Daños en puerta trasera derecha y guardabarros.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h6 class="border-bottom pb-2 mb-3">Fotos Adjuntas</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fa-solid fa-image me-2 text-primary"></i>
+                                            <a th:href="@{/descargarPrueba/1/foto_delantera_1.jpg}" class="text-decoration-none" download>foto_delantera_1.jpg</a>
+                                        </span>
+                                        <a th:href="@{/descargarPrueba/1/foto_delantera_1.jpg}" class="btn btn-outline-info btn-sm" download>
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fa-solid fa-image me-2 text-primary"></i>
+                                            <a th:href="@{/descargarPrueba/1/foto_lateral_derecha.jpg}" class="text-decoration-none" download>foto_lateral_derecha.jpg</a>
+                                        </span>
+                                        <a th:href="@{/descargarPrueba/1/foto_lateral_derecha.jpg}" class="btn btn-outline-info btn-sm" download>
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fa-solid fa-image me-2 text-primary"></i>
+                                            <a th:href="@{/descargarPrueba/1/foto_trasera.jpg}" class="text-decoration-none" download>foto_trasera.jpg</a>
+                                        </span>
+                                        <a th:href="@{/descargarPrueba/1/foto_trasera.jpg}" class="btn btn-outline-info btn-sm" download>
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-end">
+                        <a th:href="@{/modificarSiniestro/1}" class="btn btn-primary-custom">
+                            <i class="fa-solid fa-pen-to-square me-1"></i>Editar Siniestro
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

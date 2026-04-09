@@ -37,6 +37,11 @@ public class AuthController {
         return "modificarConductor";
     }
 
+    @GetMapping("/detalleConductor/{id}")
+    public String detalleConductor(Model model) {
+        return "detalleConductor";
+    }
+
     @GetMapping("/listadoVehiculos")
     public String listadoVehiculos(Model model) {
         return "listadoVehiculos";
@@ -52,6 +57,11 @@ public class AuthController {
         return "modificarVehiculo";
     }
 
+    @GetMapping("/detalleVehiculo/{id}")
+    public String detalleVehiculo(Model model) {
+        return "detalleVehiculo";
+    }
+
     @GetMapping("/crearAsignacion")
     public String crearAsignacion(Model model) {
         return "crearAsignacion";
@@ -60,6 +70,11 @@ public class AuthController {
     @GetMapping("/modificarAsignacion/{id}")
     public String modificarAsignacion(Model model) {
         return "modificarAsignacion";
+    }
+
+    @GetMapping("/detalleAsignacion/{id}")
+    public String detalleAsignacion(Model model) {
+        return "detalleAsignacion";
     }
 
     @GetMapping("/listadoSiniestros")
@@ -75,5 +90,60 @@ public class AuthController {
     @GetMapping("/modificarSiniestro/{id}")
     public String modificarSiniestro(Model model) {
         return "modificarSiniestro";
+    }
+
+    @GetMapping("/detalleSiniestro/{id}")
+    public String detalleSiniestro(Model model) {
+        return "detalleSiniestro";
+    }
+
+    @GetMapping("/listadoMantenimientos")
+    public String listadoMantenimientos(Model model) {
+        return "listadoMantenimientos";
+    }
+
+    @GetMapping("/crearMantenimiento")
+    public String crearMantenimiento(Model model) {
+        return "crearMantenimiento";
+    }
+
+    @GetMapping("/modificarMantenimiento/{id}")
+    public String modificarMantenimiento(Model model) {
+        return "modificarMantenimiento";
+    }
+
+    @GetMapping("/detalleMantenimiento/{id}")
+    public String detalleMantenimiento(Model model) {
+        return "detalleMantenimiento";
+    }
+
+    @GetMapping("/listadoDocumentos")
+    public String listadoDocumentos(Model model) {
+        return "listadoDocumentos";
+    }
+
+    @GetMapping("/crearDocumento")
+    public String crearDocumento(Model model) {
+        return "crearDocumento";
+    }
+
+    @GetMapping("/modificarDocumento/{id}")
+    public String modificarDocumento(Model model) {
+        return "modificarDocumento";
+    }
+
+    @GetMapping("/detalleDocumento/{id}")
+    public String detalleDocumento(Model model) {
+        return "detalleDocumento";
+    }
+
+    @GetMapping("/login")
+    public String login(Model model) {
+        return "login";
+    }
+
+    @GetMapping("/alertas")
+    public String alertas(Model model) {
+        return "alertas";
     }
 }

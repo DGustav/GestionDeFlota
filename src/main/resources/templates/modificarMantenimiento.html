@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Modificar Mantenimiento',
+        currentPage='servicios',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link},
+        extra_scripts=~{}
+      )}">
+<head>
+    <!-- Reutilizamos el CSS de crear ya que los estilos son idénticos para el formulario -->
+    <link rel="stylesheet" th:href="@{/css/crearMantenimiento.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <div class="panel-header">
+            <h2 class="panel-title">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Modificar Mantenimiento #1
+            </h2>
+            <p class="panel-subtitle">Actualice la información del registro de mantenimiento seleccionado.</p>
+        </div>
+
+        <form action="#" method="post" enctype="multipart/form-data" class="mt-4">
+            <div class="row g-4">
+                <!-- Vehículo (Suele ser de solo lectura en modificación o seleccionable) -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Vehículo</label>
+                        <select class="form-select-custom" required>
+                            <option value="1">Ford Mustang 2025 | AA-1234-BB</option>
+                            <option value="2">Renault Kangoo | AA-1234-BB</option>
+                            <option value="3">VW Amarok | AA-1234-BB</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Kilometraje Actual -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kilometraje Actual</label>
+                        <input type="number" value="15000" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Descripción del Mantenimiento</label>
+                        <textarea class="form-control-custom" rows="3" required>Cambio de aceite y filtros de aire/aceite.</textarea>
+                    </div>
+                </div>
+
+                <!-- Fechas -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Asignación</label>
+                        <input type="datetime-local" value="2025-03-15T10:00" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha Devolución Estimada</label>
+                        <input type="datetime-local" value="2025-03-16T18:00" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha Devolución Real</label>
+                        <input type="datetime-local" value="2025-03-16T17:30" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <!-- Comprobante -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Adjuntar Comprobante</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control-custom" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <small class="text-muted mt-2 d-block">Archivo actual: /uploads/comprobantes/maint_001.pdf</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-5 d-flex justify-content-end gap-3">
+                <a href="/listadoMantenimientos" class="btn btn-secondary-custom">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary-custom">
+                    <i class="fa-solid fa-save"></i>
+                    Actualizar Mantenimiento
+                </button>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>

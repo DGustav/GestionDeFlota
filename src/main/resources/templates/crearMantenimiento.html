@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Crear Mantenimiento',
+        currentPage='servicios',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link rel="stylesheet" th:href="@{/css/crearMantenimiento.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <div class="panel-header">
+            <h2 class="panel-title">
+                <i class="fa-solid fa-tools"></i>
+                Registrar Nuevo Mantenimiento
+            </h2>
+            <p class="panel-subtitle">Complete la información del service o reparación efectuada al vehículo.</p>
+        </div>
+
+        <form th:action="@{/crearMantenimiento}" method="post" enctype="multipart/form-data" class="mt-4">
+            <div class="row g-4">
+                <!-- Vehículo -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Vehículo</label>
+                        <select name="vehiculo.id" class="form-select-custom" required>
+                            <option value="" disabled selected>Seleccione un vehículo</option>
+                            <option value="1">Ford Mustang 2025 | AA-1234-BB</option>
+                            <option value="2">Renault Kangoo | AA-1234-BB</option>
+                            <option value="3">VW Amarok | AA-1234-BB</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Kilometraje Actual -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Kilometraje Actual</label>
+                        <input type="number" name="kilometrajeActual" class="form-control-custom" placeholder="Ej: 45000" required>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Descripción del Mantenimiento</label>
+                        <textarea name="descripcion" class="form-control-custom" rows="3" placeholder="Detalle los trabajos realizados..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- Fechas -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Asignación</label>
+                        <input type="datetime-local" name="fechaAsignacion" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha Devolución Estimada</label>
+                        <input type="datetime-local" name="fechaDevolucionEstimada" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Fecha Devolución Real</label>
+                        <input type="datetime-local" name="fechaDevolucion" class="form-control-custom" required>
+                    </div>
+                </div>
+
+                <!-- Comprobante (Archivo) -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Adjuntar Comprobante</label>
+                        <input type="file" name="comprobanteArchivo" class="form-control-custom" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-5 d-flex justify-content-end gap-3">
+                <a th:href="@{/listadoServicios}" class="btn btn-secondary-custom">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary-custom">
+                    <i class="fa-solid fa-save"></i>
+                    Guardar Mantenimiento
+                </button>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Detalle del Documento - Gestión de Flota',
+        currentPage='documentos',
+        searchPlaceholder=null,
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{},
+        extra_scripts=~{}
+      )}">
+<head>
+</head>
+<body>
+
+    <a th:href="@{/listadoDocumentos}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i>Información del Documento</h5>
+                        <span class="badge bg-success">Vigente</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">ID:</div>
+                            <div class="col-sm-8">1</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Tipo de Documento:</div>
+                            <div class="col-sm-8">VTV</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Fecha de Vencimiento:</div>
+                            <div class="col-sm-8">15/12/2026</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Asociado a:</div>
+                            <div class="col-sm-8">Vehículo: ABC-123</div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Archivo adjunto:</div>
+                            <div class="col-sm-8">
+                                <a href="#" class="btn btn-sm btn-info text-white" download>
+                                    <i class="fa-solid fa-download me-1"></i>Descargar Archivo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-end gap-2">
+                        <a th:href="@{/modificarDocumento/1}" class="btn btn-primary-custom">
+                            <i class="fa-solid fa-pen-to-square me-1"></i>Modificar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

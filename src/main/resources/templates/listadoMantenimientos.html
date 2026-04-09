@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Listado de Mantenimientos',
+        currentPage='mantenimientos',
+        searchPlaceholder='Buscar mantenimiento...',
+        topbar_action=~{:: .topbar-btn},
+        content=~{:: .content-section},
+        extra_css=~{:: link},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link rel="stylesheet" th:href="@{/css/listadoMantenimientos.css}" />
+</head>
+<body>
+
+    <a th:href="@{/crearMantenimiento}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+        <i class="fa-solid fa-plus"></i>
+        <span>Nuevo <span class="d-none d-sm-inline">mantenimiento</span></span>
+    </a>
+
+    <section class="panel mt-4 content-section">
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <div class="row g-3">
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Vehículo</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-car"></i>
+                            <input type="text" class="form-control-custom" list="vehiculosList" placeholder="Seleccionar vehículo">
+                            <datalist id="vehiculosList">
+                                <!-- Se llenaría dinámicamente -->
+                                <option value="Renault Kangoo">
+                                <option value="VW Amarok">
+                                <option value="Toyota Hilux">
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Fecha Desde</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <input type="date" class="form-control-custom">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group">
+                        <label>Fecha Hasta</label>
+                        <div class="filter-input-group">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <input type="date" class="form-control-custom">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                        <button class="btn btn-primary-custom w-100 py-2 mt-auto">
+                            <i class="fa-solid fa-filter"></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="fleet-table table align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Vehículo</th>
+                    <th>Descripción</th>
+                    <th class="d-none d-lg-table-cell">Asignación</th>
+                    <th class="d-none d-lg-table-cell">Devolución Estimada</th>
+                    <th class="d-none d-lg-table-cell">Devolución Real</th>
+                    <th class="d-none d-lg-table-cell">Kilometraje</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!-- Ejemplo de fila -->
+                <tr>
+                    <td>#1</td>
+                    <td>
+                        <div class="desc-title">Renault Kangoo</div>
+                        <div class="desc-subtitle">AB 123 CD</div>
+                    </td>
+                    <td>Cambio de aceite y filtros</td>
+                    <td class="d-none d-lg-table-cell">10/03/2025</td>
+                    <td class="d-none d-lg-table-cell">12/03/2025</td>
+                    <td class="d-none d-lg-table-cell">11/03/2025</td>
+                    <td class="d-none d-lg-table-cell">45.000 km</td>
+                    <td class="text-center">
+                        <a th:href="@{/detalleMantenimiento/1}" class="text-info me-2" title="Ver detalle">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a th:href="@{/modificarMantenimiento/1}" class="text-primary me-2" title="Modificar">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a href="#" class="text-danger" title="Eliminar">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <p class="m-0">Mostrando registros de mantenimiento</p>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                </ul>
+            </nav>
+            <button class="btn btn-primary-custom btn-report">
+                <i class="fa-solid fa-print"></i>
+                Exportar
+            </button>
+        </div>
+    </section>
+
+</body>
+</html>

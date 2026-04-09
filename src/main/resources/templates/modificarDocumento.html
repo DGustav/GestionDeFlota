@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Modificar Documento - Gestión de Flota',
+        currentPage='documentos',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <section class="panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-file-pen"></i>
+                    Modificar Documento #1
+                </h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Documento</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <select class="form-control-custom" required>
+                                    <option value="VTV" selected>VTV</option>
+                                    <option value="CEDULA">Cédula</option>
+                                    <option value="SEGURO">Seguro</option>
+                                    <option value="LICENCIA">Licencia</option>
+                                    <option value="MULTA">Multa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Vencimiento</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <input type="date" class="form-control-custom" value="2026-12-15" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Asociar a Vehículo (Opcional)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-car"></i>
+                                <select class="form-control-custom">
+                                    <option value="">Ninguno</option>
+                                    <option value="1" selected>ABC-123 (Toyota Corolla)</option>
+                                    <option value="2">XYZ-789 (Ford Ranger)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Asociar a Conductor (Opcional)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <select class="form-control-custom">
+                                    <option value="" selected>Ninguno</option>
+                                    <option value="1">Juan Pérez</option>
+                                    <option value="2">María García</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                        <div class="form-group">
+                            <label class="form-label">Archivo de Documento Actual</label>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-file-pdf text-danger me-2 fa-2x"></i>
+                                <span>vtv_abc123_2024.pdf</span>
+                                <a href="#" class="btn btn-sm btn-outline-primary ms-3">
+                                    <i class="fa-solid fa-download"></i> Descargar
+                                </a>
+                            </div>
+                            <label class="form-label mt-2">Reemplazar Archivo (Opcional)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-upload"></i>
+                                <input type="file" class="form-control-custom" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <a th:href="@{/listadoDocumentos}" class="btn btn-secondary-custom text-decoration-none">
+                        <i class="fa-solid fa-xmark"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Actualizar Documento
+                    </button>
+                </div>
+            </section>
+        </form>
+    </section>
+
+</body>
+</html>

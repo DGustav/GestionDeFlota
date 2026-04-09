@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Configuración de Alertas - Gestión de Flota',
+        currentPage='alertas',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
+    <style>
+        .alert-config-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--line);
+            margin-bottom: 2rem;
+        }
+        .alert-config-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .alert-config-title i {
+            color: var(--yellow-dark);
+        }
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-soft);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .input-group-text {
+            background-color: var(--bg-panel-soft);
+            border: 1px solid var(--line);
+            color: var(--text-soft);
+        }
+        .btn-save-alert {
+            background-color: var(--yellow-dark);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-save-alert:hover {
+            background-color: var(--sidebar-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <section class="content-section mt-4">
+        <div class="container-fluid">
+            <h2 class="mb-4" style="font-weight: 700; color: var(--text-dark);">Configuración de Alertas</h2>
+            
+            <div class="row">
+                <!-- Sección Kilometraje -->
+                <div class="col-md-6">
+                    <div class="alert-config-card">
+                        <div class="alert-config-title">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            <span>Kilometraje Recorrido</span>
+                        </div>
+                        <p class="text-muted mb-4">Configura cada cuántos kilómetros se debe enviar una alerta de mantenimiento o revisión para todos los vehículos.</p>
+                        
+                        <form th:action="@{/alertas/configurarKilometraje}" method="post">
+                            <div class="form-group mb-4">
+                                <label for="kmIntervalo">Intervalo de kilómetros</label>
+                                <div class="input-group">
+                                    <input type="number" id="kmIntervalo" name="kmIntervalo" class="form-control" placeholder="Ej: 10000" min="1" required>
+                                    <span class="input-group-text">km</span>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Se enviará un correo cada vez que un vehículo sume esta cantidad de km.</small>
+                            </div>
+                            <button type="submit" class="btn btn-save-alert w-100">
+                                <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Configuración
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sección Tiempo -->
+                <div class="col-md-6">
+                    <div class="alert-config-card">
+                        <div class="alert-config-title">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Frecuencia de Notificaciones</span>
+                        </div>
+                        <p class="text-muted mb-4">Configura cada cuánto tiempo se deben enviar los correos electrónicos de recordatorio general.</p>
+                        
+                        <form th:action="@{/alertas/configurarTiempo}" method="post">
+                            <div class="form-group mb-4">
+                                <label for="tiempoIntervalo">Intervalo de tiempo</label>
+                                <div class="input-group">
+                                    <input type="number" id="tiempoIntervalo" name="tiempoIntervalo" class="form-control" placeholder="Ej: 30" min="1" required>
+                                    <select class="form-select" name="unidadTiempo" style="max-width: 120px;">
+                                        <option value="dias">Días</option>
+                                        <option value="semanas">Semanas</option>
+                                        <option value="meses">Meses</option>
+                                    </select>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Define la frecuencia con la que el sistema revisará y enviará alertas.</small>
+                            </div>
+                            <button type="submit" class="btn btn-save-alert w-100">
+                                <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Configuración
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
