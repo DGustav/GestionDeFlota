@@ -15,8 +15,8 @@ public class Usuario {
     private Long id;
     @Column(name = "nickname",nullable = false, unique = true)
     private String nickname;
-    @Column(name = "contrasena",nullable = false)
-    private String contrasena;
+    @Column(name = "password",nullable = false)
+    private String password;
     @Enumerated(EnumType.STRING)
     @Column(name = "rol",nullable = false)
     private Rol rol;

@@ -33,17 +33,20 @@
                 <div class="login-box w-100" style="max-width: 320px;">
                     <h3 class="h5 text-muted mb-4 text-center">Ingrese sus credenciales</h3>
 
-                    <div class="input-group mb-3 position-relative">
-                        <input type="text" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Usuario">
-                        <img th:src="@{/images/user.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
-                    </div>
 
-                    <div class="input-group mb-4 position-relative">
-                        <input type="password" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Contraseña">
-                        <img th:src="@{/images/key.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
-                    </div>
+                    <form th:action="@{/login}" method="post">
+                        <div class="input-group mb-3 position-relative">
+                            <input type="text" name="username" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Usuario" required>
+                            <img th:src="@{/images/user.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
+                        </div>
 
-                    <button class="btn btn-warning w-100 fw-bold py-2 shadow-sm">Login</button>
+                        <div class="input-group mb-4 position-relative">
+                            <input type="password" name="password" class="form-control bg-secondary-subtle border-0 py-2 pe-5" placeholder="Contraseña" required>
+                            <img th:src="@{/images/key.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm">Login</button>
+                    </form>
                 </div>
             </div>
         </div>

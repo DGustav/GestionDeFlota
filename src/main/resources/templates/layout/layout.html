@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, currentPage, searchPlaceholder, topbar_action, content, extra_css, extra_scripts)">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout (title, currentPage, searchPlaceholder, topbar_action, content, extra_css, extra_scripts)">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,42 +49,42 @@
             </div>
 
             <nav class="menu">
-                <a th:href="@{/tableroDeControl}" class="menu-item" th:classappend="${currentPage == 'tableroDeControl' ? 'active' : ''}">
+                <a th:href="@{/tableroDeControl}" class="menu-item" th:classappend="${currentPage == 'tableroDeControl' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Tablero de control</span>
                 </a>
 
-                <a th:href="@{/listadoAsignaciones}" class="menu-item">
+                <a th:href="@{/listadoAsignaciones}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-car-side"></i>
                     <span>Asignaciones</span>
                 </a>
 
-                <a th:href="@{/listadoVehiculos}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}">
+                <a th:href="@{/listadoVehiculos}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-bus"></i>
                     <span>Vehículos</span>
                 </a>
 
-                <a th:href="@{/listadoConductores}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}">
+                <a th:href="@{/listadoConductores}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>Conductores</span>
                 </a>
 
-                <a th:href="@{/listadoMantenimientos}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}">
+                <a th:href="@{/listadoMantenimientos}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Services</span>
                 </a>
 
-                <a th:href="@{/listadoSiniestros}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}">
+                <a th:href="@{/listadoSiniestros}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Siniestros</span>
                 </a>
 
-                <a th:href="@{/listadoDocumentos}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}">
+                <a th:href="@{/listadoDocumentos}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                     <i class="fa-solid fa-folder"></i>
                     <span>Documentos</span>
                 </a>
 
-                <a th:href="@{/alertas}" class="menu-item" th:classappend="${currentPage == 'alertas' ? 'active' : ''}">
+                <a th:href="@{/alertas}" class="menu-item" th:classappend="${currentPage == 'alertas' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                     <i class="fa-solid fa-bell"></i>
                     <span>Alertas</span>
                 </a>
