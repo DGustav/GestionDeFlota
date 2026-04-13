@@ -22,8 +22,8 @@ public class Asignacion {
     @JoinColumn(name = "vehiculo", referencedColumnName = "id", nullable = false)
     private Vehiculo vehiculo;
     @OneToOne
-    @JoinColumn(name = "empleado", referencedColumnName = "id")
-    private Conductor empleado;
+    @JoinColumn(name = "conductor", referencedColumnName = "id")
+    private Conductor conductor;
     @Column(name = "fecha_asignacion", nullable = false)
     private LocalDateTime fechaAsignacion;
     @Column(name = "fecha_devolucion", nullable = false)

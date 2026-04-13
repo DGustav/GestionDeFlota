@@ -54,32 +54,32 @@
                     <span>Tablero de control</span>
                 </a>
 
-                <a th:href="@{/listadoAsignaciones}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/asignacion/listado}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO','CONDUCTOR')">
                     <i class="fa-solid fa-car-side"></i>
                     <span>Asignaciones</span>
                 </a>
 
-                <a th:href="@{/listadoVehiculos}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/vehiculo/listado}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-bus"></i>
                     <span>Vehículos</span>
                 </a>
 
-                <a th:href="@{/listadoConductores}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/conductor/listado}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>Conductores</span>
                 </a>
 
-                <a th:href="@{/listadoMantenimientos}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
+                <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR','OPERARIO')">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Services</span>
                 </a>
 
-                <a th:href="@{/listadoSiniestros}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
+                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR',)">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Siniestros</span>
                 </a>
 
-                <a th:href="@{/listadoDocumentos}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
+                <a th:href="@{/documento/listado}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                     <i class="fa-solid fa-folder"></i>
                     <span>Documentos</span>
                 </a>
@@ -114,7 +114,11 @@
                     <th:block th:replace="${topbar_action} ?: ~{}"></th:block>
 
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-danger-custom d-none d-sm-flex">Cerrar Sesión</button>
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger-custom d-none d-sm-flex">
+                                Cerrar Sesión
+                            </button>
+                        </form>
                         <span class="user-label d-none d-md-flex">Gustavo Porcel</span>
                         <div class="avatar">BI</div>
                     </div>

@@ -23,7 +23,7 @@
             <p class="panel-subtitle">Complete la información del service o reparación efectuada al vehículo.</p>
         </div>
 
-        <form th:action="@{/crearMantenimiento}" method="post" enctype="multipart/form-data" class="mt-4">
+        <form th:action="@{/mantenimientoVehicular/crear}" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="row g-4">
                 <!-- Vehículo -->
                 <div class="col-md-6">
@@ -86,7 +86,7 @@
             </div>
 
             <div class="form-actions mt-5 d-flex justify-content-end gap-3">
-                <a th:href="@{/listadoServicios}" class="btn btn-secondary-custom">
+                <a th:href="@{/mantenimientoVehicular/listado}" class="btn btn-secondary-custom">
                     Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary-custom">

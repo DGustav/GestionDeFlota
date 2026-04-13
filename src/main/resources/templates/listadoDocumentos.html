@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <a th:href="@{/crearDocumento}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/documento/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
         <i class="fa-solid fa-plus"></i>
         <span>Nuevo <span class="d-none d-sm-inline">documento</span></span>
     </a>
@@ -114,8 +114,8 @@
                         <span class="badge bg-success">Vigente</span>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{/detalleDocumento/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                        <a th:href="@{/modificarDocumento/1}" class="text-primary me-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a th:href="@{/documento/detalle/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                        <a th:href="@{/documento/modificar/1}" class="text-primary me-2"><i class="fa-solid fa-pen-to-square"></i></a>
                         <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
                     </td>
                 </tr>
@@ -130,8 +130,8 @@
                         <span class="badge bg-danger">Vencido</span>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{/detalleDocumento/2}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                        <a th:href="@{/modificarDocumento/2}" class="text-primary me-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a th:href="@{/documento/detalle/2}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                        <a th:href="@{/documento/modificar/2}" class="text-primary me-2"><i class="fa-solid fa-pen-to-square"></i></a>
                         <a th:href="@{/descargarPrueba/2/foto_delantera_1.jpg}" class="text-info" download=""><i class="fa-solid fa-download"></i></a>
                     </td>
                 </tr>
