@@ -45,6 +45,11 @@
                             <img th:src="@{/images/key.png}" class="icon position-absolute end-0 top-50 translate-middle-y me-3" style="width: 23px; height: 23px; opacity: 0.7; z-index: 10;">
                         </div>
 
+                        <!-- Mensaje de Error -->
+                        <div th:if="${param.error}" class="alert alert-danger py-2 mb-3 text-center" style="font-size: 0.85rem;">
+                            Usuario o contraseña incorrecta
+                        </div>
+
                         <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm">Login</button>
                     </form>
                 </div>

@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class AuthController {
     @GetMapping("/")
-    public String loginGet(Model model) {
+    public String inicio() {
+        return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String mostrarLogin() {
         return "login";
     }
 
