@@ -8,12 +8,12 @@
         content=~{:: .content-section},
         extra_css=~{},
         extra_scripts=~{}
-      )}">
+      )}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body>
 
-    <a th:href="@{/asignacion/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/asignacion/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
         <i class="fa-solid fa-plus"></i>
         <span>Nueva <span class="d-none d-sm-inline">asignación</span></span>
     </a>

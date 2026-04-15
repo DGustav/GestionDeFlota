@@ -54,9 +54,13 @@
                     <span>Tablero de control</span>
                 </a>
 
-                <a th:href="@{/asignacion/listado}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO','CONDUCTOR')">
+                <a th:href="@{/asignacion/listado}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-car-side"></i>
                     <span>Asignaciones</span>
+                </a>
+                <a th:href="@{/asignacion/mis-asignaciones}" class="menu-item" sec:authorize="hasAnyRole('CONDUCTOR')">
+                    <i class="fa-solid fa-car-side"></i>
+                    <span>Mis Asignaciones</span>
                 </a>
 
                 <a th:href="@{/vehiculo/listado}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">

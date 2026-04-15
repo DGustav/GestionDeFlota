@@ -11,9 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.util.Map;
 
 @Configuration
 /* Esta anotación es de Spring Core (no es exclusiva de seguridad).
@@ -23,9 +27,11 @@ Indica que la clase es una fuente de definiciones de beans
 // Habilita la seguridad de Spring Security
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
         this.customUserDetailsService = customUserDetailsService;
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
     }
 
     @Bean
@@ -50,13 +56,14 @@ public class SecurityConfig {
 
                         // Vista principal de asignaciones para usuarios autenticados
                         .requestMatchers("/tableroDeControl").hasAnyRole("ADMINISTRADOR")
-
-                        .requestMatchers("/asignacion/**").hasAnyRole("OPERARIO","ADMINISTRADOR", "CONDUCTOR")
+                        .requestMatchers("/asignacion/mis-asignaciones").hasRole("CONDUCTOR")
+                        .requestMatchers("/asignacion/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/vehiculo/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/conductor/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/mantenimientoVehicular/**").hasAnyRole("OPERARIO", "CONDUCTOR","ADMINISTRADOR")
                         .requestMatchers("/siniestro/**").hasAnyRole("OPERARIO", "CONDUCTOR","ADMINISTRADOR")
                         .requestMatchers("/documento/**").hasAnyRole("ADMINISTRADOR")
+
 
                         .anyRequest().authenticated()
                 )
@@ -64,6 +71,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/asignacion/listado", true)
+                        .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
@@ -78,6 +86,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public CommandLineRunner initAdmin(PasswordEncoder passwordEncoder, UsuarioService usuarioService) {
