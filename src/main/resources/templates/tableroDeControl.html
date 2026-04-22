@@ -7,10 +7,11 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-script}
       )}">
 <head>
     <link class="extra-css" rel="stylesheet" th:href="@{/css/tableroDeControl.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
 
@@ -115,5 +116,22 @@
 
     </section>
 
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

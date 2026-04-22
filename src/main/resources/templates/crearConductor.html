@@ -7,15 +7,16 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-script}
       )}">
 <head>
     <link class="extra-css" rel="stylesheet" th:href="@{/css/crearConductor.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
 
     <section class="panel mt-4 content-section">
-        <form action="#" method="POST">
+        <form th:action="@{/registrarConductor}" method="POST" autocomplete="off">
             <section class="panel">
                 <h2 class="panel-title">
                     <i class="fa-solid fa-user-plus"></i>
@@ -28,7 +29,7 @@
                             <label class="form-label">Nombre y Apellido</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-user"></i>
-                                <input type="text" class="form-control-custom" placeholder="Ej: Juan Pérez" required name="nomApe">
+                                <input type="text" class="form-control-custom" placeholder="Ej: Juan Pérez" required name="nomApe" th:value="${conductorDto.nomApe}" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -37,8 +38,9 @@
                             <label class="form-label">DNI</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="number" class="form-control-custom" placeholder="Número de documento" required name="dni">
+                                <input type="text" class="form-control-custom" placeholder="Número de documento" required name="dni" maxlength="8" pattern="\d{1,8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" th:value="${conductorDto.dni}" autocomplete="off">
                             </div>
+                            <small th:if="${errorDni}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorDni}"></small>
                         </div>
                     </div>
 
@@ -47,8 +49,9 @@
                             <label class="form-label">Legajo</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-file-invoice"></i>
-                                <input type="number" class="form-control-custom" placeholder="Número de legajo" required name="legajo">
+                                <input type="text" class="form-control-custom" placeholder="Número de legajo" required name="legajo" maxlength="4" pattern="\d{1,4}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);" th:value="${conductorDto.legajo}" autocomplete="off">
                             </div>
+                            <small th:if="${errorLegajo}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorLegajo}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -56,7 +59,7 @@
                             <label class="form-label">Correo Electrónico</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-envelope"></i>
-                                <input type="email" class="form-control-custom" placeholder="ejemplo@biosidus.com" required name="mail">
+                                <input type="email" class="form-control-custom" placeholder="ejemplo@biosidus.com" required name="mail" th:value="${conductorDto.mail}" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -67,8 +70,8 @@
                             <div class="input-container">
                                 <i class="fa-solid fa-building"></i>
                                 <select class="form-select-custom" required name="area">
-                                    <option value="" disabled selected>Seleccionar área</option>
-                                    <option value="VENTAS">VENTAS</option>
+                                    <option value="" disabled th:selected="${conductorDto.area == null}">Seleccionar área</option>
+                                    <option value="VENTAS" th:selected="${conductorDto.area != null && conductorDto.area.name() == 'VENTAS'}">VENTAS</option>
                                 </select>
                             </div>
                         </div>
@@ -89,8 +92,9 @@
                             <label class="form-label">Nickname</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-user-tag"></i>
-                                <input type="text" class="form-control-custom" placeholder="Nombre de usuario" required name="nickname">
+                                <input type="text" class="form-control-custom" autocomplete="one-time-code" placeholder="Nombre de usuario" required name="nickname" th:value="${conductorDto.nickname}">
                             </div>
+                            <small th:if="${errorNickname}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorNickname}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -98,11 +102,11 @@
                             <label class="form-label">Tipo de Usuario (Rango)</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-shield-halved"></i>
-                                <select class="form-select-custom" required name="rango">
-                                    <option value="" disabled selected>Seleccionar tipo</option>
-                                    <option value="ADMINISTRADOR">ADMINISTRADOR</option>
-                                    <option value="OPERATIVO">OPERATIVO</option>
-                                    <option value="EMPLEADO">EMPLEADO</option>
+                                <select class="form-select-custom" required name="rol">
+                                    <option value="" disabled th:selected="${conductorDto.rol == null}">Seleccionar tipo</option>
+                                    <option value="ADMINISTRADOR" th:selected="${conductorDto.rol != null && conductorDto.rol.name() == 'ADMINISTRADOR'}">ADMINISTRADOR</option>
+                                    <option value="OPERARIO" th:selected="${conductorDto.rol != null && conductorDto.rol.name() == 'OPERARIO'}">OPERARIO</option>
+                                    <option value="CONDUCTOR" th:selected="${conductorDto.rol != null && conductorDto.rol.name() == 'CONDUCTOR'}">CONDUCTOR</option>
                                 </select>
                             </div>
                         </div>
@@ -113,8 +117,9 @@
                             <label class="form-label">Contraseña</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-lock"></i>
-                                <input type="password" class="form-control-custom" placeholder="********" required name="contrasena">
+                                <input type="password" class="form-control-custom" placeholder="********" required name="contrasena" autocomplete="new-password">
                             </div>
+                            <small th:if="${errorPassword}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorPassword}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -122,8 +127,9 @@
                             <label class="form-label">Verificar Contraseña</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-lock-open"></i>
-                                <input type="password" class="form-control-custom" placeholder="********" required name="verificacionContrasena">
+                                <input type="password" class="form-control-custom" placeholder="********" required name="verificacionContrasena" autocomplete="new-password">
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -141,5 +147,32 @@
         </form>
     </section>
 
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            const error = /*[[${error}]]*/ null;
+            
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+            
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>
