@@ -19,6 +19,15 @@
     </a>
 
     <section class="panel mt-4 content-section">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <div class="table-responsive">
             <table class="fleet-table table align-middle">
                 <thead>
@@ -29,28 +38,27 @@
                     <th class="d-none d-md-table-cell">Legajo</th>
                     <th class="d-none d-lg-table-cell">Usuario</th>
                     <th class="d-none d-lg-table-cell">E-mail</th>
-                    <th class="d-none d-lg-table-cell">Área</th>
+                    <th class="d-none d-lg-table-cell">Rango</th>
                     <th class="text-center">Acciones</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <!-- Ejemplo de dato estático para previsualización -->
-                <tr>
-                    <td>1</td>
+                <tr th:each="conductor : ${conductores}">
+                    <td th:text="${conductor.id}">1</td>
                     <td>
-                        <div class="desc-title">Gustavo Porcel</div>
+                        <div class="desc-title" th:text="${conductor.nomApe}">Gustavo Porcel</div>
                     </td>
-                    <td class="d-none d-sm-table-cell">20123456</td>
-                    <td class="d-none d-md-table-cell">1001</td>
-                    <td class="d-none d-lg-table-cell">gporcel</td>
-                    <td class="d-none d-lg-table-cell">gustavo.porcel@biosidus.com.ar</td>
-                    <td class="d-none d-lg-table-cell">VENTAS</td>
+                    <td class="d-none d-sm-table-cell" th:text="${conductor.dni}">20123456</td>
+                    <td class="d-none d-md-table-cell" th:text="${conductor.legajo}">1001</td>
+                    <td class="d-none d-lg-table-cell" th:text="${conductor.usuario.nickname}">gporcel</td>
+                    <td class="d-none d-lg-table-cell" th:text="${conductor.mail}">gustavo.porcel@biosidus.com.ar</td>
+                    <td class="d-none d-lg-table-cell" th:text="${conductor.rango}">APM</td>
                     <td class="text-center">
-                        <a th:href="@{/conductor/detalle/1}" class="text-info me-2" title="Ver detalle">
+                        <a th:href="@{/conductor/detalle/{id}(id=${conductor.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/conductor/modificar/1}" class="text-primary" title="Modificar">
+                        <a th:href="@{/conductor/modificar/{id}(id=${conductor.id})}" class="text-primary" title="Modificar">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -60,7 +68,7 @@
         </div>
 
         <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-            <p class="m-0">1 conductores en total</p>
+            <p class="m-0"><span th:text="${#lists.size(conductores)}">1</span> conductores en total</p>
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" href="#">Previous</a></li>

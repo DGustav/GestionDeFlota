@@ -76,4 +76,53 @@ public class ConductorService {
 
         conductorRepositorio.save(conductor);
     }
+
+    @Transactional
+    public void actualizarConductor(Long id, ConductorUsuarioDTO dto) {
+        Conductor conductor = buscarPorId(id);
+        Usuario usuario = conductor.getUsuario();
+
+        // Validar DNI duplicado si cambió
+        if (!conductor.getDni().equals(dto.getDni())) {
+            if (conductorRepositorio.findByDni(dto.getDni()).isPresent()) {
+                throw new DniDuplicadoException("Ya existe un conductor con el mismo DNI");
+            }
+        }
+
+        // Validar Legajo duplicado si cambió
+        if (!conductor.getLegajo().equals(dto.getLegajo())) {
+            if (conductorRepositorio.findByLegajo(dto.getLegajo()).isPresent()) {
+                throw new LegajoDuplicadoException("Ya existe un conductor con el mismo legajo");
+            }
+        }
+
+        // Validar Nickname duplicado si cambió
+        if (!usuario.getNickname().equals(dto.getNickname())) {
+            if (usuarioRepositorio.findByNickname(dto.getNickname()).isPresent()) {
+                throw new NicknameDuplicadoException("El nickname ya se encuentra en uso");
+            }
+        }
+
+        // Actualizar datos del conductor
+        conductor.setNomApe(dto.getNomApe());
+        conductor.setDni(dto.getDni());
+        conductor.setLegajo(dto.getLegajo());
+        conductor.setMail(dto.getMail());
+        conductor.setRango(dto.getRango());
+
+        // Actualizar datos del usuario
+        usuario.setNickname(dto.getNickname());
+        usuario.setRol(dto.getRol());
+
+        // Actualizar contraseña si se proporcionó
+        if (dto.getContrasena() != null && !dto.getContrasena().isEmpty()) {
+            if (!dto.getContrasena().equals(dto.getVerificacionContrasena())) {
+                throw new ContraseniasSinCoincidirException("Las contraseñas no coinciden");
+            }
+            usuario.setPassword(passwordEncoder.encode(dto.getContrasena()));
+        }
+
+        usuarioRepositorio.save(usuario);
+        conductorRepositorio.save(conductor);
+    }
 }

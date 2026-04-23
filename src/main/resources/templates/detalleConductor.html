@@ -28,27 +28,27 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Nombre y Apellido:</div>
-                            <div class="col-sm-8">Gustavo Porcel</div>
+                            <div class="col-sm-8" th:text="${conductor.nomApe}">Gustavo Porcel</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">DNI:</div>
-                            <div class="col-sm-8">20123456</div>
+                            <div class="col-sm-8" th:text="${conductor.dni}">20123456</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Legajo:</div>
-                            <div class="col-sm-8">1001</div>
+                            <div class="col-sm-8" th:text="${conductor.legajo}">1001</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Usuario:</div>
-                            <div class="col-sm-8">gporcel</div>
+                            <div class="col-sm-8" th:text="${conductor.usuario.nickname}">gporcel</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">E-mail:</div>
-                            <div class="col-sm-8">gustavo.porcel@biosidus.com.ar</div>
+                            <div class="col-sm-8" th:text="${conductor.mail}">gustavo.porcel@biosidus.com.ar</div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold">Área:</div>
-                            <div class="col-sm-8">VENTAS</div>
+                            <div class="col-sm-4 fw-bold">Rango:</div>
+                            <div class="col-sm-8" th:text="${conductor.rango}">PMO</div>
                         </div>
                     </div>
                 </div>

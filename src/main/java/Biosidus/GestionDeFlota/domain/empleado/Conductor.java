@@ -31,6 +31,6 @@ public class Conductor {
     @Column(name = "mail")
     private String mail;
     @Enumerated(EnumType.STRING)
-    @Column(name = "area",nullable = false)
-    private Area area;
+    @Column(name = "rango",nullable = false)
+    private Rango rango;
 }

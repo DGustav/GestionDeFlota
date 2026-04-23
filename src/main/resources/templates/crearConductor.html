@@ -16,6 +16,10 @@
 <body>
 
     <section class="panel mt-4 content-section">
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <form th:action="@{/registrarConductor}" method="POST" autocomplete="off">
             <section class="panel">
                 <h2 class="panel-title">
@@ -40,7 +44,6 @@
                                 <i class="fa-solid fa-id-card"></i>
                                 <input type="text" class="form-control-custom" placeholder="Número de documento" required name="dni" maxlength="8" pattern="\d{1,8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" th:value="${conductorDto.dni}" autocomplete="off">
                             </div>
-                            <small th:if="${errorDni}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorDni}"></small>
                         </div>
                     </div>
 
@@ -51,7 +54,6 @@
                                 <i class="fa-solid fa-file-invoice"></i>
                                 <input type="text" class="form-control-custom" placeholder="Número de legajo" required name="legajo" maxlength="4" pattern="\d{1,4}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);" th:value="${conductorDto.legajo}" autocomplete="off">
                             </div>
-                            <small th:if="${errorLegajo}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorLegajo}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -66,12 +68,16 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Área</label>
+                            <label class="form-label">Rango</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-building"></i>
-                                <select class="form-select-custom" required name="area">
-                                    <option value="" disabled th:selected="${conductorDto.area == null}">Seleccionar área</option>
-                                    <option value="VENTAS" th:selected="${conductorDto.area != null && conductorDto.area.name() == 'VENTAS'}">VENTAS</option>
+                                <select class="form-select-custom" required name="rango">
+                                    <option value="" disabled th:selected="${conductorDto.rango == null}">Seleccionar rango</option>
+                                    <option th:each="rangoEnum : ${rangos}"
+                                            th:value="${rangoEnum}"
+                                            th:text="${rangoEnum}"
+                                            th:selected="${conductorDto.rango != null && conductorDto.rango == rangoEnum}">
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -94,7 +100,6 @@
                                 <i class="fa-solid fa-user-tag"></i>
                                 <input type="text" class="form-control-custom" autocomplete="one-time-code" placeholder="Nombre de usuario" required name="nickname" th:value="${conductorDto.nickname}">
                             </div>
-                            <small th:if="${errorNickname}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorNickname}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -119,7 +124,6 @@
                                 <i class="fa-solid fa-lock"></i>
                                 <input type="password" class="form-control-custom" placeholder="********" required name="contrasena" autocomplete="new-password">
                             </div>
-                            <small th:if="${errorPassword}" class="text-danger" style="font-size: 0.8rem;" th:text="${errorPassword}"></small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -159,15 +163,6 @@
                     icon: 'success',
                     title: '¡Éxito!',
                     text: exito,
-                    confirmButtonColor: '#004b81'
-                });
-            }
-            
-            if (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error,
                     confirmButtonColor: '#004b81'
                 });
             }

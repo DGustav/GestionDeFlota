@@ -15,7 +15,16 @@
 <body>
 
     <section class="panel mt-4 content-section">
-        <form action="#" method="POST">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/conductor/modificar/{id}(id=${id})}" th:object="${conductorDto}" method="POST" autocomplete="off">
             <section class="panel">
                 <h2 class="panel-title">
                     <i class="fa-solid fa-user-pen"></i>
@@ -28,7 +37,7 @@
                             <label class="form-label">Nombre y Apellido</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-user"></i>
-                                <input type="text" class="form-control-custom" placeholder="Ej: Juan Pérez" required name="nomApe">
+                                <input type="text" class="form-control-custom" placeholder="Ej: Juan Pérez" required th:field="*{nomApe}" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -37,7 +46,7 @@
                             <label class="form-label">DNI</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="number" class="form-control-custom" placeholder="Número de documento" required name="dni">
+                                <input type="text" class="form-control-custom" placeholder="Número de documento" required th:field="*{dni}" maxlength="8" pattern="\d{1,8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -47,7 +56,7 @@
                             <label class="form-label">Legajo</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-file-invoice"></i>
-                                <input type="number" class="form-control-custom" placeholder="Número de legajo" required name="legajo">
+                                <input type="text" class="form-control-custom" placeholder="Número de legajo" required th:field="*{legajo}" maxlength="4" pattern="\d{1,4}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -56,19 +65,19 @@
                             <label class="form-label">Correo Electrónico</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-envelope"></i>
-                                <input type="email" class="form-control-custom" placeholder="ejemplo@biosidus.com" required name="mail">
+                                <input type="email" class="form-control-custom" placeholder="ejemplo@biosidus.com" required th:field="*{mail}" autocomplete="off">
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Área</label>
+                            <label class="form-label">Rango</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-building"></i>
-                                <select class="form-select-custom" required name="area">
-                                    <option value="" disabled selected>Seleccionar área</option>
-                                    <option value="VENTAS">VENTAS</option>
+                                <select class="form-select-custom" required th:field="*{rango}">
+                                    <option value="" disabled selected>Seleccionar rango</option>
+                                    <option th:each="r : ${rangos}" th:value="${r}" th:text="${r}"></option>
                                 </select>
                             </div>
                         </div>
@@ -89,20 +98,18 @@
                             <label class="form-label">Nickname</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-user-tag"></i>
-                                <input type="text" class="form-control-custom" placeholder="Nombre de usuario" required name="nickname">
+                                <input type="text" class="form-control-custom" placeholder="Nombre de usuario" required th:field="*{nickname}" autocomplete="one-time-code">
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Tipo de Usuario (Rango)</label>
+                            <label class="form-label">Tipo de Usuario (Rol)</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-shield-halved"></i>
-                                <select class="form-select-custom" required name="rango">
+                                <select class="form-select-custom" required th:field="*{rol}">
                                     <option value="" disabled selected>Seleccionar tipo</option>
-                                    <option value="ADMINISTRADOR">ADMINISTRADOR</option>
-                                    <option value="OPERATIVO">OPERATIVO</option>
-                                    <option value="EMPLEADO">EMPLEADO</option>
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${#strings.capitalize(#strings.toLowerCase(r))}"></option>
                                 </select>
                             </div>
                         </div>
@@ -113,7 +120,7 @@
                             <label class="form-label">Nueva Contraseña (opcional)</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-lock"></i>
-                                <input type="password" class="form-control-custom" placeholder="Dejar en blanco para no cambiar" name="contrasena">
+                                <input type="password" class="form-control-custom" placeholder="Dejar en blanco para no cambiar" th:field="*{contrasena}" autocomplete="new-password">
                             </div>
                         </div>
                     </div>
@@ -122,7 +129,7 @@
                             <label class="form-label">Verificar Contraseña</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-lock-open"></i>
-                                <input type="password" class="form-control-custom" placeholder="********" name="verificacionContrasena">
+                                <input type="password" class="form-control-custom" placeholder="********" th:field="*{verificacionContrasena}" autocomplete="new-password">
                             </div>
                         </div>
                     </div>

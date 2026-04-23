@@ -48,27 +48,13 @@ public class AuthController {
 
     @PostMapping("/registrarConductor")
     public String registrarConductor(@ModelAttribute ConductorUsuarioDTO dto, RedirectAttributes redirectAttributes) {
-        if (dto.getContrasena() == null || !dto.getContrasena().equals(dto.getVerificacionContrasena())) {
-            redirectAttributes.addFlashAttribute("errorPassword", "Las contraseñas no coinciden");
-            redirectAttributes.addFlashAttribute("conductorDto", dto);
-
-            return "redirect:/conductor/crear";
-        }
 
         try {
             conductorService.registrarConductor(dto);
             redirectAttributes.addFlashAttribute("exito", "Conductor y usuario creados exitosamente");
             return "redirect:/tableroDeControl";
-        } catch (DniDuplicadoException e) {
-            redirectAttributes.addFlashAttribute("errorDni", e.getMessage());
-            redirectAttributes.addFlashAttribute("conductorDto", dto);
-            return "redirect:/conductor/crear";
-        } catch (LegajoDuplicadoException e) {
-            redirectAttributes.addFlashAttribute("errorLegajo", e.getMessage());
-            redirectAttributes.addFlashAttribute("conductorDto", dto);
-            return "redirect:/conductor/crear";
-        } catch (NicknameDuplicadoException e) {
-            redirectAttributes.addFlashAttribute("errorNickname", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
             redirectAttributes.addFlashAttribute("conductorDto", dto);
             return "redirect:/conductor/crear";
         }
