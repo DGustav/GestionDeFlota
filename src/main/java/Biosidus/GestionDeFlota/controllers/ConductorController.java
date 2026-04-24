@@ -7,13 +7,10 @@ import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import Biosidus.GestionDeFlota.exceptions.DniDuplicadoException;
 import Biosidus.GestionDeFlota.services.ConductorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -36,9 +33,13 @@ public class ConductorController {
     }
 
     @GetMapping("/listado")
-    public String listadoConductores(Model model) {
-        List<Conductor> conductores = conductorService.listarConductores();
-        model.addAttribute("conductores", conductores);
+    public String listadoConductores(@RequestParam(name="buscar", required=false) String buscar, Model model, @RequestParam(name = "page", defaultValue = "0") int page){
+        Page<Conductor> pagina = conductorService.listarConductores(buscar, page);
+        model.addAttribute("conductores", pagina.getContent()); // Los registros de la página actual
+        model.addAttribute("paginaActual", page);
+        model.addAttribute("totalPages", pagina.getTotalPages());
+        model.addAttribute("totalItems", pagina.getTotalElements());
+        model.addAttribute("busqueda", buscar);
         return "listadoConductores";
     }
 

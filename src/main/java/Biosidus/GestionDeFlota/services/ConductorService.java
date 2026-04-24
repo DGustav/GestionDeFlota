@@ -10,6 +10,10 @@ import Biosidus.GestionDeFlota.exceptions.NicknameDuplicadoException;
 import Biosidus.GestionDeFlota.repositorios.ConductorRepositorio;
 import Biosidus.GestionDeFlota.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +34,18 @@ public class ConductorService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<Conductor> listarConductores() {
-        return conductorRepositorio.findAll();
+    public Page<Conductor> listarConductores(String busqueda, int numeroPagina) {
+        // Configuramos: página actual, tamaño (10 items) y orden ascendente por nombre
+        Pageable pageable = PageRequest.of(numeroPagina, 2, Sort.by("nomApe").ascending());
+
+        if (busqueda != null && !busqueda.isEmpty()) {
+            return conductorRepositorio.findByNomApeContainingIgnoreCaseOrDniContainingOrLegajoContainingOrUsuarioNicknameContainingIgnoreCaseOrMailContainingIgnoreCase(
+                    busqueda, busqueda, busqueda, busqueda, busqueda, pageable
+            );
+        }
+
+        // El método findAll() heredado también acepta un Pageable
+        return conductorRepositorio.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
