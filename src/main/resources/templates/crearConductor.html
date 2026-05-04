@@ -150,24 +150,5 @@
             </section>
         </form>
     </section>
-
-    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script class="extra-script" th:inline="javascript">
-        /*<![CDATA[*/
-        document.addEventListener('DOMContentLoaded', function() {
-            const exito = /*[[${exito}]]*/ null;
-            const error = /*[[${error}]]*/ null;
-            
-            if (exito) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: exito,
-                    confirmButtonColor: '#004b81'
-                });
-            }
-        });
-        /*]]>*/
-    </script>
 </body>
 </html>

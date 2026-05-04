@@ -14,7 +14,6 @@ public class Modelo {
     private Long id;
     @Column(name = "nombreCompletoModelo",nullable = false)
     private String nombreCompletoModelo;
-
 }
 
 

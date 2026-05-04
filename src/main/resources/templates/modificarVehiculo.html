@@ -7,15 +7,21 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-scripts}
       )}">
 <head>
-    <link class="extra-css" rel="stylesheet" th:href="@{/css/modificarVehiculo.css}" />
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
 </head>
 <body>
 
     <section class="panel mt-4 content-section">
-        <form action="#" method="POST">
+
+        <form th:action="@{/vehiculo/actualizar/{id}(id=${id})}" th:object="${vehiculo}" method="POST">
+            <div th:if="${#fields.hasAnyErrors() || (error != null)}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:each="err : ${#fields.allErrors()}" th:text="${err}"></span>
+                <span th:if="${error}" th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             <section class="panel">
                 <h2 class="panel-title">
                     <i class="fa-solid fa-car-side"></i>
@@ -28,7 +34,7 @@
                             <label class="form-label">Patente</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="text" class="form-control-custom" placeholder="ABC-123" value="ABC-123" required />
+                                <input type="text" th:field="*{patente}" class="form-control-custom" placeholder="ABC-123" maxlength="7" required />
                             </div>
                         </div>
                     </div>
@@ -37,12 +43,13 @@
                             <label class="form-label">Modelo</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-car"></i>
-                                <input type="text" class="form-control-custom form-multi-select" list="modelosList" placeholder="Seleccione o ingrese un modelo" value="Toyota Corolla (2022)" required>
+                                <input type="text" th:field="*{nombreModelo}" class="form-control-custom form-multi-select" list="modelosList" id="modeloNombre" placeholder="Seleccione o ingrese un modelo" required>
+                                <input type="hidden" th:field="*{modeloId}" id="modeloId">
                                 <datalist id="modelosList">
-                                    <option value="Toyota Corolla (2022)">
-                                    <option value="Ford Ranger (2023)">
+                                    <option th:each="m : ${modelos}" th:data-id="${m.id}" th:value="${m.nombreCompletoModelo}"></option>
                                 </datalist>
                             </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('nombreModelo')}" th:errors="*{nombreModelo}"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -50,7 +57,8 @@
                             <label class="form-label">Kilometraje Actual</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-gauge-high"></i>
-                                <input type="number" class="form-control-custom" placeholder="0" value="15000" required />
+                                <input type="number" th:field="*{kilometrajeActual}" class="form-control-custom" placeholder="0" min="1"
+                                       oninput="if(this.value<0)this.value=0" required />
                             </div>
                         </div>
                     </div>
@@ -59,44 +67,83 @@
                             <label class="form-label">Fecha de Adquisición</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-calendar-days"></i>
-                                <input type="date" class="form-control-custom" value="2022-01-15" required />
+                                <input type="date" th:field="*{fechaAdquisicion}" class="form-control-custom" required />
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Último Service</label>
-                            <div class="input-container">
-                                <i class="fa-solid fa-wrench"></i>
-                                <input type="date" class="form-control-custom" value="2024-01-10" />
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="col-md-6 d-flex align-items-center">
                         <div class="form-check form-switch ms-2">
-                            <input class="form-check-input" type="checkbox" role="switch" id="disponible" checked>
+                            <input class="form-check-input" type="checkbox" role="switch" id="disponible" th:field="*{disponible}">
                             <label class="form-check-label fw-bold" for="disponible">DISPONIBLE</label>
                         </div>
                         <div class="form-check form-switch ms-4">
-                            <input class="form-check-input" type="checkbox" role="switch" id="esLeasing">
+                            <input class="form-check-input" type="checkbox" role="switch" id="esLeasing" th:field="*{esLeasing}">
                             <label class="form-check-label fw-bold" for="esLeasing">LEASING</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-actions mt-4">
-                    <a th:href="@{/listadoVehiculos}" class="btn btn-secondary-custom">
+                    <a th:href="@{/vehiculo/listado}" class="btn btn-secondary-custom text-decoration-none">
                         <i class="fa-solid fa-xmark"></i>
                         Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary-custom">
                         <i class="fa-solid fa-floppy-disk"></i>
-                        Actualizar Vehículo
+                        Guardar Cambios
                     </button>
                 </div>
             </section>
         </form>
     </section>
 
+    <script class="extra-scripts" th:inline="javascript">
+        const modeloNombreInput = document.getElementById('modeloNombre');
+        const modeloIdInput = document.getElementById('modeloId');
+        const modelosList = document.getElementById('modelosList');
+
+        modeloNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = modelosList.options;
+            modeloIdInput.value = ""; // Reset by default
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    modeloIdInput.value = options[i].getAttribute('data-id');
+                    break;
+                }
+            }
+        });
+
+        // Al cargar la página, si hay un valor en modeloId, intentar poner el nombre en modeloNombre
+        window.addEventListener('load', function() {
+            const currentId = modeloIdInput.value;
+            if (currentId) {
+                const options = modelosList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === currentId) {
+                        modeloNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+        });
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            const error = /*[[${error}]]*/ null;
+
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

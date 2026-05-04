@@ -7,7 +7,8 @@
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-script},
+        searchAction='/vehiculo/listado'
       )}">
 <head>
 </head>
@@ -30,33 +31,33 @@
                     <th class="d-none d-md-table-cell">Kilometraje</th>
                     <th class="d-none d-lg-table-cell">Leasing</th>
                     <th class="d-none d-lg-table-cell">Estado</th>
-                    <th class="d-none d-lg-table-cell">Último Service</th>
                     <th class="text-center">Acciones</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <!-- Ejemplo de dato estático para previsualización -->
-                <tr>
-                    <td>1</td>
+                <tr th:each="vehiculo : ${vehiculos}">
+                    <td th:text="${vehiculo.id}">1</td>
                     <td>
-                        <div class="desc-title">ABC-123</div>
+                        <div class="desc-title" th:if="${#strings.length(vehiculo.patente) == 6}" th:text="${#strings.substring(vehiculo.patente,0,3) + '-' + #strings.substring(vehiculo.patente,3,6)}">ABC-123</div>
+                        <div class="desc-title" th:if="${#strings.length(vehiculo.patente) == 7}" th:text="${#strings.substring(vehiculo.patente,0,2) + '-' + #strings.substring(vehiculo.patente,2,5)+ '-' + #strings.substring(vehiculo.patente,5,7)}">ABC-123</div>
                     </td>
-                    <td>Toyota Corolla</td>
-                    <td class="d-none d-sm-table-cell">2022</td>
-                    <td class="d-none d-md-table-cell">15.000 km</td>
+                    <td th:text="${vehiculo.modelo != null ? vehiculo.modelo.nombreCompletoModelo : 'N/A'}">Toyota Corolla</td>
+                    <td class="d-none d-sm-table-cell" th:text="${#temporals.format(vehiculo.fechaAdquisicion, 'yyyy')}">2022</td>
+                    <td class="d-none d-md-table-cell" th:text="${vehiculo.kilometrajeActual + ' km'}">15.000 km</td>
                     <td class="d-none d-lg-table-cell">
-                        <span class="badge text-dark">Sí</span>
+                        <span class="badge text-dark" th:text="${vehiculo.esLeasing ? 'Sí' : 'No'}">Sí</span>
                     </td>
                     <td class="d-none d-lg-table-cell">
-                        <span class="badge bg-success">Disponible</span>
+                        <span class="badge" 
+                              th:classappend="${vehiculo.disponible ? 'bg-success' : 'bg-danger'}" 
+                              th:text="${vehiculo.disponible ? 'Disponible' : 'No Disponible'}">Disponible</span>
                     </td>
-                    <td class="d-none d-lg-table-cell">10/01/2024</td>
                     <td class="text-center">
-                        <a th:href="@{/vehiculo/detalle/1}" class="text-info me-2" title="Ver detalle">
+                        <a th:href="@{/vehiculo/detalle/{id}(id=${vehiculo.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/vehiculo/modificar/1}" class="text-primary" title="Modificar">
+                        <a th:href="@{/vehiculo/modificar/{id}(id=${vehiculo.id})}" class="text-primary" title="Modificar">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -66,12 +67,28 @@
         </div>
 
         <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-            <p class="m-0">1 vehículos en total</p>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
-                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+            <p class="m-0">
+                Mostrando vehículos del <span th:text="${paginaActual * tamanioPagina + 1}"></span>
+                al <span th:text="${(paginaActual + 1) * tamanioPagina > totalItems ? totalItems : (paginaActual + 1) * tamanioPagina}"></span>
+                de un total de <span th:text="${totalItems}"></span>
+            </p>
+            <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                <ul class="pagination m-0">
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual - 1}, buscar=${busqueda})}">Anterior</a>
+                    </li>
+
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${paginaActual == i ? 'active' : ''}">
+                        <a class="page-link"
+                           th:href="@{/vehiculo/listado(page=${i}, buscar=${busqueda})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual + 1}, buscar=${busqueda})}">Siguiente</a>
+                    </li>
                 </ul>
             </nav>
             <button class="btn btn-primary-custom btn-report">
@@ -80,6 +97,22 @@
             </button>
         </div>
     </section>
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
 
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>
