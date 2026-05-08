@@ -196,8 +196,18 @@
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
             const exito = /*[[${exito}]]*/ null;
+            const ImportacionExito = /*[[${ImporatcionExito}]]*/ null;
 
             if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+
+            if (ImportacionExito) {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Éxito!',

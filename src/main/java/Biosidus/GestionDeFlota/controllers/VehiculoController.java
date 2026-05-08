@@ -2,6 +2,7 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.VehiculoDTO;
 import Biosidus.GestionDeFlota.domain.vehiculo.*;
 import Biosidus.GestionDeFlota.exceptions.PatenteDuplicadaException;
+import Biosidus.GestionDeFlota.services.VehiculoImportService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -23,6 +25,8 @@ public class VehiculoController {
 
     @Autowired
     private VehiculoService vehiculoService;
+    @Autowired
+    private VehiculoImportService vehiculoImportService;
 
     @GetMapping("/listado")
     public String listadoVehiculos(@RequestParam(name="buscar", required=false) String buscar,
@@ -152,5 +156,21 @@ public class VehiculoController {
                 .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
         model.addAttribute("vehiculo", vehiculo);
         return "detalleVehiculo";
+    }
+
+    @PostMapping("/importarVehiculos")
+    public String cargarExcel(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
+        try {
+            vehiculoImportService.importarExcel(file);
+            ra.addFlashAttribute("ImportacionExito", "La flota se ha cargado correctamente.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("ImportacionError", "Error al procesar el archivo: " + e.getMessage());
+        }
+        return "redirect:/vehiculo/listado";
+    }
+
+    @GetMapping("/importarVehiculos")
+    public String plantilaDeCargaMasivaDeVehiculos() {
+        return "importarVehiculos";
     }
 }

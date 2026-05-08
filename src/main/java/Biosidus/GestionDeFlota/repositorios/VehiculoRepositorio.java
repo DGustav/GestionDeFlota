@@ -16,4 +16,5 @@ public interface VehiculoRepositorio extends JpaRepository<Vehiculo, Long>, JpaS
     Optional<Vehiculo> findByPatente(String patente);
     Page<Vehiculo> findByPatenteContainingIgnoreCaseOrModeloNombreCompletoModeloContainingIgnoreCase(String patente, String nombreModelo, Pageable pageable);
     List<Vehiculo> findByDisponibleTrue();
+
 }

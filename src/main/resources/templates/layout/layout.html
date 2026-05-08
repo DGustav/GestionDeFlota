@@ -68,6 +68,11 @@
                     <span>Vehículos</span>
                 </a>
 
+                <a th:href="@{/vehiculo/importarVehiculos}" class="menu-item" th:classappend="${currentPage == 'importarVehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Importar Vehículos</span>
+                </a>
+
                 <a th:href="@{/conductor/listado}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>Conductores</span>

@@ -35,7 +35,7 @@ public class VehiculoService {
 
     @Transactional(readOnly = true)
     public Page<Vehiculo> listarVehiculos(String busqueda, Boolean disponible, EstadoVehiculo estado, OrigenVehiculo origen, Propietario propietario, TipoVehiculo tipoVehiculo, int numeroPagina) {
-        Pageable pageable = PageRequest.of(numeroPagina, 5, Sort.by("patente").ascending());
+        Pageable pageable = PageRequest.of(numeroPagina, 7, Sort.by("patente").ascending());
 
         Specification<Vehiculo> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

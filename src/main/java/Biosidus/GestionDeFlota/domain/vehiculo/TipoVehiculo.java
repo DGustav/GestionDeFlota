@@ -6,5 +6,6 @@ public enum TipoVehiculo {
     CUATRO_X4,
     RURAL,
     RURAL_5_PUERTAS,
-    MINI_VAN
+    MINI_VAN,
+    CERRADA
 }

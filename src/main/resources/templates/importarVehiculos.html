@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout(
+        title='Importar Vehículos - Gestión de Flota',
+        currentPage='importarVehiculos',
+        searchPlaceholder=null,
+        topbar_action=~{},
+        content=~{:: .content-section},
+        extra_css=~{:: link.extra-css},
+        extra_scripts=~{}
+      )}">
+<head>
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
+</head>
+<body>
+
+    <section class="panel mt-4 content-section">
+        <div th:if="${ImportacionError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${ImportacionError}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div th:if="${ImportacionExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${ImportacionExito}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <section class="panel">
+            <h2 class="panel-title">
+                <i class="fa-solid fa-file-excel"></i>
+                Importar Vehículos desde Excel
+            </h2>
+            <p class="text-muted mb-4">Seleccione un archivo Excel (.xlsx) con los datos de los vehículos para importar a la flota.</p>
+
+            <form th:action="@{/vehiculo/importarVehiculos}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Archivo Excel</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-upload"></i>
+                                <input type="file" name="file" class="form-control-custom" accept=".xlsx, .xls" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        Importar
+                    </button>
+                    <a th:href="@{/vehiculo/listado}" class="btn btn-secondary-custom">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </section>
+    </section>
+
+</body>
+</html>
