@@ -39,7 +39,24 @@ public class Vehiculo {
     private List<MantenimientoVehicular> services;
     @Column(name = "disponible",nullable = false)
     private Boolean disponible;
-    @Column(name="esLeasing")
-    private Boolean esLeasing;
+
+    @Column(name = "estado")
+    @Enumerated(EnumType.STRING)
+    private EstadoVehiculo estado;
+
+    @Column(name = "chasis")
+    private String chasis;
+
+    @Column(name = "motor")
+    private String motor;
+
+    @Column(name = "origen")
+    @Enumerated(EnumType.STRING)
+    private OrigenVehiculo origen;
+
+    @Column(name = "propietario")
+    @Enumerated(EnumType.STRING)
+    private Propietario propietario;
+
 
 }

@@ -4,5 +4,9 @@ public enum Rango {
     APM,
     DIRECTOR,
     GERENTE,
-    CEO
+    CEO,
+    JEFE_APM,
+    ASISTENTE,
+    KAM,
+    JEFE_COMERCIAL
 }

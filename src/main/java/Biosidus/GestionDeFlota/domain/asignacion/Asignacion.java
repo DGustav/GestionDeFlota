@@ -26,7 +26,7 @@ public class Asignacion {
     private Conductor conductor;
     @Column(name = "fecha_asignacion", nullable = false)
     private LocalDateTime fechaAsignacion;
-    @Column(name = "fecha_devolucion", nullable = false)
+    @Column(name = "fecha_devolucion")
     private LocalDateTime fechaDevolucion;
     @Column(name = "fecha_devolucion_estimada", nullable = false)
     private LocalDateTime fechaDevolucionEstimada;
@@ -34,9 +34,9 @@ public class Asignacion {
     private EstadoAsignacion estado;
     @Column(name = "kilometraje_inicial", nullable = false)
     private Integer kilometrajeInicial;
-    @Column(name = "kilometraje_final", nullable = false)
+    @Column(name = "kilometraje_final")
     private Integer kilometrajeFinal;
-    @Column(name = "kilometros_recorridos", nullable = false)
+    @Column(name = "kilometros_recorridos")
     private Integer kilometrosRecorridos;
 
     public void actualizarKms(Integer kilometros){

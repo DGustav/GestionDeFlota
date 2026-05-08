@@ -34,7 +34,7 @@
                             <label class="form-label">Patente</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-id-card"></i>
-                                <input type="text" th:field="*{patente}" class="form-control-custom" placeholder="ABC-123" maxlength="7" required />
+                                <input type="text" th:field="*{patente}" class="form-control-custom" placeholder="ABC-123 o AB123CD" maxlength="7" required />
                             </div>
                         </div>
                     </div>
@@ -72,14 +72,94 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-6 d-flex align-items-center">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <select th:field="*{estado}" class="form-control-custom" required>
+                                    <option value="" disabled selected>Seleccione un estado</option>
+                                    <option th:each="est : ${estados}" th:value="${est}" th:text="${est}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Origen</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-earth-americas"></i>
+                                <select th:field="*{origen}" class="form-control-custom" required>
+                                    <option value="" disabled selected>Seleccione el origen</option>
+                                    <option th:each="orig : ${origenes}" th:value="${orig}" th:text="${#strings.replace(orig, '_', ' ')}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Chasis</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-barcode"></i>
+                                <input type="text" th:field="*{chasis}" class="form-control-custom" placeholder="Número de chasis" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Motor</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-gears"></i>
+                                <input type="text" th:field="*{motor}" class="form-control-custom" placeholder="Número de motor" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Año</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="number" th:field="*{anio}" class="form-control-custom" placeholder="2024" min="1900" maxlength="4" required />
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('anio')}" th:errors="*{anio}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Vehículo</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-truck"></i>
+                                <select th:field="*{tipoVehiculo}" class="form-control-custom" required>
+                                    <option value="" disabled selected>Seleccione un tipo</option>
+                                    <option th:each="tipo : ${tiposVehiculo}" th:value="${tipo}" th:text="${#strings.replace(tipo, '_', ' ')}"></option>
+                                </select>
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('tipoVehiculo')}" th:errors="*{tipoVehiculo}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Propietario</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-building"></i>
+                                <select th:field="*{propietario}" class="form-control-custom" required>
+                                    <option value="" disabled selected>Seleccione el propietario</option>
+                                    <option th:each="prop : ${propietarios}" th:value="${prop}" th:text="${#strings.replace(prop, '_', ' ')}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12 d-flex align-items-center mt-4">
                         <div class="form-check form-switch ms-2">
                             <input class="form-check-input" type="checkbox" role="switch" id="disponible" th:field="*{disponible}">
                             <label class="form-check-label fw-bold" for="disponible">DISPONIBLE</label>
-                        </div>
-                        <div class="form-check form-switch ms-4">
-                            <input class="form-check-input" type="checkbox" role="switch" id="esLeasing" th:field="*{esLeasing}">
-                            <label class="form-check-label fw-bold" for="esLeasing">LEASING</label>
                         </div>
                     </div>
                 </div>

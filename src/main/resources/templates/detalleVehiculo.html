@@ -28,31 +28,52 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Patente:</div>
-                            <div class="col-sm-8">ABC-123</div>
+                            <div class="col-sm-8" th:text="${vehiculo.patente}">ABC-123</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Marca y Modelo:</div>
-                            <div class="col-sm-8">Toyota Corolla</div>
+                            <div class="col-sm-8" th:text="${vehiculo.modelo != null ? vehiculo.modelo.nombreCompletoModelo : 'N/A'}">Toyota Corolla</div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold">Año:</div>
-                            <div class="col-sm-8">2022</div>
+                            <div class="col-sm-4 fw-bold">Tipo:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.modelo != null && vehiculo.modelo.tipoVehiculo != null ? #strings.replace(vehiculo.modelo.tipoVehiculo, '_', ' ') : 'N/A'}">SEDAN</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Año</div>
+                            <div class="col-sm-8" th:text="${vehiculo.modelo != null ? vehiculo.modelo.anio : 'N/A'}">2022</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Fecha de adquisición:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.fechaAdquisicion != null ? #temporals.format(vehiculo.fechaAdquisicion, 'dd-MM-yyyy') : 'N/A'}">2022</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Kilometraje:</div>
-                            <div class="col-sm-8">15.000 km</div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold">Leasing:</div>
-                            <div class="col-sm-8"><span class="badge bg-info">Sí</span></div>
+                            <div class="col-sm-8" th:text="${#numbers.formatDecimal(vehiculo.kilometrajeActual, 0, 'POINT', 0, 'POINT') + ' km'}">15.000 km</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Estado:</div>
-                            <div class="col-sm-8"><span class="badge bg-success">Disponible</span></div>
+                            <div class="col-sm-8">
+                                <span class="badge" 
+                                      th:classappend="${vehiculo.disponible ? 'bg-success' : 'bg-danger'}" 
+                                      th:text="${vehiculo.disponible ? 'Disponible' : 'No Disponible'}">Disponible</span>
+                                <span class="badge bg-secondary ms-1" th:text="${vehiculo.estado}">Activo</span>
+                            </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-sm-4 fw-bold">Último Service:</div>
-                            <div class="col-sm-8">10/01/2024</div>
+                            <div class="col-sm-4 fw-bold">Origen:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.origen != null ? #strings.replace(vehiculo.origen, '_', ' ') : 'N/A'}">NACIONAL</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Propietario:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.propietario != null ? #strings.replace(vehiculo.propietario, '_', ' ') : 'N/A'}">BIOSIDUS</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Chasis:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.chasis != null ? vehiculo.chasis : 'N/A'}">123456789</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Motor:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.motor != null ? vehiculo.motor : 'N/A'}">987654321</div>
                         </div>
                     </div>
                 </div>

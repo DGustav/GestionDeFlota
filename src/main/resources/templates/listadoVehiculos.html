@@ -20,6 +20,96 @@
     </a>
 
     <section class="panel mt-4 content-section">
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <form th:action="@{/vehiculo/listado}" method="GET">
+                <input type="hidden" name="buscar" th:value="${busqueda}">
+                <div class="row g-3">
+                    <div class="col-12 col-sm-4 col-lg-2">
+                        <div class="filter-group">
+                            <label>Tipo</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-car"></i>
+                                <select name="tipoVehiculo" class="form-select-custom">
+                                    <option value="" th:selected="${tipoVehiculoSeleccionado == null}">Todos</option>
+                                    <option th:each="tipo : ${tiposVehiculo}" 
+                                            th:value="${tipo}" 
+                                            th:text="${#strings.replace(tipo, '_', ' ')}" 
+                                            th:selected="${tipoVehiculoSeleccionado == tipo}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-3">
+                        <div class="filter-group">
+                            <label>Disponibilidad</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <select name="disponible" class="form-select-custom">
+                                    <option value="" th:selected="${disponible == null}">Todos</option>
+                                    <option value="true" th:selected="${disponible == true}">Disponible</option>
+                                    <option value="false" th:selected="${disponible == false}">No Disponible</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-2">
+                        <div class="filter-group">
+                            <label>Estado</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-signal"></i>
+                                <select name="estado" class="form-select-custom">
+                                    <option value="" th:selected="${estadoSeleccionado == null}">Todos</option>
+                                    <option th:each="est : ${estados}" 
+                                            th:value="${est}" 
+                                            th:text="${est}" 
+                                            th:selected="${estadoSeleccionado == est}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-2">
+                        <div class="filter-group">
+                            <label>Origen</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-earth-americas"></i>
+                                <select name="origen" class="form-select-custom">
+                                    <option value="" th:selected="${origenSeleccionado == null}">Todos</option>
+                                    <option th:each="orig : ${origenes}" 
+                                            th:value="${orig}" 
+                                            th:text="${#strings.replace(orig, '_', ' ')}" 
+                                            th:selected="${origenSeleccionado == orig}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-2">
+                        <div class="filter-group">
+                            <label>Propietario</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-building"></i>
+                                <select name="propietario" class="form-select-custom">
+                                    <option value="" th:selected="${propietarioSeleccionado == null}">Todos</option>
+                                    <option th:each="prop : ${propietarios}" 
+                                            th:value="${prop}" 
+                                            th:text="${#strings.replace(prop, '_', ' ')}" 
+                                            th:selected="${propietarioSeleccionado == prop}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-1">
+                        <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                            <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
+                                <i class="fa-solid fa-filter"></i>
+                                Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <div class="table-responsive">
             <table class="fleet-table table align-middle">
                 <thead>
@@ -27,10 +117,11 @@
                     <th>ID</th>
                     <th>Patente</th>
                     <th>Marca y Modelo</th>
-                    <th class="d-none d-sm-table-cell">Año</th>
-                    <th class="d-none d-md-table-cell">Kilometraje</th>
-                    <th class="d-none d-lg-table-cell">Leasing</th>
+                    <th>Tipo</th>
+                    <th>Año</th>
+                    <th class="d-none d-lg-table-cell">Disponibilidad</th>
                     <th class="d-none d-lg-table-cell">Estado</th>
+                    <th class="d-none d-lg-table-cell">Propietario</th>
                     <th class="text-center">Acciones</th>
                 </tr>
                 </thead>
@@ -43,15 +134,18 @@
                         <div class="desc-title" th:if="${#strings.length(vehiculo.patente) == 7}" th:text="${#strings.substring(vehiculo.patente,0,2) + '-' + #strings.substring(vehiculo.patente,2,5)+ '-' + #strings.substring(vehiculo.patente,5,7)}">ABC-123</div>
                     </td>
                     <td th:text="${vehiculo.modelo != null ? vehiculo.modelo.nombreCompletoModelo : 'N/A'}">Toyota Corolla</td>
-                    <td class="d-none d-sm-table-cell" th:text="${#temporals.format(vehiculo.fechaAdquisicion, 'yyyy')}">2022</td>
-                    <td class="d-none d-md-table-cell" th:text="${vehiculo.kilometrajeActual + ' km'}">15.000 km</td>
-                    <td class="d-none d-lg-table-cell">
-                        <span class="badge text-dark" th:text="${vehiculo.esLeasing ? 'Sí' : 'No'}">Sí</span>
-                    </td>
+                    <td th:text="${vehiculo.modelo != null && vehiculo.modelo.tipoVehiculo != null ? #strings.replace(vehiculo.modelo.tipoVehiculo, '_', ' ') : 'N/A'}">SEDAN</td>
+                    <td th:text="${vehiculo.modelo != null ? vehiculo.modelo.anio : 'N/A'}">2022</td>
                     <td class="d-none d-lg-table-cell">
                         <span class="badge" 
                               th:classappend="${vehiculo.disponible ? 'bg-success' : 'bg-danger'}" 
-                              th:text="${vehiculo.disponible ? 'Disponible' : 'No Disponible'}">Disponible</span>
+                              th:text="${vehiculo.disponible ? 'Disponible' : 'No Disp.'}">Disponible</span>
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        <span class="badge bg-secondary" th:text="${vehiculo.estado}">ACTIVO</span>
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        <span class="badge bg-info text-dark" th:text="${vehiculo.propietario != null ? #strings.replace(vehiculo.propietario, '_', ' ') : 'N/A'}">BIOSIDUS</span>
                     </td>
                     <td class="text-center">
                         <a th:href="@{/vehiculo/detalle/{id}(id=${vehiculo.id})}" class="text-info me-2" title="Ver detalle">
@@ -75,19 +169,19 @@
             <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                 <ul class="pagination m-0">
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual - 1}, buscar=${busqueda})}">Anterior</a>
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Anterior</a>
                     </li>
 
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                         th:classappend="${paginaActual == i ? 'active' : ''}">
                         <a class="page-link"
-                           th:href="@{/vehiculo/listado(page=${i}, buscar=${busqueda})}"
+                           th:href="@{/vehiculo/listado(page=${i}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}"
                            th:text="${i + 1}">1</a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual + 1}, buscar=${busqueda})}">Siguiente</a>
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual + 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Siguiente</a>
                     </li>
                 </ul>
             </nav>

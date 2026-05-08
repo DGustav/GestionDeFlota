@@ -1,9 +1,10 @@
 package Biosidus.GestionDeFlota.DTOs;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
+import Biosidus.GestionDeFlota.domain.vehiculo.OrigenVehiculo;
+import Biosidus.GestionDeFlota.domain.vehiculo.Propietario;
+import Biosidus.GestionDeFlota.domain.vehiculo.TipoVehiculo;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,6 +38,26 @@ public class VehiculoDTO {
     @NotNull(message = "Debe marcar la disponibilidad del vehículo")
     private Boolean disponible;
 
-    @NotNull(message = "Debe especificar si el vehículo es leasing o propio")
-    private Boolean esLeasing;
+    @NotNull(message = "El estado del vehículo es obligatorio")
+    private EstadoVehiculo estado;
+
+    private String chasis;
+
+    private String motor;
+
+    @NotNull(message = "El año es obligatorio")
+    @Min(value = 0, message = "El año no puede ser negativo")
+    @Max(value = 9999, message = "El año no puede tener más de 4 dígitos")
+    private Integer anio;
+
+    @NotNull(message = "El tipo de vehículo es obligatorio")
+    private TipoVehiculo tipoVehiculo;
+
+    @NotNull(message = "El origen del vehículo es obligatorio")
+    private OrigenVehiculo origen;
+
+    @NotNull(message = "El propietario del vehículo es obligatorio")
+    private Propietario propietario;
+
+
 }
