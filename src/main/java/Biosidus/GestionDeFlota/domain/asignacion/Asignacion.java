@@ -18,11 +18,11 @@ public class Asignacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "vehiculo", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "vehiculo_id", referencedColumnName = "id")
     private Vehiculo vehiculo;
-    @OneToOne
-    @JoinColumn(name = "conductor", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "conductor_id", referencedColumnName = "id")
     private Conductor conductor;
     @Column(name = "fecha_asignacion", nullable = false)
     private LocalDateTime fechaAsignacion;
@@ -32,7 +32,7 @@ public class Asignacion {
     private LocalDateTime fechaDevolucionEstimada;
     @Enumerated(EnumType.STRING)
     private EstadoAsignacion estado;
-    @Column(name = "kilometraje_inicial", nullable = false)
+    @Column(name = "kilometraje_inicial")
     private Integer kilometrajeInicial;
     @Column(name = "kilometraje_final")
     private Integer kilometrajeFinal;
@@ -41,6 +41,13 @@ public class Asignacion {
 
     public void actualizarKms(Integer kilometros){
         this.kilometrosRecorridos += kilometros;
+    }
+
+    public void finalizarAsignacion(){
+        this.fechaDevolucion = LocalDateTime.now();
+        this.estado = EstadoAsignacion.FINALIZADA;
+        this.kilometrajeFinal = this.kilometrajeInicial + this.kilometrosRecorridos;
+
     }
 
 };

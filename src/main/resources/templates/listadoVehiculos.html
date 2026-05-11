@@ -167,13 +167,25 @@
                 de un total de <span th:text="${totalItems}"></span>
             </p>
             <nav aria-label="Page navigation" th:if="${totalPages > 1}">
-                <ul class="pagination m-0">
+                <ul class="pagination m-0"
+                    th:with="maxPaginas=5,
+                 mitad=${maxPaginas / 2},
+                 inicio=${paginaActual - mitad < 0 ? 0 : (paginaActual + mitad >= totalPages ? totalPages - maxPaginas : paginaActual - mitad)},
+                 final=${paginaActual + mitad >= totalPages ? totalPages - 1 : (paginaActual - mitad < 0 ? (maxPaginas > totalPages ? totalPages - 1 : maxPaginas - 1) : paginaActual + mitad)},
+                 inicioReal=${inicio < 0 ? 0 : inicio}">
+
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=0, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Primera página">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
                         <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Anterior</a>
                     </li>
 
                     <li class="page-item"
-                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:each="i : ${#numbers.sequence(inicioReal, final)}"
                         th:classappend="${paginaActual == i ? 'active' : ''}">
                         <a class="page-link"
                            th:href="@{/vehiculo/listado(page=${i}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}"
@@ -182,6 +194,12 @@
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
                         <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual + 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Siguiente</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/vehiculo/listado(page=${totalPages - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Última página">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -196,7 +214,8 @@
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
             const exito = /*[[${exito}]]*/ null;
-            const ImportacionExito = /*[[${ImporatcionExito}]]*/ null;
+            const importacionExito = /*[[${importacionExito}]]*/ null;
+            const importacionError = /*[[${importacionError}]]*/ null;
 
             if (exito) {
                 Swal.fire({
@@ -207,11 +226,19 @@
                 });
             }
 
-            if (ImportacionExito) {
+            if (importacionExito) {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Éxito!',
                     text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+            if (importacionError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: importacionError,
                     confirmButtonColor: '#004b81'
                 });
             }

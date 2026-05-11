@@ -162,9 +162,9 @@ public class VehiculoController {
     public String cargarExcel(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
         try {
             vehiculoImportService.importarExcel(file);
-            ra.addFlashAttribute("ImportacionExito", "La flota se ha cargado correctamente.");
+            ra.addFlashAttribute("importacionExito", "La flota se ha cargado correctamente.");
         } catch (Exception e) {
-            ra.addFlashAttribute("ImportacionError", "Error al procesar el archivo: " + e.getMessage());
+            ra.addFlashAttribute("importacionError", "Error al procesar el archivo: " + e.getMessage());
         }
         return "redirect:/vehiculo/listado";
     }

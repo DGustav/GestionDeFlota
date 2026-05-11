@@ -35,8 +35,6 @@ public class AsignacionDTO {
     @NotNull(message = "El estado de la asignación es obligatorio")
     private EstadoAsignacion estado;
 
-    @NotNull(message = "El kilometraje inicial es obligatorio")
-    @Min(value = 0, message = "El kilometraje inicial no puede ser negativo")
     private Integer kilometrajeInicial;
 
     private Integer kilometrajeFinal;

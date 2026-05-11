@@ -128,7 +128,7 @@
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(a.fechaAsignacion, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(a.fechaDevolucionEstimada, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${a.fechaDevolucion != null ? #temporals.format(a.fechaDevolucion, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-                    <td class="d-none d-lg-table-cell" th:text="${#numbers.formatInteger(a.kilometrajeInicial, 0, 'POINT')}"></td>
+                    <td class="d-none d-lg-table-cell" th:text="${a.kilometrajeInicial}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${#numbers.formatInteger(a.kilometrosRecorridos, 0, 'POINT')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${a.kilometrajeFinal != null ? #numbers.formatInteger(a.kilometrajeFinal, 0, 'POINT') : '-'}"></td>
                     <td class="d-none d-lg-table-cell text-center">

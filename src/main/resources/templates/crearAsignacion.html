@@ -83,17 +83,6 @@
                         </div>
                     </div>
 
-                    <!-- Kilometraje Inicial -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Kilometraje Inicial</label>
-                            <div class="input-container">
-                                <i class="fa-solid fa-gauge-high"></i>
-                                <input type="number" th:field="*{kilometrajeInicial}" class="form-control-custom" placeholder="0" min="0" required />
-                            </div>
-                            <div class="text-danger" th:if="${#fields.hasErrors('kilometrajeInicial')}" th:errors="*{kilometrajeInicial}"></div>
-                        </div>
-                    </div>
 
                     <!-- Estado -->
                     <div class="col-md-6">
