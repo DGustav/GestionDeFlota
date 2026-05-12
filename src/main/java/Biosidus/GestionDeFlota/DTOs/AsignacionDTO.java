@@ -15,11 +15,13 @@ public class AsignacionDTO {
 
     private Long id;
 
-    @NotNull(message = "El vehículo es obligatorio")
     private Long vehiculoId;
 
-    @NotNull(message = "El conductor es obligatorio")
+    private String nombreVehiculo;
+
     private Long conductorId;
+
+    private String nombreConductor;
 
     @NotNull(message = "La fecha de asignación es obligatoria")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
