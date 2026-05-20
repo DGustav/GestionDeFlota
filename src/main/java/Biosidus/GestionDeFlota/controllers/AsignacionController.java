@@ -30,8 +30,10 @@ public class AsignacionController {
     private AsignacionService asignacionService;
 
     @GetMapping("/listado")
-    public String listadoAsignaciones(@RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+    public String listadoAsignaciones(@RequestParam(name = "buscar", required = false) String buscar,
+                                     @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                      @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+                                     @RequestParam(name = "fechaParticular", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaParticular,
                                      @RequestParam(name = "vehiculoId", required = false) Long vehiculoId,
                                      @RequestParam(name = "conductorId", required = false) Long conductorId,
                                      @RequestParam(name = "estado", required = false) EstadoAsignacion estado,
@@ -40,8 +42,9 @@ public class AsignacionController {
         
         LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
         LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
+        LocalDateTime particular = (fechaParticular != null) ? fechaParticular.atStartOfDay() : null;
 
-        Page<Asignacion> pagina = asignacionService.listarAsignaciones(desde, hasta, vehiculoId, conductorId, estado, page);
+        Page<Asignacion> pagina = asignacionService.listarAsignaciones(buscar, desde, hasta, particular, vehiculoId, conductorId, estado, page);
         
         model.addAttribute("asignaciones", pagina.getContent());
         model.addAttribute("paginaActual", page);
@@ -49,8 +52,10 @@ public class AsignacionController {
         model.addAttribute("tamanioPagina", pagina.getSize());
         model.addAttribute("totalItems", pagina.getTotalElements());
         
+        model.addAttribute("busqueda", buscar);
         model.addAttribute("fechaDesde", fechaDesde);
         model.addAttribute("fechaHasta", fechaHasta);
+        model.addAttribute("fechaParticular", fechaParticular);
         model.addAttribute("vehiculoIdSeleccionado", vehiculoId);
         model.addAttribute("conductorIdSeleccionado", conductorId);
         model.addAttribute("estadoSeleccionado", estado);

@@ -7,7 +7,8 @@
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{:: link},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-script},
+        searchAction='/mantenimientoVehicular/listado'
       )}">
 <head>
     <link rel="stylesheet" th:href="@{/css/listadoMantenimientos.css}" />
@@ -22,49 +23,54 @@
     <section class="panel mt-4 content-section">
         <!-- Filtros -->
         <div class="filters-bar">
-            <div class="row g-3">
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Vehículo</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-car"></i>
-                            <input type="text" class="form-control-custom" list="vehiculosList" placeholder="Seleccionar vehículo">
-                            <datalist id="vehiculosList">
-                                <!-- Se llenaría dinámicamente -->
-                                <option value="Renault Kangoo">
-                                <option value="VW Amarok">
-                                <option value="Toyota Hilux">
-                            </datalist>
+            <form th:action="@{/mantenimientoVehicular/listado}" method="GET">
+                <!-- Mantener el parámetro de búsqueda si existe -->
+                <input type="hidden" name="buscar" th:value="${busqueda}">
+                
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Particular</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="date" name="fecha" class="form-control-custom" th:value="${fecha}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Desde</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <input type="date" name="fechaDesde" class="form-control-custom" th:value="${fechaDesde}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Hasta</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <input type="date" name="fechaHasta" class="form-control-custom" th:value="${fechaHasta}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
+                                    <i class="fa-solid fa-filter"></i>
+                                    Filtrar
+                                </button>
+                                <a th:href="@{/mantenimientoVehicular/listado(buscar=${busqueda})}" class="btn btn-secondary w-100 py-2 mt-auto" style="background-color: #6c757d; color: white; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                                    <i class="fa-solid fa-eraser me-2"></i>
+                                    Limpiar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Fecha Desde</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-calendar-day"></i>
-                            <input type="date" class="form-control-custom">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Fecha Hasta</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            <input type="date" class="form-control-custom">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group h-100 d-flex flex-column justify-content-end">
-                        <button class="btn btn-primary-custom w-100 py-2 mt-auto">
-                            <i class="fa-solid fa-filter"></i>
-                            Filtrar
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
 
         <div class="table-responsive">
@@ -74,7 +80,7 @@
                     <th>ID</th>
                     <th>Vehículo</th>
                     <th>Descripción</th>
-                    <th class="d-none d-lg-table-cell">Asignación</th>
+                    <th class="d-none d-lg-table-cell">Fecha de service</th>
                     <th class="d-none d-lg-table-cell">Devolución Estimada</th>
                     <th class="d-none d-lg-table-cell">Devolución Real</th>
                     <th class="d-none d-lg-table-cell">Kilometraje</th>
@@ -84,26 +90,27 @@
 
                 <tbody>
                 <!-- Ejemplo de fila -->
-                <tr>
-                    <td>#1</td>
+                <tr th:each="mantenimiento : ${mantenimientos}">
+                    <td th:text="'#' + ${mantenimiento.id}">#1</td>
                     <td>
-                        <div class="desc-title">Renault Kangoo</div>
-                        <div class="desc-subtitle">AB 123 CD</div>
+                        <div class="desc-title" th:text="${mantenimiento.vehiculo.modelo.nombreCompletoModelo}">Renault Kangoo</div>
+                        <div class="desc-subtitle" th:text="${mantenimiento.vehiculo.patente}">AB 123 CD</div>
                     </td>
-                    <td>Cambio de aceite y filtros</td>
-                    <td class="d-none d-lg-table-cell">10/03/2025</td>
-                    <td class="d-none d-lg-table-cell">12/03/2025</td>
-                    <td class="d-none d-lg-table-cell">11/03/2025</td>
-                    <td class="d-none d-lg-table-cell">45.000 km</td>
+                    <td th:text="${mantenimiento.descripcion}">Cambio de aceite y filtros</td>
+                    <td class="d-none d-lg-table-cell" th:text="${#temporals.format(mantenimiento.fechaAsignacion, 'dd/MM/yyyy')}">10/03/2025</td>
+                    <td class="d-none d-lg-table-cell" th:text="${#temporals.format(mantenimiento.fechaDevolucionEstimada, 'dd/MM/yyyy')}">12/03/2025</td>
+                    <td class="d-none d-lg-table-cell" th:text="${#temporals.format(mantenimiento.fechaDevolucion, 'dd/MM/yyyy')}">11/03/2025</td>
+                    <td class="d-none d-lg-table-cell" th:text="${mantenimiento.kilometrajeActual + ' km'}">45.000 km</td>
                     <td class="text-center">
-                        <a th:href="@{/mantenimientoVehicular/detalle/1}" class="text-info me-2" title="Ver detalle">
+                        <a th:if="${mantenimiento.ruta_comprobante != null && !mantenimiento.ruta_comprobante.isEmpty()}" 
+                           th:href="@{/mantenimientoVehicular/descargar-comprobante/{id}(id=${mantenimiento.id})}" target="_blank" class="text-info me-2" title="Ver comprobante">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </a>
+                        <a th:href="@{/mantenimientoVehicular/detalle/{id}(id=${mantenimiento.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/mantenimientoVehicular/modificar/1}" class="text-primary me-2" title="Modificar">
+                        <a th:href="@{/mantenimientoVehicular/modificar/{id}(id=${mantenimiento.id})}" class="text-primary me-2" title="Modificar">
                             <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                        <a href="#" class="text-danger" title="Eliminar">
-                            <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
                 </tr>
@@ -112,12 +119,46 @@
         </div>
 
         <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-            <p class="m-0">Mostrando registros de mantenimiento</p>
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+            <p class="m-0">
+                Mostrando mantenimientos del <span th:text="${paginaActual * tamanioPagina + 1}"></span>
+                al <span th:text="${(paginaActual + 1) * tamanioPagina > totalItems ? totalItems : (paginaActual + 1) * tamanioPagina}"></span>
+                de un total de <span th:text="${totalItems}"></span>
+            </p>
+            <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                <ul class="pagination m-0"
+                    th:with="maxPaginas=5,
+                 mitad=${maxPaginas / 2},
+                 inicio=${paginaActual - mitad < 0 ? 0 : (paginaActual + mitad >= totalPages ? totalPages - maxPaginas : paginaActual - mitad)},
+                 final=${paginaActual + mitad >= totalPages ? totalPages - 1 : (paginaActual - mitad < 0 ? (maxPaginas > totalPages ? totalPages - 1 : maxPaginas - 1) : paginaActual + mitad)},
+                 inicioReal=${inicio < 0 ? 0 : inicio}">
+
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/mantenimientoVehicular/listado(page=0, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" title="Primera página">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/mantenimientoVehicular/listado(page=${paginaActual - 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}">Anterior</a>
+                    </li>
+
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(inicioReal, final)}"
+                        th:classappend="${paginaActual == i ? 'active' : ''}">
+                        <a class="page-link"
+                           th:href="@{/mantenimientoVehicular/listado(page=${i}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/mantenimientoVehicular/listado(page=${paginaActual + 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}">Siguiente</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/mantenimientoVehicular/listado(page=${totalPages - 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" title="Última página">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <button class="btn btn-primary-custom btn-report">
@@ -126,6 +167,21 @@
             </button>
         </div>
     </section>
-
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

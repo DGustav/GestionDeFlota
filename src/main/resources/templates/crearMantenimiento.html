@@ -23,18 +23,20 @@
             <p class="panel-subtitle">Complete la información del service o reparación efectuada al vehículo.</p>
         </div>
 
-        <form th:action="@{/mantenimientoVehicular/crear}" method="post" enctype="multipart/form-data" class="mt-4">
+        <form th:action="@{/mantenimientoVehicular/crear}" th:object="${mantenimiento}" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="row g-4">
                 <!-- Vehículo -->
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="form-label">Vehículo</label>
-                        <select name="vehiculo.id" class="form-select-custom" required>
+                        <select th:field="*{vehiculoId}" class="form-select-custom" th:classappend="${#fields.hasErrors('vehiculoId')} ? 'is-invalid' : ''" required>
                             <option value="" disabled selected>Seleccione un vehículo</option>
-                            <option value="1">Ford Mustang 2025 | AA-1234-BB</option>
-                            <option value="2">Renault Kangoo | AA-1234-BB</option>
-                            <option value="3">VW Amarok | AA-1234-BB</option>
+                            <option th:each="vehiculo : ${vehiculos}"
+                                    th:value="${vehiculo.id}"
+                                    th:text="${vehiculo.modelo.nombreCompletoModelo + ' | ' + vehiculo.patente}">
+                            </option>
                         </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('vehiculoId')}" th:errors="*{vehiculoId}"></div>
                     </div>
                 </div>
 
@@ -42,7 +44,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="form-label">Kilometraje Actual</label>
-                        <input type="number" name="kilometrajeActual" class="form-control-custom" placeholder="Ej: 45000" required>
+                        <input type="number" th:field="*{kilometrajeActual}" class="form-control-custom" th:classappend="${#fields.hasErrors('kilometrajeActual')} ? 'is-invalid' : ''" placeholder="Ej: 45000" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('kilometrajeActual')}" th:errors="*{kilometrajeActual}"></div>
                     </div>
                 </div>
 
@@ -50,29 +53,33 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label">Descripción del Mantenimiento</label>
-                        <textarea name="descripcion" class="form-control-custom" rows="3" placeholder="Detalle los trabajos realizados..." required></textarea>
+                        <textarea th:field="*{descripcion}" class="form-control-custom" th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''" rows="3" placeholder="Detalle los trabajos realizados..."></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
                     </div>
                 </div>
 
                 <!-- Fechas -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="form-label">Fecha de Asignación</label>
-                        <input type="datetime-local" name="fechaAsignacion" class="form-control-custom" required>
+                        <label class="form-label">Fecha de Service</label>
+                        <input type="datetime-local" th:field="*{fechaAsignacion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaAsignacion')} ? 'is-invalid' : ''" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaAsignacion')}" th:errors="*{fechaAsignacion}"></div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="form-label">Fecha Devolución Estimada</label>
-                        <input type="datetime-local" name="fechaDevolucionEstimada" class="form-control-custom" required>
+                        <input type="datetime-local" th:field="*{fechaDevolucionEstimada}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaDevolucionEstimada')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaDevolucionEstimada')}" th:errors="*{fechaDevolucionEstimada}"></div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="form-label">Fecha Devolución Real</label>
-                        <input type="datetime-local" name="fechaDevolucion" class="form-control-custom" required>
+                        <input type="datetime-local" th:field="*{fechaDevolucion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaDevolucion')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaDevolucion')}" th:errors="*{fechaDevolucion}"></div>
                     </div>
                 </div>
 
@@ -80,7 +87,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label">Adjuntar Comprobante</label>
-                        <input type="file" name="comprobanteArchivo" class="form-control-custom" accept=".pdf,.jpg,.jpeg,.png">
+                        <input type="file" th:field="*{comprobanteArchivo}" class="form-control-custom" accept=".pdf,.jpg,.jpeg,.png" required>
                     </div>
                 </div>
             </div>

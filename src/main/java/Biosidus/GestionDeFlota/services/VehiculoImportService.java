@@ -81,7 +81,7 @@ public class VehiculoImportService {
 
         if (hoja == null) {
             System.out.println("La hoja no existe.");
-            return;
+            throw new RuntimeException("La hoja no tiene el formato esperado.");
         }
 
         System.out.println("Procesando hoja: " + hoja.getSheetName());

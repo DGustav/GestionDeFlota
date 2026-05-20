@@ -3,11 +3,12 @@
       th:replace="~{layout/layout :: layout(
         title='Gestión de Flota',
         currentPage='listadoAsignaciones',
-        searchPlaceholder='Buscar',
+        searchPlaceholder='Buscar por patente, modelo, conductor, legajo o DNI',
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
-        extra_scripts=~{}
+        extra_scripts=~{},
+        searchAction='/asignacion/listado'
       )}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
 </head>
@@ -22,8 +23,9 @@
         <!-- Filtros -->
         <div class="filters-bar">
             <form th:action="@{/asignacion/listado}" method="GET">
+                <input type="hidden" name="buscar" th:value="${busqueda}">
                 <div class="row g-3">
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
                         <div class="filter-group">
                             <label>Fecha Desde</label>
                             <div class="filter-input-group">
@@ -32,7 +34,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
                         <div class="filter-group">
                             <label>Fecha Hasta</label>
                             <div class="filter-input-group">
@@ -41,37 +43,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-2">
                         <div class="filter-group">
-                            <label>Vehículo</label>
+                            <label>Fecha Particular</label>
                             <div class="filter-input-group">
-                                <i class="fa-solid fa-car"></i>
-                                <select name="vehiculoId" class="form-select-custom">
-                                    <option value="">Todos</option>
-                                    <option th:each="v : ${vehiculos}" 
-                                            th:value="${v.id}" 
-                                            th:text="${v.modelo.nombreCompletoModelo}" 
-                                            th:selected="${vehiculoIdSeleccionado == v.id}"></option>
-                                </select>
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="date" name="fechaParticular" th:value="${fechaParticular}" class="form-control-custom" placeholder="Fecha">
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
-                        <div class="filter-group">
-                            <label>Conductor</label>
-                            <div class="filter-input-group">
-                                <i class="fa-solid fa-user-tie"></i>
-                                <select name="conductorId" class="form-select-custom">
-                                    <option value="">Todos</option>
-                                    <option th:each="c : ${conductores}" 
-                                            th:value="${c.id}" 
-                                            th:text="${c.nomApe}" 
-                                            th:selected="${conductorIdSeleccionado == c.id}"></option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-12 col-sm-6 col-lg-3">
                         <div class="filter-group">
                             <label>Estado</label>
                             <div class="filter-input-group">
@@ -86,7 +67,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-12 col-sm-12 col-lg-3">
                         <div class="filter-group h-100 d-flex flex-column justify-content-end">
                             <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
                                 <i class="fa-solid fa-filter"></i>
@@ -162,29 +143,29 @@
                  inicioReal=${inicio < 0 ? 0 : inicio}">
 
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/asignacion/listado(page=0, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, vehiculoId=${vehiculoIdSeleccionado}, conductorId=${conductorIdSeleccionado}, estado=${estadoSeleccionado})}" title="Primera página">
+                        <a class="page-link" th:href="@{/asignacion/listado(page=0, buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}" title="Primera página">
                             <i class="fa-solid fa-angles-left"></i>
                         </a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/asignacion/listado(page=${paginaActual - 1}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, vehiculoId=${vehiculoIdSeleccionado}, conductorId=${conductorIdSeleccionado}, estado=${estadoSeleccionado})}">Anterior</a>
+                        <a class="page-link" th:href="@{/asignacion/listado(page=${paginaActual - 1}, buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}">Anterior</a>
                     </li>
 
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(inicioReal, final)}"
                         th:classappend="${paginaActual == i ? 'active' : ''}">
                         <a class="page-link"
-                           th:href="@{/asignacion/listado(page=${i}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, vehiculoId=${vehiculoIdSeleccionado}, conductorId=${conductorIdSeleccionado}, estado=${estadoSeleccionado})}"
+                           th:href="@{/asignacion/listado(page=${i}, buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}"
                            th:text="${i + 1}">1</a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/asignacion/listado(page=${paginaActual + 1}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, vehiculoId=${vehiculoIdSeleccionado}, conductorId=${conductorIdSeleccionado}, estado=${estadoSeleccionado})}">Siguiente</a>
+                        <a class="page-link" th:href="@{/asignacion/listado(page=${paginaActual + 1}, buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}">Siguiente</a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/asignacion/listado(page=${totalPages - 1}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, vehiculoId=${vehiculoIdSeleccionado}, conductorId=${conductorIdSeleccionado}, estado=${estadoSeleccionado})}" title="Última página">
+                        <a class="page-link" th:href="@{/asignacion/listado(page=${totalPages - 1}, buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}" title="Última página">
                             <i class="fa-solid fa-angles-right"></i>
                         </a>
                     </li>

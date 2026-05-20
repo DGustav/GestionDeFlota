@@ -1,8 +1,9 @@
-package Biosidus.GestionDeFlota.domain.asignacion;
+package Biosidus.GestionDeFlota.domain.siniestro;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

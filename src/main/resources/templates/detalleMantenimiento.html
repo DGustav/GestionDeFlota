@@ -23,8 +23,9 @@
             <div class="col-md-12">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fa-solid fa-gears me-2"></i>Detalle de Mantenimiento #1</h5>
-                        <span class="badge bg-success">Completado</span>
+                        <h5 class="mb-0"><i class="fa-solid fa-gears me-2"></i>Detalle de Mantenimiento <span th:text="'#' + ${mantenimiento.id}">#1</span></h5>
+                        <span th:if="${mantenimiento.fechaDevolucion != null}" class="badge bg-success">Completado</span>
+                        <span th:if="${mantenimiento.fechaDevolucion == null}" class="badge bg-warning text-dark">En Proceso</span>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -32,30 +33,30 @@
                                 <h6 class="border-bottom pb-2 mb-3">Información del Vehículo</h6>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Vehículo:</div>
-                                    <div class="col-sm-8">Renault Kangoo</div>
+                                    <div class="col-sm-8" th:text="${mantenimiento.vehiculo.modelo.nombreCompletoModelo}">Renault Kangoo</div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Patente:</div>
-                                    <div class="col-sm-8">AB 123 CD</div>
+                                    <div class="col-sm-8" th:text="${mantenimiento.vehiculo.patente}">AB 123 CD</div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Kilometraje:</div>
-                                    <div class="col-sm-8">45.000 km</div>
+                                    <div class="col-sm-8" th:text="${mantenimiento.kilometrajeActual + ' km'}">45.000 km</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <h6 class="border-bottom pb-2 mb-3">Fechas del Servicio</h6>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Fecha de Ingreso:</div>
-                                    <div class="col-sm-8">10/03/2025</div>
+                                    <div class="col-sm-8" th:text="${#temporals.format(mantenimiento.fechaAsignacion, 'dd/MM/yyyy')}">10/03/2025</div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Devolución Estimada:</div>
-                                    <div class="col-sm-8">12/03/2025</div>
+                                    <div class="col-sm-8" th:text="${#temporals.format(mantenimiento.fechaDevolucionEstimada, 'dd/MM/yyyy')}">12/03/2025</div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Devolución Real:</div>
-                                    <div class="col-sm-8">11/03/2025</div>
+                                    <div class="col-sm-8" th:text="${mantenimiento.fechaDevolucion != null ? #temporals.format(mantenimiento.fechaDevolucion, 'dd/MM/yyyy') : '-'}">11/03/2025</div>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +65,7 @@
                             <div class="col-md-12">
                                 <h6 class="border-bottom pb-2 mb-3">Descripción del Trabajo</h6>
                                 <div class="p-3 bg-light rounded">
-                                    <p class="mb-0">Cambio de aceite y filtros. Revisión de frenos y niveles.</p>
+                                    <p class="mb-0" th:text="${mantenimiento.descripcion}">Cambio de aceite y filtros. Revisión de frenos y niveles.</p>
                                 </div>
                             </div>
                         </div>
@@ -76,11 +77,15 @@
                                     <div class="col-md-12">
                                         <div class="row mb-3 align-items-center">
                                             <div class="col-sm-4 fw-bold">Archivo adjunto:</div>
-                                            <div class="col-sm-8 text-muted">
-                                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>Factura_Mantenimiento_01.pdf
-                                                <a href="#" class="btn btn-sm btn-outline-info ms-2" download>
-                                                    <i class="fa-solid fa-download me-1"></i>Descargar
+                                            <div class="col-sm-8 text-muted" th:if="${mantenimiento.ruta_comprobante != null && !mantenimiento.ruta_comprobante.isEmpty()}">
+                                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                                                <span th:text="${#strings.substringAfter(mantenimiento.ruta_comprobante, '_')}">Factura_Mantenimiento_01.pdf</span>
+                                                <a th:href="@{/mantenimientoVehicular/descargar-comprobante/{id}(id=${mantenimiento.id})}" class="btn btn-sm btn-outline-info ms-2" target="_blank">
+                                                    <i class="fa-solid fa-download me-1"></i>Ver / Descargar
                                                 </a>
+                                            </div>
+                                            <div class="col-sm-8 text-muted" th:unless="${mantenimiento.ruta_comprobante != null && !mantenimiento.ruta_comprobante.isEmpty()}">
+                                                No se adjuntó comprobante.
                                             </div>
                                         </div>
                                     </div>
@@ -89,7 +94,7 @@
                         </div>
                     </div>
                     <div class="card-footer bg-light text-end">
-                        <a th:href="@{/mantenimientoVehicular/modificar/1}" class="btn btn-primary-custom">
+                        <a th:href="@{/mantenimientoVehicular/modificar/{id}(id=${mantenimiento.id})}" class="btn btn-primary-custom">
                             <i class="fa-solid fa-pen-to-square me-1"></i>Editar Mantenimiento
                         </a>
                     </div>

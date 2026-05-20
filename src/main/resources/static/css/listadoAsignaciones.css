@@ -169,7 +169,8 @@ body {
 
 .search-box {
     flex: 1;
-    max-width: 980px;
+    min-width: 0;
+    max-width: 70%;
     height: 42px;
     border-radius: 12px;
     background: var(--white);

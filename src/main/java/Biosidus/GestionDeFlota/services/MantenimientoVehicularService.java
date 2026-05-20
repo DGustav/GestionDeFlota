@@ -1,0 +1,180 @@
+package Biosidus.GestionDeFlota.services;
+
+import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
+import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
+import Biosidus.GestionDeFlota.domain.vehiculo.MantenimientoVehicular;
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.repositorios.MantenimientoVehicularRepositorio;
+import Biosidus.GestionDeFlota.repositorios.VehiculoRepositorio;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class MantenimientoVehicularService {
+
+    @Autowired
+    private MantenimientoVehicularRepositorio mantenimientoRepositorio;
+
+    @Autowired
+    private VehiculoRepositorio vehiculoRepositorio;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadLocation;
+
+    @Transactional(readOnly = true)
+    public List<MantenimientoVehicular> listarTodos() {
+        return mantenimientoRepositorio.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MantenimientoVehicular> listarMantenimientos(int page, String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        
+        LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
+        LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
+        LocalDateTime fechaInicio = (fecha != null) ? fecha.atStartOfDay() : null;
+        LocalDateTime fechaFin = (fecha != null) ? fecha.atTime(LocalTime.MAX) : null;
+
+        if (desde != null || hasta != null || fecha != null) {
+            if (buscar != null && !buscar.isEmpty()) {
+                return mantenimientoRepositorio.filtrarPorRangoYBusqueda(desde, hasta, fechaInicio, fechaFin, buscar, pageable);
+            } else {
+                return mantenimientoRepositorio.filtrarPorRango(desde, hasta, fechaInicio, fechaFin, pageable);
+            }
+        }
+
+        if (buscar != null && !buscar.isEmpty()) {
+            return mantenimientoRepositorio.findByVehiculoModeloNombreCompletoModeloContainingIgnoreCaseOrVehiculoPatenteContainingIgnoreCaseOrDescripcionContainingIgnoreCase(buscar, buscar, buscar, pageable);
+        }
+        return mantenimientoRepositorio.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public MantenimientoVehicular buscarPorId(Long id) {
+        return mantenimientoRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public MantenimientoVehicularDTO buscarDTOporId(Long id) {
+        MantenimientoVehicular mantenimiento = buscarPorId(id);
+        MantenimientoVehicularDTO dto = new MantenimientoVehicularDTO();
+        dto.setId(mantenimiento.getId());
+        dto.setVehiculoId(mantenimiento.getVehiculo().getId());
+        dto.setKilometrajeActual(mantenimiento.getKilometrajeActual());
+        dto.setDescripcion(mantenimiento.getDescripcion());
+        dto.setFechaAsignacion(mantenimiento.getFechaAsignacion());
+        dto.setFechaDevolucionEstimada(mantenimiento.getFechaDevolucionEstimada());
+        dto.setFechaDevolucion(mantenimiento.getFechaDevolucion());
+        return dto;
+    }
+
+    @Transactional
+    public void guardarMantenimiento(MantenimientoVehicularDTO dto) throws IOException {
+        MantenimientoVehicular mantenimiento;
+        if (dto.getId() != null) {
+            mantenimiento = mantenimientoRepositorio.findById(dto.getId())
+                    .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
+        } else {
+            mantenimiento = new MantenimientoVehicular();
+        }
+
+        Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+
+        mantenimiento.setVehiculo(vehiculo);
+        mantenimiento.setKilometrajeActual(dto.getKilometrajeActual());
+        mantenimiento.setDescripcion(dto.getDescripcion());
+        mantenimiento.setFechaAsignacion(dto.getFechaAsignacion());
+        mantenimiento.setFechaDevolucionEstimada(dto.getFechaDevolucionEstimada());
+        mantenimiento.setFechaDevolucion(dto.getFechaDevolucion());
+
+        MultipartFile comprobanteArchivo = dto.getComprobanteArchivo();
+        if (comprobanteArchivo != null && !comprobanteArchivo.isEmpty()) {
+            String originalFilename = comprobanteArchivo.getOriginalFilename();
+            String nuevoNombre = UUID.randomUUID().toString() + "_" + originalFilename;
+            String rutaRelativa = "/services/" + nuevoNombre;
+            Path rutaCompleta = Paths.get(uploadLocation, "services", nuevoNombre);
+            
+            File directorio = rutaCompleta.getParent().toFile();
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            Files.copy(comprobanteArchivo.getInputStream(), rutaCompleta);
+            mantenimiento.setRuta_comprobante(rutaRelativa);
+        } else if (dto.getId() == null) {
+            mantenimiento.setRuta_comprobante("");
+        }
+        // El service inició (no se cargó la fecha de devolución)
+        if (dto.getFechaDevolucion() == null) {
+            vehiculo.setEstado(EstadoVehiculo.EN_SERVICE);
+            vehiculo.setDisponible(false);
+
+        }else {
+            // El service ya finalizó (se cargó la fecha de devolución)
+            vehiculo.setEstado(EstadoVehiculo.ACTIVO);
+            vehiculo.setDisponible(true);
+        }
+
+        mantenimientoRepositorio.save(mantenimiento);
+        
+        // Actualizar el kilometraje del vehículo si es mayor al actual
+        Integer kilometrajeActual = dto.getKilometrajeActual();
+        if (kilometrajeActual != null && (vehiculo.getKilometrajeActual() == null || kilometrajeActual > vehiculo.getKilometrajeActual())) {
+            vehiculo.setKilometrajeActual(kilometrajeActual);
+        }
+        vehiculoRepositorio.save(vehiculo);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Resource> descargarComprobante(Long id) throws MalformedURLException {
+        MantenimientoVehicular mantenimiento = buscarPorId(id);
+        String rutaRelativa = mantenimiento.getRuta_comprobante();
+
+        if (rutaRelativa == null || rutaRelativa.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Path path = Paths.get(uploadLocation, rutaRelativa);
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            String filename = path.getFileName().toString();
+            // Intentar remover el UUID del nombre para la descarga
+            if (filename.contains("_")) {
+                filename = filename.substring(filename.indexOf("_") + 1);
+            }
+            
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

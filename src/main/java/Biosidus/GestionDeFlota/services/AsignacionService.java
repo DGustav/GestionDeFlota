@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +36,23 @@ public class AsignacionService {
     @Autowired
     private ConductorRepositorio conductorRepositorio;
 
-    public List<Asignacion> listarAsignaciones() {
-        return asignacionRepositorio.findAll();
-    }
-
     @Transactional(readOnly = true)
-    public Page<Asignacion> listarAsignaciones(LocalDateTime fechaDesde, LocalDateTime fechaHasta, Long vehiculoId, Long conductorId, EstadoAsignacion estado, int numeroPagina) {
+    public Page<Asignacion> listarAsignaciones(String buscar, LocalDateTime fechaDesde, LocalDateTime fechaHasta, LocalDateTime fechaParticular, Long vehiculoId, Long conductorId, EstadoAsignacion estado, int numeroPagina) {
         Pageable pageable = PageRequest.of(numeroPagina, 5, Sort.by("id").descending());
 
         Specification<Asignacion> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (buscar != null && !buscar.isEmpty()) {
+                String likePattern = "%" + buscar.toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.join("vehiculo").get("patente")), likePattern),
+                        cb.like(cb.lower(root.join("vehiculo").join("modelo").get("nombreCompletoModelo")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("nomApe")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("legajo")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("dni")), likePattern)
+                ));
+            }
 
             if (fechaDesde != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("fechaAsignacion"), fechaDesde));
@@ -52,6 +60,12 @@ public class AsignacionService {
 
             if (fechaHasta != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("fechaAsignacion"), fechaHasta));
+            }
+
+            if (fechaParticular != null) {
+                LocalDateTime startOfDay = fechaParticular.toLocalDate().atStartOfDay();
+                LocalDateTime endOfDay = fechaParticular.toLocalDate().atTime(LocalTime.MAX);
+                predicates.add(cb.between(root.get("fechaAsignacion"), startOfDay, endOfDay));
             }
 
             if (vehiculoId != null) {
@@ -107,4 +121,5 @@ public class AsignacionService {
     public List<Conductor> listarConductores() {
         return conductorRepositorio.findAll();
     }
+
 }

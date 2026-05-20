@@ -97,6 +97,10 @@ public class VehiculoService {
         return modeloRepositorio.findAll();
     }
 
+    public List<Vehiculo> listarVehiculos() {
+        return vehiculoRepositorio.findAll();
+    }
+
     @Transactional
     public void guardarVehiculo(VehiculoDTO vehiculoDTO) {
         if(vehiculoRepositorio.findByPatente(vehiculoDTO.getPatente().toUpperCase().trim()).isPresent()) {

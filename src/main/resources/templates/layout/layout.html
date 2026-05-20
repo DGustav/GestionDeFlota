@@ -83,7 +83,7 @@
                     <span>Services</span>
                 </a>
 
-                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR',)">
+                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Siniestros</span>
                 </a>
@@ -102,9 +102,9 @@
 
         <!-- Main Content -->
         <main class="main-content col ps-md-2 pt-2">
-            <header class="topbar d-flex flex-column flex-md-row">
-                <form method="GET" th:action="${searchAction ?: '#'}">
-                    <div class="search-container mb-3 mb-md-0 d-flex w-50 me-md-3" th:if="${searchPlaceholder != null}">
+            <header class="topbar d-flex flex-column flex-md-row align-items-md-center">
+                <form method="GET" th:action="${searchAction ?: '#'}" class="flex-grow-1">
+                    <div class="search-container mb-3 mb-md-0 d-flex me-md-3" th:if="${searchPlaceholder != null}">
                         <div class="search-box flex-grow-1">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <input
@@ -122,7 +122,7 @@
                 </form>
 <div class="flex-grow-1" th:unless="${searchPlaceholder != null}"></div>
 
-                <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end w-auto">
+                <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end flex-shrink-0">
                     <!-- Fragmento para botón de acción principal variable -->
                     <th:block th:replace="${topbar_action} ?: ~{}"></th:block>
 
@@ -133,7 +133,6 @@
                             </button>
                         </form>
                         <span class="user-label d-none d-md-flex">Gustavo Porcel</span>
-                        <div class="avatar">BI</div>
                     </div>
                 </div>
             </header>
