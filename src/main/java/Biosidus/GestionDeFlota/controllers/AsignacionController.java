@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,6 +99,49 @@ public class AsignacionController {
             model.addAttribute("conductores", asignacionService.listarConductores());
             model.addAttribute("estados", EstadoAsignacion.values());
             return "crearAsignacion";
+        }
+    }
+
+    @GetMapping("/detalle/{id}")
+    public String detalleAsignacion(@PathVariable Long id, Model model) {
+        Asignacion asignacion = asignacionService.obtenerPorId(id);
+        model.addAttribute("asignacion", asignacion);
+        return "detalleAsignacion";
+    }
+
+    @GetMapping("/modificar/{id}")
+    public String modificarAsignacion(@PathVariable Long id, Model model) {
+        Asignacion asignacion = asignacionService.obtenerPorId(id);
+        model.addAttribute("asignacion", asignacionService.convertirADataTransferObject(asignacion));
+        model.addAttribute("vehiculos", asignacionService.listarTodosLosVehiculos());
+        model.addAttribute("conductores", asignacionService.listarConductores());
+        model.addAttribute("estados", EstadoAsignacion.values());
+        return "modificarAsignacion";
+    }
+
+    @PostMapping("/actualizar")
+    public String actualizarAsignacion(@Valid @ModelAttribute("asignacion") AsignacionDTO asignacionDTO,
+                                      BindingResult result,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("vehiculos", asignacionService.listarTodosLosVehiculos());
+            model.addAttribute("conductores", asignacionService.listarConductores());
+            model.addAttribute("estados", EstadoAsignacion.values());
+            return "modificarAsignacion";
+        }
+
+        try {
+            asignacionService.actualizarAsignacion(asignacionDTO, result);
+            redirectAttributes.addFlashAttribute("exito", "Asignación actualizada correctamente");
+            return "redirect:/asignacion/listado";
+        } catch (Exception e) {
+            model.addAttribute("vehiculos", asignacionService.listarTodosLosVehiculos());
+            model.addAttribute("conductores", asignacionService.listarConductores());
+            model.addAttribute("estados", EstadoAsignacion.values());
+            model.addAttribute("error", "Error al actualizar la asignación: " + e.getMessage());
+            return "modificarAsignacion";
         }
     }
 }

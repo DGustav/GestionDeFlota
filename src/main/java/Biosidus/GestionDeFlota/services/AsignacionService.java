@@ -89,25 +89,87 @@ public class AsignacionService {
     @Transactional
     public void guardarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) {
         if (asignacionDTO.getVehiculoId() == null || asignacionDTO.getConductorId() == null) {
-            result.rejectValue("conductorId", "error.conductorId", "El conductor seleccionado no existe");
-            result.rejectValue("vehiculoId", "error.vehiculoId", "El vehículo seleccionado no existe");
-            throw new RuntimeException("El vehículo  o conductor seleccionado no existe");
+            if (asignacionDTO.getVehiculoId() == null) result.rejectValue("vehiculoId", "error.vehiculoId", "El vehículo seleccionado no existe");
+            if (asignacionDTO.getConductorId() == null) result.rejectValue("conductorId", "error.conductorId", "El conductor seleccionado no existe");
+            throw new RuntimeException("El vehículo o conductor seleccionado no existe");
         }
 
-        Vehiculo vehiculo = vehiculoRepositorio.findById(asignacionDTO.getVehiculoId()).get();
+        Vehiculo vehiculo = vehiculoRepositorio.findById(asignacionDTO.getVehiculoId())
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
         
-        Conductor conductor = conductorRepositorio.findById(asignacionDTO.getConductorId()).get();
+        Conductor conductor = conductorRepositorio.findById(asignacionDTO.getConductorId())
+                .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
 
         Asignacion asignacion = new Asignacion();
-        asignacion.setVehiculo(vehiculo);
-        asignacion.setConductor(conductor);
-        asignacion.setFechaAsignacion(asignacionDTO.getFechaAsignacion());
-        asignacion.setFechaDevolucion(asignacionDTO.getFechaDevolucion());
-        asignacion.setFechaDevolucionEstimada(asignacionDTO.getFechaDevolucionEstimada());
-        asignacion.setEstado(asignacionDTO.getEstado());
+        mapearDtoAEntidad(asignacionDTO, asignacion, vehiculo, conductor);
+        
+        // Regla de negocio específica para creación: el kilometraje inicial es el actual del vehículo
         asignacion.setKilometrajeInicial(vehiculo.getKilometrajeActual());
-        asignacion.getVehiculo().setDisponible(false);
+        vehiculo.setDisponible(false);
+        
         asignacionRepositorio.save(asignacion);
+    }
+
+    @Transactional
+    public void actualizarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) {
+        if (asignacionDTO.getId() == null) {
+            throw new RuntimeException("ID de asignación no proporcionado");
+        }
+
+        if (asignacionDTO.getVehiculoId() == null || asignacionDTO.getConductorId() == null) {
+            if (asignacionDTO.getVehiculoId() == null) result.rejectValue("vehiculoId", "error.vehiculoId", "El vehículo seleccionado no existe");
+            if (asignacionDTO.getConductorId() == null) result.rejectValue("conductorId", "error.conductorId", "El conductor seleccionado no existe");
+            throw new RuntimeException("El vehículo o conductor seleccionado no existe");
+        }
+
+        Asignacion asignacion = asignacionRepositorio.findById(asignacionDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
+
+        Vehiculo vehiculo = vehiculoRepositorio.findById(asignacionDTO.getVehiculoId())
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+        
+        Conductor conductor = conductorRepositorio.findById(asignacionDTO.getConductorId())
+                .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
+
+        // Si cambia el vehículo, gestionar disponibilidad
+        if (!asignacion.getVehiculo().getId().equals(vehiculo.getId())) {
+            asignacion.getVehiculo().setDisponible(true);
+            vehiculo.setDisponible(false);
+        }
+
+        mapearDtoAEntidad(asignacionDTO, asignacion, vehiculo, conductor);
+        // En actualización permitimos modificar kilometrajes si es necesario
+        asignacion.setKilometrajeInicial(asignacionDTO.getKilometrajeInicial());
+        asignacion.setKilometrajeFinal(asignacionDTO.getKilometrajeFinal());
+        asignacion.setKilometrosRecorridos(asignacionDTO.getKilometrosRecorridos());
+
+        asignacionRepositorio.save(asignacion);
+    }
+
+    private void mapearDtoAEntidad(AsignacionDTO dto, Asignacion entidad, Vehiculo vehiculo, Conductor conductor) {
+        entidad.setVehiculo(vehiculo);
+        entidad.setConductor(conductor);
+        entidad.setFechaAsignacion(dto.getFechaAsignacion());
+        entidad.setFechaDevolucion(dto.getFechaDevolucion());
+        entidad.setFechaDevolucionEstimada(dto.getFechaDevolucionEstimada());
+        entidad.setEstado(dto.getEstado());
+    }
+
+    public AsignacionDTO convertirADataTransferObject(Asignacion asignacion) {
+        AsignacionDTO dto = new AsignacionDTO();
+        dto.setId(asignacion.getId());
+        dto.setVehiculoId(asignacion.getVehiculo().getId());
+        dto.setNombreVehiculo(asignacion.getVehiculo().getPatente() + " - " + asignacion.getVehiculo().getModelo().getNombreCompletoModelo());
+        dto.setConductorId(asignacion.getConductor().getId());
+        dto.setNombreConductor(asignacion.getConductor().getNomApe());
+        dto.setFechaAsignacion(asignacion.getFechaAsignacion());
+        dto.setFechaDevolucion(asignacion.getFechaDevolucion());
+        dto.setFechaDevolucionEstimada(asignacion.getFechaDevolucionEstimada());
+        dto.setEstado(asignacion.getEstado());
+        dto.setKilometrajeInicial(asignacion.getKilometrajeInicial());
+        dto.setKilometrajeFinal(asignacion.getKilometrajeFinal());
+        dto.setKilometrosRecorridos(asignacion.getKilometrosRecorridos());
+        return dto;
     }
 
     public List<Vehiculo> listarVehiculosDisponibles() {
@@ -120,6 +182,12 @@ public class AsignacionService {
     
     public List<Conductor> listarConductores() {
         return conductorRepositorio.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Asignacion obtenerPorId(Long id) {
+        return asignacionRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asignación no encontrada con ID: " + id));
     }
 
 }

@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <a th:href="@{documento/listado}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/documento/listado}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
         <i class="fa-solid fa-arrow-left"></i>
         <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
     </a>
@@ -24,37 +24,46 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i>Información del Documento</h5>
-                        <span class="badge bg-success">Vigente</span>
+                        <span class="badge" th:classappend="${documento.estadoDocumento.name() == 'VIGENTE' ? 'bg-success' : 'bg-danger'}" th:text="${documento.estadoDocumento}"></span>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">ID:</div>
-                            <div class="col-sm-8">1</div>
+                            <div class="col-sm-8" th:text="${documento.id}"></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Tipo de Documento:</div>
-                            <div class="col-sm-8">VTV</div>
+                            <div class="col-sm-8" th:text="${documento.tipoDocumento}"></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Fecha de Vencimiento:</div>
-                            <div class="col-sm-8">15/12/2026</div>
+                            <div class="col-sm-8" th:text="${#temporals.format(documento.fechaVencimiento, 'dd/MM/yyyy')}"></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Asociado a:</div>
-                            <div class="col-sm-8">Vehículo: ABC-123</div>
+                            <div class="col-sm-8">
+                                <span th:if="${documento.vehiculo != null}">
+                                    <i class="fa-solid fa-car me-1"></i>
+                                    <span th:text="${'Vehículo: ' + documento.vehiculo.patente + ' - ' + documento.vehiculo.modelo.nombreCompletoModelo}"></span>
+                                </span>
+                                <span th:if="${documento.conductor != null}">
+                                    <i class="fa-solid fa-user-tie me-1"></i>
+                                    <span th:text="${'Conductor: ' + documento.conductor.nomApe}"></span>
+                                </span>
+                            </div>
                         </div>
                         <hr>
                         <div class="row mb-3">
                             <div class="col-sm-4 fw-bold">Archivo adjunto:</div>
                             <div class="col-sm-8">
-                                <a href="#" class="btn btn-sm btn-info text-white" download>
+                                <a th:href="@{/documento/descargar/{id}(id=${documento.id})}" class="btn btn-sm btn-info text-white">
                                     <i class="fa-solid fa-download me-1"></i>Descargar Archivo
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer bg-light d-flex justify-content-end gap-2">
-                        <a th:href="@{/documento/modificar/1}" class="btn btn-primary-custom">
+                        <a th:href="@{/documento/modificar/{id}(id=${documento.id})}" class="btn btn-primary-custom">
                             <i class="fa-solid fa-pen-to-square me-1"></i>Modificar
                         </a>
                     </div>

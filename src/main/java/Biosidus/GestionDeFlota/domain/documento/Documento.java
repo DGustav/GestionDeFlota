@@ -1,6 +1,6 @@
 package Biosidus.GestionDeFlota.domain.documento;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
@@ -21,7 +21,7 @@ public class Documento {
     @Column(name="tipo_documento",nullable = false)
     private TipoDocumento tipoDocumento;
     @Column(name="fecha_vencimiento",nullable = false)
-    private LocalDateTime fechaVencimiento;
+    private LocalDate fechaVencimiento;
     @Column(name="archivo",nullable = false)
     private String ruta_archivo;
     @ManyToOne
@@ -35,7 +35,7 @@ public class Documento {
     private EstadoDocumento estadoDocumento;
 
     public Boolean estaVencido(){
-        return LocalDateTime.now().isAfter(fechaVencimiento);
+        return LocalDate.now().isAfter(fechaVencimiento);
     }
 
     public Boolean esVehiculo(){

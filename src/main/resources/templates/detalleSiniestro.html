@@ -1,19 +1,52 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/layout :: layout(
-        title='Detalle de Siniestro - Gestión de Flota',
+        title='Detalle del Siniestro - Gestión de Flota',
         currentPage='siniestros',
         searchPlaceholder=null,
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
-        extra_css=~{},
+        extra_css=~{:: style},
         extra_scripts=~{}
       )}">
 <head>
+    <style>
+        .prueba-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .file-icon {
+            font-size: 2.5rem;
+            color: #6c757d;
+        }
+        .prueba-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 110px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .prueba-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 6px 6px rgba(0,0,0,0.1);
+            border-color: #004b81;
+            transform: translateY(-4px);
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
 
-    <a th:href="@{siniestro/listado}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/siniestro/listado}" class="btn btn-secondary-custom me-2 text-decoration-none topbar-btn">
         <i class="fa-solid fa-arrow-left"></i>
         <span>Volver <span class="d-none d-sm-inline">al listado</span></span>
     </a>
@@ -23,73 +56,88 @@
             <div class="col-md-12">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fa-solid fa-triangle-exclamation me-2"></i>Detalle de Siniestro #1</h5>
+                        <h5 class="mb-0"><i class="fa-solid fa-circle-exclamation me-2"></i>Detalle del Siniestro #[[${siniestro.id}]]</h5>
+                        <span class="badge bg-light text-primary" th:text="${#temporals.format(siniestro.fechaSiniestro, 'dd/MM/yyyy HH:mm')}">15/03/2026 14:30</span>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h6 class="border-bottom pb-2 mb-3">Información del Hecho</h6>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Fecha:</div>
-                                    <div class="col-sm-8">20/03/2025</div>
-                                </div>
+                                <h6 class="border-bottom pb-2 mb-3">Información del Vehículo</h6>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Vehículo:</div>
-                                    <div class="col-sm-8">Toyota Hilux (AB 456 XY)</div>
+                                    <div class="col-sm-8" th:text="${siniestro.contexto.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
                                 </div>
                                 <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Patente:</div>
+                                    <div class="col-sm-8" th:text="${siniestro.contexto.vehiculo.patente}">ABC-123</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 mb-3">Información del Conductor</h6>
+                                <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Conductor:</div>
-                                    <div class="col-sm-8">Juan Pérez</div>
+                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.nomApe}">Gustavo Porcel</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">Legajo:</div>
+                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.legajo}">-</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold">DNI:</div>
+                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.dni}">-</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mt-4">
                             <div class="col-md-12">
-                                <h6 class="border-bottom pb-2 mb-3">Descripción del Siniestro</h6>
-                                <div class="p-3 bg-light rounded">
-                                    <p class="mb-0">Colisión lateral con otro vehículo al realizar maniobra de giro. Daños en puerta trasera derecha y guardabarros.</p>
+                                <h6 class="border-bottom pb-2 mb-3">Detalle del Siniestro</h6>
+                                <div class="row mb-3">
+                                    <div class="col-sm-2 fw-bold">Fecha:</div>
+                                    <div class="col-sm-10" th:text="${#temporals.format(siniestro.fechaSiniestro, 'dd/MM/yyyy HH:mm')}">15/03/2026 14:30</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-2 fw-bold">Descripción:</div>
+                                    <div class="col-sm-10">
+                                        <p class="text-muted" th:text="${siniestro.descripcion}">Sin descripción.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="row mt-4">
                             <div class="col-md-12">
-                                <h6 class="border-bottom pb-2 mb-3">Fotos Adjuntas</h6>
-                                <div class="list-group">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <i class="fa-solid fa-image me-2 text-primary"></i>
-                                            <a th:href="@{/descargarPrueba/1/foto_delantera_1.jpg}" class="text-decoration-none" download>foto_delantera_1.jpg</a>
-                                        </span>
-                                        <a th:href="@{/descargarPrueba/1/foto_delantera_1.jpg}" class="btn btn-outline-info btn-sm" download>
-                                            <i class="fa-solid fa-download"></i>
+                                <h6 class="border-bottom pb-2 mb-3">Pruebas / Documentación</h6>
+                                <div th:if="${siniestro.pruebas != null and !siniestro.pruebas.isEmpty()}" class="prueba-container">
+                                    <div th:each="prueba : ${siniestro.pruebas}">
+                                        <a th:href="@{/siniestro/descargar-prueba(ruta=${prueba})}"
+                                           target="_blank"
+                                           class="prueba-card">
+                                            
+                                            <th:block th:with="extension=${#strings.toLowerCase(#strings.substringAfter(prueba, '.'))}">
+                                                <i th:if="${extension == 'pdf'}" class="fa-solid fa-file-pdf file-icon text-danger"></i>
+                                                <i th:if="${extension == 'doc' || extension == 'docx'}" class="fa-solid fa-file-word file-icon text-primary"></i>
+                                                <i th:if="${extension == 'xls' || extension == 'xlsx'}" class="fa-solid fa-file-excel file-icon text-success"></i>
+                                                <i th:if="${extension == 'jpg' || extension == 'jpeg' || extension == 'png' || extension == 'gif'}" class="fa-solid fa-file-image file-icon text-info"></i>
+                                                <i th:if="${extension != 'pdf' && extension != 'doc' && extension != 'docx' && extension != 'xls' && extension != 'xlsx' && extension != 'jpg' && extension != 'jpeg' && extension != 'png' && extension != 'gif'}" 
+                                                   class="fa-solid fa-file-lines file-icon"></i>
+                                            </th:block>
+
+                                            <span class="mt-2 text-center px-2"
+                                                  style="font-size: 0.75rem; word-break: break-all; max-width: 100%; line-height: 1.1;"
+                                                  th:text="${#strings.substringAfter(prueba, '_')}">
+                                                archivo.pdf
+                                            </span>
                                         </a>
                                     </div>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <i class="fa-solid fa-image me-2 text-primary"></i>
-                                            <a th:href="@{/descargarPrueba/1/foto_lateral_derecha.jpg}" class="text-decoration-none" download>foto_lateral_derecha.jpg</a>
-                                        </span>
-                                        <a th:href="@{/descargarPrueba/1/foto_lateral_derecha.jpg}" class="btn btn-outline-info btn-sm" download>
-                                            <i class="fa-solid fa-download"></i>
-                                        </a>
-                                    </div>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <i class="fa-solid fa-image me-2 text-primary"></i>
-                                            <a th:href="@{/descargarPrueba/1/foto_trasera.jpg}" class="text-decoration-none" download>foto_trasera.jpg</a>
-                                        </span>
-                                        <a th:href="@{/descargarPrueba/1/foto_trasera.jpg}" class="btn btn-outline-info btn-sm" download>
-                                            <i class="fa-solid fa-download"></i>
-                                        </a>
-                                    </div>
+                                </div>
+                                <div th:unless="${siniestro.pruebas != null and !siniestro.pruebas.isEmpty()}" class="mb-4">
+                                    <p class="text-muted italic bg-light p-3 rounded shadow-sm border">No se adjuntaron pruebas para este siniestro.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer bg-light text-end">
-                        <a th:href="@{siniestro/modificar/1}" class="btn btn-primary-custom">
+                        <a th:href="@{/siniestro/modificar/{id}(id=${siniestro.id})}" class="btn btn-primary-custom">
                             <i class="fa-solid fa-pen-to-square me-1"></i>Editar Siniestro
                         </a>
                     </div>

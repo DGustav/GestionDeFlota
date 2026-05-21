@@ -7,115 +7,241 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-scripts}
       )}">
 <head>
-    <link class="extra-css" rel="stylesheet" th:href="@{/css/modificarAsignacion.css}" />
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
 </head>
 <body>
 
     <section class="panel mt-4 content-section">
-        <h2 class="panel-title">
-            <i class="fa-solid fa-car-side"></i>
-            Modificar Asignación #<span th:text="${id ?: '1'}">1</span>
-        </h2>
 
-        <form action="#" method="POST">
-            <div class="row g-4">
-                <!-- Conductor -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Conductor</label>
-                        <select class="form-select-custom" name="conductor" required>
-                            <option value="" disabled>Seleccionar conductor</option>
-                            <option value="1">S. Gomez</option>
-                            <option value="2">Sat Lucero</option>
-                            <option value="3">Raul Peretta</option>
-                            <option value="4" selected>Gustavo Porcel</option>
-                        </select>
+        <form th:action="@{/asignacion/actualizar}" th:object="${asignacion}" method="POST">
+            <input type="hidden" th:field="*{id}">
+            
+            <div th:if="${#fields.hasAnyErrors() || (error != null)}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err} + '.'"></div>
+                <div th:if="${error != null}" th:text="${error}"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <section class="panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    Modificar Asignación #<span th:text="*{id}"></span>
+                </h2>
+                
+                <div class="row">
+                    <!-- Vehículo -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Vehículo</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-car"></i>
+                                <input type="text" th:field="*{nombreVehiculo}" class="form-control-custom form-multi-select" list="vehiculosList" id="vehiculoNombre" placeholder="Seleccione o ingrese un vehículo" required>
+                                <input type="hidden" th:field="*{vehiculoId}" id="vehiculoId">
+                                <datalist id="vehiculosList">
+                                    <option th:each="v : ${vehiculos}" th:data-id="${v.id}" th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}"></option>
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conductor -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Conductor</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <input type="text" th:field="*{nombreConductor}" class="form-control-custom form-multi-select" list="conductoresList" id="conductorNombre" placeholder="Seleccione o ingrese un conductor" required>
+                                <input type="hidden" th:field="*{conductorId}" id="conductorId">
+                                <datalist id="conductoresList">
+                                    <option th:each="c : ${conductores}" th:data-id="${c.id}" th:value="${c.nomApe}"></option>
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha Asignación -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Asignación</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                <input type="datetime-local" th:field="*{fechaAsignacion}" class="form-control-custom" required />
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('fechaAsignacion')}" th:errors="*{fechaAsignacion}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha Devolución Estimada -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Devolución Estimada</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar-clock"></i>
+                                <input type="datetime-local" th:field="*{fechaDevolucionEstimada}" class="form-control-custom" required />
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('fechaDevolucionEstimada')}" th:errors="*{fechaDevolucionEstimada}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Estado de la Asignación</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <select th:field="*{estado}" class="form-control-custom">
+                                    <option th:each="est : ${estados}" th:value="${est}" th:text="${est}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kilometraje Inicial -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Kilometraje Inicial</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                <input type="number" th:field="*{kilometrajeInicial}" class="form-control-custom" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kilometros Recorridos -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Kilómetros Recorridos</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-route"></i>
+                                <input type="number" th:field="*{kilometrosRecorridos}" class="form-control-custom" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kilometraje Final -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Kilometraje Final</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-flag-checkered"></i>
+                                <input type="number" th:field="*{kilometrajeFinal}" class="form-control-custom" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha Devolución Real -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de Devolución Real</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <input type="datetime-local" th:field="*{fechaDevolucion}" class="form-control-custom" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Vehículo -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Vehículo</label>
-                        <select class="form-select-custom" name="vehiculo" required>
-                            <option value="" disabled>Seleccionar vehículo</option>
-                            <option value="1" selected>Renault Kangoo (ABC-123)</option>
-                            <option value="2">VW Amarok (DEF-456)</option>
-                            <option value="3">Toyota Hilux (GHI-789)</option>
-                            <option value="4">Citroen Berlingo (JKL-012)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Estado -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Estado</label>
-                        <select class="form-select-custom" name="estado" required>
-                            <option value="" disabled>Seleccionar estado</option>
-                            <option value="ACTIVA" selected>ACTIVA</option>
-                            <option value="PENDIENTE">PENDIENTE</option>
-                            <option value="FINALIZADA">FINALIZADA</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Fecha de Asignación -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Fecha de Asignación</label>
-                        <input type="datetime-local" class="form-control-custom" name="fechaAsignacion" value="2025-03-15T10:00" required>
-                    </div>
-                </div>
-
-                <!-- Kilometraje Inicial -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Kilometraje Inicial</label>
-                        <input type="number" class="form-control-custom" name="kilometrajeInicial" value="10000" required>
-                    </div>
-                </div>
-
-                <!-- Fecha de Devolución Estimada -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Fecha de Devolución Estimada</label>
-                        <input type="datetime-local" class="form-control-custom" name="fechaDevolucionEstimada" value="2025-03-15T18:00" required>
-                    </div>
-                </div>
-
-                <!-- Kilometros Recorridos (Solo lectura o edición según estado) -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Kilometros Recorridos</label>
-                        <input type="number" class="form-control-custom" name="kilometrosRecorridos" value="5000">
-                    </div>
-                </div>
-
-                <!-- Kilometraje Final -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Kilometraje Final</label>
-                        <input type="number" class="form-control-custom" name="kilometrajeFinal" value="15000">
-                    </div>
-                </div>
-
-                <!-- Botones de Acción -->
-                <div class="col-12 d-flex justify-content-end gap-3 mt-4">
+                <div class="form-actions mt-4">
                     <a th:href="@{/asignacion/listado}" class="btn btn-secondary-custom text-decoration-none">
+                        <i class="fa-solid fa-xmark"></i>
                         Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary-custom">
-                        <i class="fa-solid fa-save"></i>
+                        <i class="fa-solid fa-floppy-disk"></i>
                         Actualizar Asignación
                     </button>
                 </div>
-            </div>
+            </section>
         </form>
     </section>
 
+    <script class="extra-scripts" th:inline="javascript">
+        const vehiculoNombreInput = document.getElementById('vehiculoNombre');
+        const vehiculoIdInput = document.getElementById('vehiculoId');
+        const vehiculosList = document.getElementById('vehiculosList');
+
+        const conductorNombreInput = document.getElementById('conductorNombre');
+        const conductorIdInput = document.getElementById('conductorId');
+        const conductoresList = document.getElementById('conductoresList');
+
+        vehiculoNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = vehiculosList.options;
+            vehiculoIdInput.value = ""; // Reset by default
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    vehiculoIdInput.value = options[i].getAttribute('data-id');
+                    break;
+                }
+            }
+        });
+
+        conductorNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = conductoresList.options;
+            conductorIdInput.value = ""; // Reset by default
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    conductorIdInput.value = options[i].getAttribute('data-id');
+                    break;
+                }
+            }
+        });
+
+        // Al cargar la página, si hay un valor en vehiculoId/conductorId, intentar poner el nombre en el input correspondiente
+        window.addEventListener('load', function() {
+            const currentVehiculoId = vehiculoIdInput.value;
+            if (currentVehiculoId) {
+                const options = vehiculosList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === currentVehiculoId) {
+                        vehiculoNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+
+            const currentConductorId = conductorIdInput.value;
+            if (currentConductorId) {
+                const options = conductoresList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === currentConductorId) {
+                        conductorNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+        });
+
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            var exito = /*[[${exito}]]*/ null;
+            var error = /*[[${error}]]*/ null;
+
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

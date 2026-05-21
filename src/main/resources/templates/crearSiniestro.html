@@ -4,14 +4,14 @@
         title='Registrar Siniestro - Gestión de Flota',
         currentPage='siniestros',
         searchPlaceholder=null,
-        topbar_action=~{},
+      topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-scripts}
       )}">
 <head>
     <!-- Reutilizamos el CSS de crearAsignacion ya que los componentes de formulario son iguales -->
-    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearAsignacion.css}" />
+    <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
 </head>
 <body>
 
@@ -21,27 +21,38 @@
             Registrar Nuevo Siniestro
         </h2>
 
-        <form action="#" method="POST" enctype="multipart/form-data">
+        <form th:action="@{/siniestro/crear}" th:object="${siniestro}" method="POST" enctype="multipart/form-data">
+            <div th:if="${#fields.hasAnyErrors() || (error != null)}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err} + '.'"></div>
+                <div th:if="${error != null}" th:text="${error}"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
             <div class="row g-4">
-                <!-- Asignación / Contexto -->
+                <!-- Vehículo -->
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label class="form-label">Asignación Relacionada (Vehículo - Conductor)</label>
-                        <select class="form-select-custom" name="contexto" required>
-                            <option value="" disabled selected>Seleccionar asignación</option>
-                            <option value="1">Ford Mustang (AB 123 CD) - Gustavo Porcel</option>
-                            <option value="2">Toyota Hilux (XY 987 ZW) - Raul Peretta</option>
-                            <option value="3">VW Amarok (JK 456 LM) - Sat Lucero</option>
-                        </select>
-                        <small class="text-muted">El siniestro debe estar vinculado a una asignación activa o pasada.</small>
+                        <label class="form-label">Vehículo</label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-car"></i>
+                            <input type="text" th:field="*{nombreVehiculo}" class="form-control-custom" list="vehiculosList" id="vehiculoNombre" placeholder="Seleccione o ingrese un vehículo" required>
+                            <input type="hidden" th:field="*{vehiculoId}" id="vehiculoId">
+                            <datalist id="vehiculosList">
+                                <option th:each="v : ${vehiculos}" th:data-id="${v.id}" th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}"></option>
+                            </datalist>
+                        </div>
+                        <small class="text-muted">El siniestro debe estar vinculado a un vehículo con asignación.</small>
                     </div>
                 </div>
 
                 <!-- Fecha del Siniestro -->
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label class="form-label">Fecha y Hora del Siniestro</label>
-                        <input type="datetime-local" class="form-control-custom" name="fechaSiniestro" required>
+                        <label class="form-label">Fecha del Siniestro</label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <input type="datetime-local" th:field="*{fechaSiniestro}" class="form-control-custom" required>
+                        </div>
                     </div>
                 </div>
 
@@ -49,7 +60,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label">Descripción del Siniestro</label>
-                        <textarea class="form-control-custom" name="descripcion" rows="4" placeholder="Detalle lo sucedido..." required></textarea>
+                        <textarea th:field="*{descripcion}" class="form-control-custom" rows="4" placeholder="Detalle lo sucedido..." required></textarea>
                     </div>
                 </div>
 
@@ -58,7 +69,7 @@
                     <div class="form-group">
                         <label class="form-label">Carga de Pruebas (Fotos/Documentos)</label>
                         <div class="input-group">
-                            <input type="file" class="form-control-custom" name="pruebas" multiple accept="image/*,.pdf">
+                            <input type="file" class="form-control-custom" th:field="*{pruebasArchivos}" multiple accept="image/*,.pdf">
                         </div>
                         <small class="text-muted">Puede seleccionar varios archivos a la vez (fotos o PDF).</small>
                     </div>
@@ -78,5 +89,62 @@
         </form>
     </section>
 
+    <script class="extra-scripts" th:inline="javascript">
+        const vehiculoNombreInput = document.getElementById('vehiculoNombre');
+        const vehiculoIdInput = document.getElementById('vehiculoId');
+        const vehiculosList = document.getElementById('vehiculosList');
+
+        vehiculoNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = vehiculosList.options;
+            vehiculoIdInput.value = ""; // Reset by default
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    vehiculoIdInput.value = options[i].getAttribute('data-id');
+                    break;
+                }
+            }
+        });
+
+        // Al cargar la página, si hay un valor en vehiculoId, intentar poner el nombre en el input correspondiente
+        window.addEventListener('load', function() {
+            const currentVehiculoId = vehiculoIdInput.value;
+            if (currentVehiculoId) {
+                const options = vehiculosList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === currentVehiculoId) {
+                        vehiculoNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+        });
+
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            var exito = /*[[${exito}]]*/ null;
+            var error = /*[[${error}]]*/ null;
+
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

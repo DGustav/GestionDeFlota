@@ -17,12 +17,12 @@ public class Siniestro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "contexto",referencedColumnName = "id",nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "asignacion_id",referencedColumnName = "id")
     private Asignacion contexto;
     @Column(name = "fecha_siniestro",nullable = false)
     private LocalDateTime fechaSiniestro;
-    @Column(name = "descripcion",nullable = false)
+    @Column(name = "descripcion")
     private String descripcion;
     @ElementCollection
     @CollectionTable(name = "prueba",joinColumns = @JoinColumn(name = "siniestro_id"))

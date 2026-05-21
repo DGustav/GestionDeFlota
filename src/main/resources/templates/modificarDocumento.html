@@ -7,7 +7,7 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-scripts}
       )}">
 <head>
     <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
@@ -15,77 +15,99 @@
 <body>
 
     <section class="panel mt-4 content-section">
-        <form action="#" method="POST" enctype="multipart/form-data">
+
+        <form th:action="@{/documento/actualizar}" th:object="${documento}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            <div th:if="${#fields.hasAnyErrors() || (error != null)}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err} + '.'"></div>
+                <div th:if="${error != null}" th:text="${error}"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             <section class="panel">
                 <h2 class="panel-title">
                     <i class="fa-solid fa-file-pen"></i>
-                    Modificar Documento #1
+                    Modificar Documento #<span th:text="${documento.id}"></span>
                 </h2>
                 <div class="row">
+                    <!-- Tipo Documento -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Tipo de Documento</label>
                             <div class="input-container">
-                                <i class="fa-solid fa-file-invoice"></i>
-                                <select class="form-control-custom" required>
-                                    <option value="VTV" selected>VTV</option>
-                                    <option value="CEDULA">Cédula</option>
-                                    <option value="SEGURO">Seguro</option>
-                                    <option value="LICENCIA">Licencia</option>
-                                    <option value="MULTA">Multa</option>
+                                <i class="fa-solid fa-tag"></i>
+                                <select th:field="*{tipoDocumento}" class="form-control-custom" required>
+                                    <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Fecha Vencimiento -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Fecha de Vencimiento</label>
                             <div class="input-container">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <input type="date" class="form-control-custom" value="2026-12-15" required />
+                                <i class="fa-solid fa-calendar-xmark"></i>
+                                <input type="date" th:field="*{fechaVencimiento}" class="form-control-custom" required />
                             </div>
                         </div>
                     </div>
+
+                    <!-- Vehículo -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Asociar a Vehículo (Opcional)</label>
+                            <label class="form-label">Vehículo</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-car"></i>
-                                <select class="form-control-custom">
-                                    <option value="">Ninguno</option>
-                                    <option value="1" selected>ABC-123 (Toyota Corolla)</option>
-                                    <option value="2">XYZ-789 (Ford Ranger)</option>
-                                </select>
+                                <input type="text" th:field="*{nombreVehiculo}" class="form-control-custom form-multi-select" list="vehiculosList" id="vehiculoNombre" placeholder="Seleccione un vehículo">
+                                <input type="hidden" th:field="*{vehiculoId}" id="vehiculoId">
+                                <datalist id="vehiculosList">
+                                    <option th:each="v : ${vehiculos}" th:data-id="${v.id}" th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}"></option>
+                                </datalist>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Conductor -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Asociar a Conductor (Opcional)</label>
+                            <label class="form-label">Conductor</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-user-tie"></i>
-                                <select class="form-control-custom">
-                                    <option value="" selected>Ninguno</option>
-                                    <option value="1">Juan Pérez</option>
-                                    <option value="2">María García</option>
+                                <input type="text" th:field="*{nombreConductor}" class="form-control-custom form-multi-select" list="conductoresList" id="conductorNombre" placeholder="Seleccione un conductor">
+                                <input type="hidden" th:field="*{conductorId}" id="conductorId">
+                                <datalist id="conductoresList">
+                                    <option th:each="c : ${conductores}" th:data-id="${c.id}" th:value="${c.nomApe}"></option>
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Estado del Documento</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <select th:field="*{estadoDocumento}" class="form-control-custom" required>
+                                    <option th:each="est : ${estados}" th:value="${est}" th:text="${est}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 mt-3">
+
+                    <!-- Archivo -->
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Archivo de Documento Actual</label>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fa-solid fa-file-pdf text-danger me-2 fa-2x"></i>
-                                <span>vtv_abc123_2024.pdf</span>
-                                <a href="#" class="btn btn-sm btn-outline-primary ms-3">
-                                    <i class="fa-solid fa-download"></i> Descargar
-                                </a>
-                            </div>
-                            <label class="form-label mt-2">Reemplazar Archivo (Opcional)</label>
+                            <label class="form-label">Archivo del Documento (Dejar vacío para mantener el actual)</label>
                             <div class="input-container">
-                                <i class="fa-solid fa-upload"></i>
-                                <input type="file" class="form-control-custom" />
+                                <i class="fa-solid fa-file-arrow-up"></i>
+                                <input type="file" th:field="*{archivo}" class="form-control-custom" />
+                            </div>
+                            <div class="mt-2" th:if="${documento.ruta_archivo != null && !documento.ruta_archivo.isEmpty()}">
+                                <a th:href="@{/documento/descargar/{id}(id=${documento.id})}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-download"></i> Descargar archivo actual
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -105,5 +127,102 @@
         </form>
     </section>
 
+    <script class="extra-scripts" th:inline="javascript">
+        const vehiculoNombreInput = document.getElementById('vehiculoNombre');
+        const vehiculoIdInput = document.getElementById('vehiculoId');
+        const vehiculosList = document.getElementById('vehiculosList');
+
+        const conductorNombreInput = document.getElementById('conductorNombre');
+        const conductorIdInput = document.getElementById('conductorId');
+        const conductoresList = document.getElementById('conductoresList');
+
+        vehiculoNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = vehiculosList.options;
+            vehiculoIdInput.value = ""; 
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    vehiculoIdInput.value = options[i].getAttribute('data-id');
+                    conductorNombreInput.value = "";
+                    conductorIdInput.value = "";
+                    break;
+                }
+            }
+        });
+
+        conductorNombreInput.addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = conductoresList.options;
+            conductorIdInput.value = ""; 
+            
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    conductorIdInput.value = options[i].getAttribute('data-id');
+                    vehiculoNombreInput.value = "";
+                    vehiculoIdInput.value = "";
+                    break;
+                }
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (!vehiculoIdInput.value && !conductorIdInput.value) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debe seleccionar un vehículo o un conductor',
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+
+        window.addEventListener('load', function() {
+            if (vehiculoIdInput.value) {
+                const options = vehiculosList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === vehiculoIdInput.value) {
+                        vehiculoNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+            if (conductorIdInput.value) {
+                const options = conductoresList.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-id') === conductorIdInput.value) {
+                        conductorNombreInput.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+        });
+
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            var exito = /*[[${exito}]]*/ null;
+            var error = /*[[${error}]]*/ null;
+
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

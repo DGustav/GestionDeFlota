@@ -7,7 +7,8 @@
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
-        extra_scripts=~{}
+        extra_scripts=~{:: script.extra-script},
+        searchAction='/siniestro/listado'
       )}">
 <head>
 </head>
@@ -21,43 +22,54 @@
     <section class="panel mt-4 content-section">
         <!-- Filtros -->
         <div class="filters-bar">
-            <div class="row g-3">
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Fecha del Siniestro</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-calendar-day"></i>
-                            <input type="date" class="form-control-custom">
+            <form th:action="@{/siniestro/listado}" method="GET">
+                <!-- Mantener el parámetro de búsqueda si existe -->
+                <input type="hidden" name="buscar" th:value="${busqueda}">
+                
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Particular</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="date" name="fecha" class="form-control-custom" th:value="${fecha}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Desde</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <input type="date" name="fechaDesde" class="form-control-custom" th:value="${fechaDesde}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group">
+                            <label>Fecha Hasta</label>
+                            <div class="filter-input-group">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <input type="date" name="fechaHasta" class="form-control-custom" th:value="${fechaHasta}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="filter-group h-100 d-flex flex-column justify-content-end">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
+                                    <i class="fa-solid fa-filter"></i>
+                                    Filtrar
+                                </button>
+                                <a th:href="@{/siniestro/listado(buscar=${busqueda})}" class="btn btn-secondary w-100 py-2 mt-auto" style="background-color: #6c757d; color: white; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                                    <i class="fa-solid fa-eraser me-2"></i>
+                                    Limpiar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Vehículo</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-car"></i>
-                            <input type="text" class="form-control-custom" list="vehiculosList" placeholder="Filtrar por vehículo">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-4 col-lg-3">
-                    <div class="filter-group">
-                        <label>Conductor</label>
-                        <div class="filter-input-group">
-                            <i class="fa-solid fa-user-tie"></i>
-                            <input type="text" class="form-control-custom" list="conductoresList" placeholder="Filtrar por conductor">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-lg-3">
-                    <div class="filter-group h-100 d-flex flex-column justify-content-end">
-                        <button class="btn btn-primary-custom w-100 py-2 mt-auto">
-                            <i class="fa-solid fa-filter"></i>
-                            Filtrar
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
 
         <div class="table-responsive">
@@ -74,38 +86,20 @@
                 </thead>
 
                 <tbody>
-                <tr>
-                    <td>#1</td>
-                    <td>15/03/2026</td>
+                <tr th:each="siniestro : ${siniestros}">
+                    <td th:text="'#' + ${siniestro.id}">#1</td>
+                    <td th:text="${#temporals.format(siniestro.fechaSiniestro, 'dd/MM/yyyy HH:mm')}">15/03/2026 14:30</td>
                     <td>
-                        <div class="desc-title">Ford Mustang 2025</div>
-                        <small class="text-muted">AB 123 CD</small>
+                        <div class="desc-title" th:text="${siniestro.contexto.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
+                        <small class="text-muted" th:text="${siniestro.contexto.vehiculo.patente}">AB 123 CD</small>
                     </td>
-                    <td>Gustavo Porcel</td>
-                    <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;">Choque leve en estacionamiento</td>
+                    <td th:text="${siniestro.contexto.conductor.nomApe}">Gustavo Porcel</td>
+                    <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;" th:text="${siniestro.descripcion}">Choque leve en estacionamiento</td>
                     <td class="text-center">
-                        <a th:href="@{/siniestro/detalle/1}" class="text-info me-2" title="Ver detalle">
+                        <a th:href="@{/siniestro/detalle/{id}(id=${siniestro.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/siniestro/modificar/1}" class="text-primary" title="Modificar">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>#2</td>
-                    <td>20/03/2026</td>
-                    <td>
-                        <div class="desc-title">Toyota Hilux</div>
-                        <small class="text-muted">XY 987 ZW</small>
-                    </td>
-                    <td>Raul Peretta</td>
-                    <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;">Rotura de parabrisas por piedra</td>
-                    <td class="text-center">
-                        <a th:href="@{/siniestro/detalle/2}" class="text-info me-2" title="Ver detalle">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a th:href="@{/siniestro/modificar/2}" class="text-primary" title="Modificar">
+                        <a th:href="@{/siniestro/modificar/{id}(id=${siniestro.id})}" class="text-primary" title="Modificar">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -115,12 +109,46 @@
         </div>
 
         <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-            <p class="m-0">2 registros en total</p>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+            <p class="m-0">
+                Mostrando siniestros del <span th:text="${paginaActual * tamanioPagina + 1}"></span>
+                al <span th:text="${(paginaActual + 1) * tamanioPagina > totalItems ? totalItems : (paginaActual + 1) * tamanioPagina}"></span>
+                de un total de <span th:text="${totalItems}"></span>
+            </p>
+            <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                <ul class="pagination m-0"
+                    th:with="maxPaginas=5,
+                 mitad=${maxPaginas / 2},
+                 inicio=${paginaActual - mitad < 0 ? 0 : (paginaActual + mitad >= totalPages ? totalPages - maxPaginas : paginaActual - mitad)},
+                 final=${paginaActual + mitad >= totalPages ? totalPages - 1 : (paginaActual - mitad < 0 ? (maxPaginas > totalPages ? totalPages - 1 : maxPaginas - 1) : paginaActual + mitad)},
+                 inicioReal=${inicio < 0 ? 0 : inicio}">
+
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/siniestro/listado(page=0, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" title="Primera página">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/siniestro/listado(page=${paginaActual - 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}">Anterior</a>
+                    </li>
+
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(inicioReal, final)}"
+                        th:classappend="${paginaActual == i ? 'active' : ''}">
+                        <a class="page-link"
+                           th:href="@{/siniestro/listado(page=${i}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/siniestro/listado(page=${paginaActual + 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}">Siguiente</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/siniestro/listado(page=${totalPages - 1}, buscar=${busqueda}, fecha=${fecha}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" title="Última página">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <button class="btn btn-primary-custom btn-report">
@@ -130,5 +158,21 @@
         </div>
     </section>
 
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>
