@@ -36,20 +36,28 @@ public class VehiculoService {
     @Transactional(readOnly = true)
     public Page<Vehiculo> listarVehiculos(String busqueda, Boolean disponible, EstadoVehiculo estado, OrigenVehiculo origen, Propietario propietario, TipoVehiculo tipoVehiculo, int numeroPagina) {
         Pageable pageable = PageRequest.of(numeroPagina, 7, Sort.by("patente").ascending());
+        Specification<Vehiculo> spec = crearSpecification(busqueda, disponible, estado, origen, propietario, tipoVehiculo);
+        return vehiculoRepositorio.findAll(spec, pageable);
+    }
 
-        Specification<Vehiculo> spec = (root, query, cb) -> {
+    @Transactional(readOnly = true)
+    public List<Vehiculo> listarVehiculosParaReporte(String busqueda, Boolean disponible, EstadoVehiculo estado, OrigenVehiculo origen, Propietario propietario, TipoVehiculo tipoVehiculo) {
+        Specification<Vehiculo> spec = crearSpecification(busqueda, disponible, estado, origen, propietario, tipoVehiculo);
+        return vehiculoRepositorio.findAll(spec, Sort.by("patente").ascending());
+    }
+
+    private Specification<Vehiculo> crearSpecification(String busqueda, Boolean disponible, EstadoVehiculo estado, OrigenVehiculo origen, Propietario propietario, TipoVehiculo tipoVehiculo) {
+        return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             if (busqueda != null && !busqueda.isEmpty()) {
                 String likePattern = "%" + busqueda.toLowerCase() + "%";
                 
-                // Intentar convertir la búsqueda a número para comparar con el año
                 Predicate anioPredicate = null;
                 try {
                     Integer busquedaAnio = Integer.parseInt(busqueda);
                     anioPredicate = cb.equal(root.join("modelo").get("anio"), busquedaAnio);
                 } catch (NumberFormatException e) {
-                    // No es un número, no se busca por año exacto
                 }
 
                 if (anioPredicate != null) {
@@ -88,8 +96,6 @@ public class VehiculoService {
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-
-        return vehiculoRepositorio.findAll(spec, pageable);
     }
 
     @Transactional(readOnly = true)

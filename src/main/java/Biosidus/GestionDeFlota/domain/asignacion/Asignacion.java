@@ -28,7 +28,7 @@ public class Asignacion {
     private LocalDateTime fechaAsignacion;
     @Column(name = "fecha_devolucion")
     private LocalDateTime fechaDevolucion;
-    @Column(name = "fecha_devolucion_estimada", nullable = false)
+    @Column(name = "fecha_devolucion_estimada")
     private LocalDateTime fechaDevolucionEstimada;
     @Enumerated(EnumType.STRING)
     private EstadoAsignacion estado;
@@ -39,15 +39,15 @@ public class Asignacion {
     @Column(name = "kilometros_recorridos")
     private Integer kilometrosRecorridos;
 
-    public void actualizarKms(Integer kilometros){
-        this.kilometrosRecorridos += kilometros;
+    public void actualizarKms(Integer kilometrajeActual){
+
+        this.kilometrosRecorridos = kilometrajeActual - this.kilometrajeInicial;
+        this.kilometrajeFinal = kilometrajeActual;
     }
 
     public void finalizarAsignacion(){
         this.fechaDevolucion = LocalDateTime.now();
         this.estado = EstadoAsignacion.FINALIZADA;
-        this.kilometrajeFinal = this.kilometrajeInicial + this.kilometrosRecorridos;
-
     }
 
 };

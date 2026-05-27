@@ -5,12 +5,21 @@ import Biosidus.GestionDeFlota.domain.empleado.Rango;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
 import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import Biosidus.GestionDeFlota.services.ConductorService;
+import Biosidus.GestionDeFlota.services.ExcelReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/conductor")
@@ -19,6 +28,9 @@ public class ConductorController {
 
     @Autowired
     private ConductorService conductorService;
+
+    @Autowired
+    private ExcelReportService excelReportService;
 
     @GetMapping("/crear")
     public String crearConductor(@ModelAttribute("conductorDto") ConductorUsuarioDTO conductorDto, Model model) {
@@ -80,5 +92,24 @@ public class ConductorController {
         Conductor conductor = conductorService.buscarPorId(id);
         model.addAttribute("conductor", conductor);
         return "detalleConductor";
+    }
+
+    @GetMapping("/exportar/excel")
+    public ResponseEntity<InputStreamResource> exportarExcel(@RequestParam(name = "buscar", required = false) String buscar) {
+        try {
+            List<Conductor> conductoresFiltrados = conductorService.listarConductoresParaReporte(buscar);
+            ByteArrayInputStream stream = excelReportService.generarReporteExcelConductor(conductoresFiltrados);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=reporte_conductores.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(new InputStreamResource(stream));
+
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

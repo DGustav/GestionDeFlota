@@ -3,8 +3,9 @@ package Biosidus.GestionDeFlota.services;
 import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
-import Biosidus.GestionDeFlota.domain.vehiculo.MantenimientoVehicular;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.repositorios.AsignacionRepositorio;
 import Biosidus.GestionDeFlota.repositorios.MantenimientoVehicularRepositorio;
 import Biosidus.GestionDeFlota.repositorios.VehiculoRepositorio;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,9 @@ public class MantenimientoVehicularService {
     @Autowired
     private VehiculoRepositorio vehiculoRepositorio;
 
+    @Autowired
+    private AsignacionRepositorio asignacionRepositorio;
+
     @Value("${spring.servlet.multipart.location}")
     private String uploadLocation;
 
@@ -74,6 +78,27 @@ public class MantenimientoVehicularService {
     }
 
     @Transactional(readOnly = true)
+    public List<MantenimientoVehicular> listarMantenimientos(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta) {
+        LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
+        LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
+        LocalDateTime fechaInicio = (fecha != null) ? fecha.atStartOfDay() : null;
+        LocalDateTime fechaFin = (fecha != null) ? fecha.atTime(LocalTime.MAX) : null;
+
+        if (desde != null || hasta != null || fecha != null) {
+            if (buscar != null && !buscar.isEmpty()) {
+                return mantenimientoRepositorio.filtrarPorRangoYBusquedaSinPag(desde, hasta, fechaInicio, fechaFin, buscar);
+            } else {
+                return mantenimientoRepositorio.filtrarPorRangoSinPag(desde, hasta, fechaInicio, fechaFin);
+            }
+        }
+
+        if (buscar != null && !buscar.isEmpty()) {
+            return mantenimientoRepositorio.findByVehiculoModeloNombreCompletoModeloContainingIgnoreCaseOrVehiculoPatenteContainingIgnoreCaseOrDescripcionContainingIgnoreCase(buscar, buscar, buscar);
+        }
+        return mantenimientoRepositorio.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public MantenimientoVehicular buscarPorId(Long id) {
         return mantenimientoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
@@ -85,6 +110,7 @@ public class MantenimientoVehicularService {
         MantenimientoVehicularDTO dto = new MantenimientoVehicularDTO();
         dto.setId(mantenimiento.getId());
         dto.setVehiculoId(mantenimiento.getVehiculo().getId());
+        dto.setNombreVehiculo(mantenimiento.getVehiculo().getPatente() + " - " + mantenimiento.getVehiculo().getModelo().getNombreCompletoModelo());
         dto.setKilometrajeActual(mantenimiento.getKilometrajeActual());
         dto.setDescripcion(mantenimiento.getDescripcion());
         dto.setFechaAsignacion(mantenimiento.getFechaAsignacion());
@@ -146,7 +172,11 @@ public class MantenimientoVehicularService {
         // Actualizar el kilometraje del vehículo si es mayor al actual
         Integer kilometrajeActual = dto.getKilometrajeActual();
         if (kilometrajeActual != null && (vehiculo.getKilometrajeActual() == null || kilometrajeActual > vehiculo.getKilometrajeActual())) {
-            vehiculo.setKilometrajeActual(kilometrajeActual);
+           Asignacion asignacion = asignacionRepositorio.findFirstByVehiculoIdAndFechaDevolucionIsNullOrderByFechaAsignacionDesc(
+                    vehiculo.getId()
+            ).get();
+            asignacion.actualizarKms(kilometrajeActual);
+            asignacionRepositorio.save(asignacion);
         }
         vehiculoRepositorio.save(vehiculo);
     }

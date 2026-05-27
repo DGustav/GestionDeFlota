@@ -6,11 +6,15 @@ import Biosidus.GestionDeFlota.domain.documento.EstadoDocumento;
 import Biosidus.GestionDeFlota.domain.documento.TipoDocumento;
 import Biosidus.GestionDeFlota.services.AsignacionService;
 import Biosidus.GestionDeFlota.services.DocumentoService;
+import Biosidus.GestionDeFlota.services.ExcelReportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/documento")
@@ -33,6 +39,9 @@ public class DocumentoController {
 
     @Autowired
     private AsignacionService asignacionService;
+
+    @Autowired
+    private ExcelReportService excelReportService;
 
     @GetMapping("/listado")
     public String listadoDocumentos(Model model,
@@ -149,6 +158,29 @@ public class DocumentoController {
             return documentoService.descargarArchivo(id);
         } catch (MalformedURLException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/exportar/excel")
+    public ResponseEntity<InputStreamResource> exportarExcel(
+            @RequestParam(name = "estado", required = false) EstadoDocumento estado,
+            @RequestParam(name = "tipo", required = false) TipoDocumento tipo,
+            @RequestParam(name = "buscar", required = false) String buscar) {
+
+        try {
+            List<Documento> documentos = documentoService.listarDocumentosParaReporte(estado, tipo, buscar);
+            ByteArrayInputStream stream = excelReportService.generarReporteExcelDocumento(documentos);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=reporte_documentos.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(new InputStreamResource(stream));
+
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

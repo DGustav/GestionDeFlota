@@ -19,6 +19,8 @@ public class MantenimientoVehicularDTO {
     @NotNull(message = "El vehículo es obligatorio")
     private Long vehiculoId;
 
+    private String nombreVehiculo;
+
     @NotNull(message = "El kilometraje es obligatorio")
     @Min(value = 0, message = "El kilometraje no puede ser negativo")
     private Integer kilometrajeActual;

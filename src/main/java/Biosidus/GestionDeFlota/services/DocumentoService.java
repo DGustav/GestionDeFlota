@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -164,5 +165,17 @@ public class DocumentoService {
     @Transactional
     public void eliminarDocumento(Long id) {
         documentoRepositorio.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Documento> listarDocumentosParaReporte(EstadoDocumento estado, TipoDocumento tipo, String buscar) {
+        if (estado != null || tipo != null || (buscar != null && !buscar.isEmpty())) {
+            // El repositorio devuelve Page, pero podemos pedir la primera página con un tamaño muy grande
+            // o implementar un método que devuelva List en el repositorio.
+            // Dado que filtrarDocumentos devuelve Page<Documento>, podemos usar un Pageable sin límite o muy grande.
+            Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("id").descending());
+            return documentoRepositorio.filtrarDocumentos(estado, tipo, buscar, pageable).getContent();
+        }
+        return documentoRepositorio.findAll(Sort.by("id").descending());
     }
 }

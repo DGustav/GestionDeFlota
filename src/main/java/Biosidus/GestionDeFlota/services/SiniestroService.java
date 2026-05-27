@@ -1,10 +1,9 @@
 package Biosidus.GestionDeFlota.services;
 
 import Biosidus.GestionDeFlota.DTOs.SiniestroDTO;
-import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
-import Biosidus.GestionDeFlota.domain.asignacion.EstadoAsignacion;
 import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
-import Biosidus.GestionDeFlota.repositorios.AsignacionRepositorio;
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.repositorios.VehiculoRepositorio;
 import Biosidus.GestionDeFlota.repositorios.SiniestroRepositorio;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -42,7 +41,7 @@ public class SiniestroService {
     private SiniestroRepositorio siniestroRepositorio;
 
     @Autowired
-    private AsignacionRepositorio asignacionRepositorio;
+    private VehiculoRepositorio vehiculoRepositorio;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadLocation;
@@ -55,17 +54,12 @@ public class SiniestroService {
             if (buscar != null && !buscar.isEmpty()) {
                 String likePattern = "%" + buscar.toLowerCase() + "%";
                 
-                Join<Object, Object> contextoJoin = root.join("contexto", JoinType.LEFT);
-                Join<Object, Object> vehiculoJoin = contextoJoin.join("vehiculo", JoinType.LEFT);
+                Join<Object, Object> vehiculoJoin = root.join("vehiculo", JoinType.LEFT);
                 Join<Object, Object> modeloJoin = vehiculoJoin.join("modelo", JoinType.LEFT);
-                Join<Object, Object> conductorJoin = contextoJoin.join("conductor", JoinType.LEFT);
 
                 Predicate searchPredicate = cb.or(
                     cb.like(cb.lower(modeloJoin.get("nombreCompletoModelo")), likePattern),
-                    cb.like(cb.lower(vehiculoJoin.get("patente")), likePattern),
-                    cb.like(cb.lower(conductorJoin.get("nomApe")), likePattern),
-                    cb.like(cb.lower(conductorJoin.get("legajo")), likePattern),
-                    cb.like(cb.lower(conductorJoin.get("dni")), likePattern)
+                    cb.like(cb.lower(vehiculoJoin.get("patente")), likePattern)
                 );
                 predicates.add(searchPredicate);
             }
@@ -101,8 +95,8 @@ public class SiniestroService {
         Siniestro siniestro = obtenerSiniestroPorId(id);
         SiniestroDTO dto = new SiniestroDTO();
         dto.setId(siniestro.getId());
-        dto.setVehiculoId(siniestro.getContexto().getVehiculo().getId());
-        dto.setNombreVehiculo(siniestro.getContexto().getVehiculo().getPatente() + " - " + siniestro.getContexto().getVehiculo().getModelo().getNombreCompletoModelo());
+        dto.setVehiculoId(siniestro.getVehiculo().getId());
+        dto.setNombreVehiculo(siniestro.getVehiculo().getPatente() + " - " + siniestro.getVehiculo().getModelo().getNombreCompletoModelo());
         dto.setFechaSiniestro(siniestro.getFechaSiniestro());
         dto.setDescripcion(siniestro.getDescripcion());
         // No cargamos los archivos de prueba en el DTO de esta forma, ya que son MultipartFile en el DTO para subida
@@ -150,25 +144,10 @@ public class SiniestroService {
     public void guardarSiniestro(SiniestroDTO dto) throws IOException {
         Siniestro siniestro = new Siniestro();
         
-        // Buscar la última asignación para el vehículo seleccionado
-        // Intentamos buscar una activa, si no hay, la última finalizada.
-        
-        Specification<Asignacion> spec = (root, query, cb) -> {
-            return cb.equal(root.get("vehiculo").get("id"), dto.getVehiculoId());
-        };
-        
-        List<Asignacion> asignaciones = asignacionRepositorio.findAll(spec, Sort.by(Sort.Direction.DESC, "id"));
-        if (asignaciones.isEmpty()) {
-            throw new RuntimeException("No se encontró una asignación para el vehículo seleccionado. El siniestro debe estar vinculado a una asignación.");
-        }
-        
-        // Priorizar asignación ACTIVA
-        Asignacion contexto = asignaciones.stream()
-                .filter(a -> a.getEstado() == EstadoAsignacion.ACTIVA)
-                .findFirst()
-                .orElse(asignaciones.get(0)); // Si no hay activa, tomar la última (que será la primera de la lista por el sort DESC)
+        Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
+                .orElseThrow(() -> new RuntimeException("No se encontró el vehículo seleccionado."));
 
-        siniestro.setContexto(contexto);
+        siniestro.setVehiculo(vehiculo);
         siniestro.setFechaSiniestro(dto.getFechaSiniestro());
         siniestro.setDescripcion(dto.getDescripcion());
 
@@ -195,8 +174,45 @@ public class SiniestroService {
 
         siniestroRepositorio.save(siniestro);
     }
-    
-    
+
+    @Transactional(readOnly = true)
+    public List<Siniestro> listarSiniestrosParaReporte(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta) {
+        Specification<Siniestro> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (buscar != null && !buscar.isEmpty()) {
+                String likePattern = "%" + buscar.toLowerCase() + "%";
+                Join<Object, Object> vehiculoJoin = root.join("vehiculo", JoinType.LEFT);
+                Join<Object, Object> modeloJoin = vehiculoJoin.join("modelo", JoinType.LEFT);
+
+                Predicate searchPredicate = cb.or(
+                        cb.like(cb.lower(modeloJoin.get("nombreCompletoModelo")), likePattern),
+                        cb.like(cb.lower(vehiculoJoin.get("patente")), likePattern)
+                );
+                predicates.add(searchPredicate);
+            }
+
+            if (fecha != null) {
+                LocalDateTime inicioDia = fecha.atStartOfDay();
+                LocalDateTime finDia = fecha.atTime(LocalTime.MAX);
+                predicates.add(cb.between(root.get("fechaSiniestro"), inicioDia, finDia));
+            }
+
+            if (fechaDesde != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("fechaSiniestro"), fechaDesde.atStartOfDay()));
+            }
+
+            if (fechaHasta != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("fechaSiniestro"), fechaHasta.atTime(LocalTime.MAX)));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // Retornamos la totalidad de los registros aplicando el orden desc por fecha
+        return siniestroRepositorio.findAll(spec, Sort.by(Sort.Direction.DESC, "fechaSiniestro"));
+    }
+
     @Transactional(readOnly = true)
     public ResponseEntity<Resource> descargarPrueba(String rutaRelativa) throws java.net.MalformedURLException {
         if (rutaRelativa == null || rutaRelativa.isEmpty()) {
@@ -222,4 +238,5 @@ public class SiniestroService {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

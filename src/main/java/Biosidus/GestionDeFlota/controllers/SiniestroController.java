@@ -3,6 +3,7 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.SiniestroDTO;
 import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.SiniestroService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
@@ -37,6 +39,9 @@ public class SiniestroController {
 
     @Autowired
     private VehiculoService vehiculoService;
+
+    @Autowired
+    private ExcelReportService excelReportService;
 
     @GetMapping("/listado")
     public String listadoSiniestros(Model model,
@@ -130,7 +135,7 @@ public class SiniestroController {
             model.addAttribute("ruta_uploads", ruta_uploads);
             model.addAttribute("siniestroOriginal", siniestro);
             // Aseguramos que el nombre del vehículo esté presente si hubo error de validación
-            siniestroDTO.setNombreVehiculo(siniestro.getContexto().getVehiculo().getPatente() + " - " + siniestro.getContexto().getVehiculo().getModelo().getNombreCompletoModelo());
+            siniestroDTO.setNombreVehiculo(siniestro.getVehiculo().getPatente() + " - " + siniestro.getVehiculo().getModelo().getNombreCompletoModelo());
             return "modificarSiniestro";
         }
 
@@ -145,7 +150,7 @@ public class SiniestroController {
             model.addAttribute("ruta_uploads", ruta_uploads);
             model.addAttribute("siniestroOriginal", siniestro);
             // Aseguramos que el nombre del vehículo esté presente si hubo error
-            siniestroDTO.setNombreVehiculo(siniestro.getContexto().getVehiculo().getPatente() + " - " + siniestro.getContexto().getVehiculo().getModelo().getNombreCompletoModelo());
+            siniestroDTO.setNombreVehiculo(siniestro.getVehiculo().getPatente() + " - " + siniestro.getVehiculo().getModelo().getNombreCompletoModelo());
             return "modificarSiniestro";
         }
     }
@@ -165,6 +170,34 @@ public class SiniestroController {
             return siniestroService.descargarPrueba(ruta);
         } catch (MalformedURLException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/exportar/excel")
+    public ResponseEntity<org.springframework.core.io.InputStreamResource> exportarExcel(
+            @RequestParam(name = "buscar", required = false) String buscar,
+            @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) {
+
+        try {
+            // 1. Buscamos la totalidad de registros que coinciden con los filtros actuales de la pantalla
+            List<Siniestro> siniestrosFiltrados = siniestroService.listarSiniestrosParaReporte(buscar, fecha, fechaDesde, fechaHasta);
+
+            // 2. Generamos el flujo binario del Excel
+            ByteArrayInputStream stream = excelReportService.generarReporteExcelSiniestro(siniestrosFiltrados);
+
+            // 3. Preparamos los encabezados HTTP para la descarga del archivo (.xlsx)
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=reporte_siniestros.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(org.springframework.http.MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(new org.springframework.core.io.InputStreamResource(stream));
+
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

@@ -7,7 +7,7 @@
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
-        extra_scripts=~{},
+        extra_scripts=~{:: script.extra-script},
         searchAction='/asignacion/listado'
       )}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
@@ -171,12 +171,28 @@
                     </li>
                 </ul>
             </nav>
-            <button class="btn btn-primary-custom btn-report">
-                <i class="fa-solid fa-print"></i>
-                Imprimir reporte
-            </button>
+            <a th:href="@{/asignacion/exportar/excel(buscar=${busqueda}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, fechaParticular=${fechaParticular}, estado=${estadoSeleccionado})}"
+               class="btn btn-success me-2 text-decoration-none">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Exportar <span class="d-none d-sm-inline">Excel</span></span>
+            </a>
         </div>
     </section>
-
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

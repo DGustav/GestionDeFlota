@@ -83,38 +83,39 @@
                  inicioReal=${inicio < 0 ? 0 : inicio}">
 
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=0, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Primera página">
+                        <a class="page-link" th:href="@{/conductor/listado(page=0, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Primera página">
                             <i class="fa-solid fa-angles-left"></i>
                         </a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual == 0 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Anterior</a>
+                        <a class="page-link" th:href="@{/conductor/listado(page=${paginaActual - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Anterior</a>
                     </li>
 
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(inicioReal, final)}"
                         th:classappend="${paginaActual == i ? 'active' : ''}">
                         <a class="page-link"
-                           th:href="@{/vehiculo/listado(page=${i}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}"
+                           th:href="@{/conductor/listado(page=${i}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}"
                            th:text="${i + 1}">1</a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=${paginaActual + 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Siguiente</a>
+                        <a class="page-link" th:href="@{/conductor/listado(page=${paginaActual + 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}">Siguiente</a>
                     </li>
 
                     <li class="page-item" th:classappend="${paginaActual + 1 == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{/vehiculo/listado(page=${totalPages - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Última página">
+                        <a class="page-link" th:href="@{/conductor/listado(page=${totalPages - 1}, buscar=${busqueda}, disponible=${disponible}, estado=${estadoSeleccionado}, origen=${origenSeleccionado}, propietario=${propietarioSeleccionado}, tipoVehiculo=${tipoVehiculoSeleccionado})}" title="Última página">
                             <i class="fa-solid fa-angles-right"></i>
                         </a>
                     </li>
                 </ul>
             </nav>
-            <button class="btn btn-primary-custom btn-report">
-                <i class="fa-solid fa-print"></i>
-                Imprimir reporte
-            </button>
+            <a th:href="@{/conductor/exportar/excel(buscar=${busqueda})}"
+               class="btn btn-success me-2 text-decoration-none">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Exportar <span class="d-none d-sm-inline">Excel</span></span>
+            </a>
         </div>
     </section>
 

@@ -3,12 +3,9 @@ package Biosidus.GestionDeFlota.domain.vehiculo;
 import java.time.LocalDate;
 import java.util.List;
 
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Entity

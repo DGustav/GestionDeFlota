@@ -89,7 +89,7 @@
                 <div class="form-group">
 
                     <label class="form-label">
-                        Vehículo y Conductor (Lectura)
+                        Vehículo (Lectura)
                     </label>
 
                     <div class="input-container">
@@ -97,7 +97,7 @@
 
                         <input type="text"
                                class="form-control-custom"
-                               th:value="${siniestro.nombreVehiculo + ' - ' + siniestroOriginal.contexto.conductor.nomApe}"
+                               th:value="${siniestro.nombreVehiculo}"
                                disabled>
                     </div>
                 </div>

@@ -2,11 +2,16 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.VehiculoDTO;
 import Biosidus.GestionDeFlota.domain.vehiculo.*;
 import Biosidus.GestionDeFlota.exceptions.PatenteDuplicadaException;
+import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.VehiculoImportService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
+
 @Controller
 @RequestMapping("/vehiculo")
 public class VehiculoController {
@@ -27,6 +36,8 @@ public class VehiculoController {
     private VehiculoService vehiculoService;
     @Autowired
     private VehiculoImportService vehiculoImportService;
+    @Autowired
+    private ExcelReportService excelReportService;
 
     @GetMapping("/listado")
     public String listadoVehiculos(@RequestParam(name="buscar", required=false) String buscar,
@@ -172,5 +183,32 @@ public class VehiculoController {
     @GetMapping("/importarVehiculos")
     public String plantilaDeCargaMasivaDeVehiculos() {
         return "importarVehiculos";
+    }
+
+    @GetMapping("/exportar/excel")
+    public ResponseEntity<InputStreamResource> exportarExcel(
+            @RequestParam(name = "buscar", required = false) String buscar,
+            @RequestParam(name = "disponible", required = false) Boolean disponible,
+            @RequestParam(name = "estado", required = false) EstadoVehiculo estado,
+            @RequestParam(name = "origen", required = false) OrigenVehiculo origen,
+            @RequestParam(name = "propietario", required = false) Propietario propietario,
+            @RequestParam(name = "tipoVehiculo", required = false) TipoVehiculo tipoVehiculo) {
+
+        try {
+            List<Vehiculo> vehiculosFiltrados = vehiculoService.listarVehiculosParaReporte(buscar, disponible, estado, origen, propietario, tipoVehiculo);
+
+            ByteArrayInputStream stream = excelReportService.generarReporteExcelVehiculo(vehiculosFiltrados);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=reporte_vehiculos.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(new InputStreamResource(stream));
+
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

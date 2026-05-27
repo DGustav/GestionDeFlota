@@ -3,7 +3,7 @@ package Biosidus.GestionDeFlota.domain.siniestro;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +18,8 @@ public class Siniestro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "asignacion_id",referencedColumnName = "id")
-    private Asignacion contexto;
+    @JoinColumn(name = "vehiculo_id",referencedColumnName = "id")
+    private Vehiculo vehiculo;
     @Column(name = "fecha_siniestro",nullable = false)
     private LocalDateTime fechaSiniestro;
     @Column(name = "descripcion")

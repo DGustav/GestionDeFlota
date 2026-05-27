@@ -75,7 +75,7 @@
                             <label class="form-label">Fecha de Devolución Estimada</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-calendar-clock"></i>
-                                <input type="datetime-local" th:field="*{fechaDevolucionEstimada}" class="form-control-custom" required />
+                                <input type="datetime-local" th:field="*{fechaDevolucionEstimada}" class="form-control-custom"/>
                             </div>
                             <div class="text-danger" th:if="${#fields.hasErrors('fechaDevolucionEstimada')}" th:errors="*{fechaDevolucionEstimada}"></div>
                         </div>
@@ -172,17 +172,7 @@
 
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
-            var exito = /*[[${exito}]]*/ null;
             var error = /*[[${error}]]*/ null;
-
-            if (exito) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: exito,
-                    confirmButtonColor: '#004b81'
-                });
-            }
 
             if (error) {
                 Swal.fire({

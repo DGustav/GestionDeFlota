@@ -79,7 +79,6 @@
                     <th>ID</th>
                     <th>Fecha</th>
                     <th>Vehículo</th>
-                    <th>Conductor</th>
                     <th class="d-none d-md-table-cell">Descripción</th>
                     <th class="text-center">Acciones</th>
                 </tr>
@@ -90,10 +89,10 @@
                     <td th:text="'#' + ${siniestro.id}">#1</td>
                     <td th:text="${#temporals.format(siniestro.fechaSiniestro, 'dd/MM/yyyy HH:mm')}">15/03/2026 14:30</td>
                     <td>
-                        <div class="desc-title" th:text="${siniestro.contexto.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
-                        <small class="text-muted" th:text="${siniestro.contexto.vehiculo.patente}">AB 123 CD</small>
+                        <div class="desc-title" th:text="${siniestro.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
+                        <small class="text-muted" th:text="${siniestro.vehiculo.patente}">AB 123 CD</small>
                     </td>
-                    <td th:text="${siniestro.contexto.conductor.nomApe}">Gustavo Porcel</td>
+
                     <td class="d-none d-md-table-cell text-truncate" style="max-width: 200px;" th:text="${siniestro.descripcion}">Choque leve en estacionamiento</td>
                     <td class="text-center">
                         <a th:href="@{/siniestro/detalle/{id}(id=${siniestro.id})}" class="text-info me-2" title="Ver detalle">
@@ -151,10 +150,11 @@
                     </li>
                 </ul>
             </nav>
-            <button class="btn btn-primary-custom btn-report">
-                <i class="fa-solid fa-print"></i>
-                Exportar
-            </button>
+            <a th:href="@{/siniestro/exportar/excel(buscar=${busqueda}, fecha=${fecha != null ? #temporals.format(fecha, 'yyyy-MM-dd') : ''}, fechaDesde=${fechaDesde != null ? #temporals.format(fechaDesde, 'yyyy-MM-dd') : ''}, fechaHasta=${fechaHasta != null ? #temporals.format(fechaHasta, 'yyyy-MM-dd') : ''})}"
+                class="btn btn-success me-2 text-decoration-none">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Exportar <span class="d-none d-sm-inline">Excel</span></span>
+            </a>
         </div>
     </section>
 

@@ -65,26 +65,11 @@
                                 <h6 class="border-bottom pb-2 mb-3">Información del Vehículo</h6>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Vehículo:</div>
-                                    <div class="col-sm-8" th:text="${siniestro.contexto.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
+                                    <div class="col-sm-8" th:text="${siniestro.vehiculo.modelo.nombreCompletoModelo}">Ford Mustang 2025</div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold">Patente:</div>
-                                    <div class="col-sm-8" th:text="${siniestro.contexto.vehiculo.patente}">ABC-123</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="border-bottom pb-2 mb-3">Información del Conductor</h6>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Conductor:</div>
-                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.nomApe}">Gustavo Porcel</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Legajo:</div>
-                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.legajo}">-</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">DNI:</div>
-                                    <div class="col-sm-8" th:text="${siniestro.contexto.conductor.dni}">-</div>
+                                    <div class="col-sm-8" th:text="${siniestro.vehiculo.patente}">ABC-123</div>
                                 </div>
                             </div>
                         </div>

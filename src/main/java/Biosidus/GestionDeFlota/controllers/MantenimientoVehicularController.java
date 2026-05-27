@@ -1,8 +1,8 @@
 package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
-import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
-import Biosidus.GestionDeFlota.domain.vehiculo.MantenimientoVehicular;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.MantenimientoVehicularService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
 import jakarta.validation.Valid;
@@ -16,6 +16,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,6 +34,9 @@ public class MantenimientoVehicularController {
 
     @Autowired
     private VehiculoService vehiculoService;
+
+    @Autowired
+    private ExcelReportService excelReportService;
 
     @GetMapping("/listado")
     public String listadoMantenimientos(Model model, 
@@ -66,7 +72,7 @@ public class MantenimientoVehicularController {
                                        Model model,
                                        RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos().stream().filter(v -> v.getEstado() != EstadoVehiculo.EN_SERVICE).toList();
+            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
             model.addAttribute("vehiculos", vehiculos);
             return "crearMantenimiento";
         }
@@ -130,5 +136,19 @@ public class MantenimientoVehicularController {
         } catch (MalformedURLException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/exportar/excel")
+    public ResponseEntity<InputStreamResource> exportarExcel(@RequestParam(name = "buscar", required = false) String buscar,
+                                                            @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+                                                            @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+                                                            @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) throws IOException {
+        List<MantenimientoVehicular> mantenimientos = mantenimientoService.listarMantenimientos(buscar, fecha, fechaDesde, fechaHasta);
+        InputStreamResource file = new InputStreamResource(excelReportService.generarReporteExcelMantenimiento(mantenimientos));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mantenimientos.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
     }
 }

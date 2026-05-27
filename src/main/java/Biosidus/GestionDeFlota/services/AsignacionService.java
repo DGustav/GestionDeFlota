@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AsignacionService {
@@ -105,6 +106,9 @@ public class AsignacionService {
         
         // Regla de negocio específica para creación: el kilometraje inicial es el actual del vehículo
         asignacion.setKilometrajeInicial(vehiculo.getKilometrajeActual());
+        asignacion.setKilometrosRecorridos(0);
+        asignacion.setKilometrajeFinal(vehiculo.getKilometrajeActual());
+
         vehiculo.setDisponible(false);
         
         asignacionRepositorio.save(asignacion);
@@ -185,9 +189,62 @@ public class AsignacionService {
     }
 
     @Transactional(readOnly = true)
+    public List<Asignacion> listarAsignacionesParaReporte(String buscar, LocalDateTime fechaDesde, LocalDateTime fechaHasta, LocalDateTime fechaParticular, Long vehiculoId, Long conductorId, EstadoAsignacion estado) {
+        Specification<Asignacion> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (buscar != null && !buscar.isEmpty()) {
+                String likePattern = "%" + buscar.toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.join("vehiculo").get("patente")), likePattern),
+                        cb.like(cb.lower(root.join("vehiculo").join("modelo").get("nombreCompletoModelo")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("nomApe")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("legajo")), likePattern),
+                        cb.like(cb.lower(root.join("conductor").get("dni")), likePattern)
+                ));
+            }
+
+            if (fechaDesde != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("fechaAsignacion"), fechaDesde));
+            }
+
+            if (fechaHasta != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("fechaAsignacion"), fechaHasta));
+            }
+
+            if (fechaParticular != null) {
+                LocalDateTime startOfDay = fechaParticular.toLocalDate().atStartOfDay();
+                LocalDateTime endOfDay = fechaParticular.toLocalDate().atTime(LocalTime.MAX);
+                predicates.add(cb.between(root.get("fechaAsignacion"), startOfDay, endOfDay));
+            }
+
+            if (vehiculoId != null) {
+                predicates.add(cb.equal(root.get("vehiculo").get("id"), vehiculoId));
+            }
+
+            if (conductorId != null) {
+                predicates.add(cb.equal(root.get("conductor").get("id"), conductorId));
+            }
+
+            if (estado != null) {
+                predicates.add(cb.equal(root.get("estado"), estado));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return asignacionRepositorio.findAll(spec, Sort.by("id").descending());
+    }
+
+    @Transactional(readOnly = true)
     public Asignacion obtenerPorId(Long id) {
         return asignacionRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Asignación no encontrada con ID: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Asignacion> filtrarPorVehiculo(Long vehiculoId) {
+        return asignacionRepositorio.findFirstByVehiculoIdAndFechaDevolucionIsNullOrderByFechaAsignacionDesc(vehiculoId);
     }
 
 }

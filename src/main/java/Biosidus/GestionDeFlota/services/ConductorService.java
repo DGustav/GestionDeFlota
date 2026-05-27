@@ -36,7 +36,7 @@ public class ConductorService {
     @Transactional(readOnly = true)
     public Page<Conductor> listarConductores(String busqueda, int numeroPagina) {
         // Configuramos: página actual, tamaño (10 items) y orden ascendente por nombre
-        Pageable pageable = PageRequest.of(numeroPagina, 2, Sort.by("nomApe").ascending());
+        Pageable pageable = PageRequest.of(numeroPagina, 5, Sort.by("nomApe").ascending());
 
         if (busqueda != null && !busqueda.isEmpty()) {
             return conductorRepositorio.findByNomApeContainingIgnoreCaseOrDniContainingOrLegajoContainingOrUsuarioNicknameContainingIgnoreCaseOrMailContainingIgnoreCase(
@@ -51,6 +51,16 @@ public class ConductorService {
     @Transactional(readOnly = true)
     public Conductor buscarPorId(Long id) {
         return conductorRepositorio.findById(id).orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Conductor> listarConductoresParaReporte(String busqueda) {
+        if (busqueda != null && !busqueda.isEmpty()) {
+            return conductorRepositorio.findByNomApeContainingIgnoreCaseOrDniContainingOrLegajoContainingOrUsuarioNicknameContainingIgnoreCaseOrMailContainingIgnoreCase(
+                    busqueda, busqueda, busqueda, busqueda, busqueda, Sort.by("nomApe").ascending()
+            );
+        }
+        return conductorRepositorio.findAll(Sort.by("nomApe").ascending());
     }
 
     @Transactional

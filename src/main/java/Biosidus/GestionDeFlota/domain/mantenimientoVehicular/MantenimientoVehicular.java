@@ -1,5 +1,7 @@
-package Biosidus.GestionDeFlota.domain.vehiculo;
+package Biosidus.GestionDeFlota.domain.mantenimientoVehicular;
 import java.time.LocalDateTime;
+
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -30,7 +30,6 @@ public class AsignacionDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime fechaDevolucion;
 
-    @NotNull(message = "La fecha de devolución estimada es obligatoria")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime fechaDevolucionEstimada;
 

@@ -167,6 +167,11 @@
                     </li>
                 </ul>
             </nav>
+            <a th:href="@{/documento/exportar/excel(estado=${estadoSeleccionado}, tipo=${tipoSeleccionado}, buscar=${busqueda})}"
+               class="btn btn-success me-2 text-decoration-none">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Exportar <span class="d-none d-sm-inline">Excel</span></span>
+            </a>
         </div>
     </section>
 
