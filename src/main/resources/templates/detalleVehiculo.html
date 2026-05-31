@@ -96,32 +96,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>VTV</td>
-                                        <td>15/12/2026</td>
-                                        <td><span class="badge bg-success">Vigente</span></td>
+                                    <tr th:each="doc : ${documentos}">
+                                        <td th:text="${#strings.replace(doc.tipoDocumento, '_', ' ')}">VTV</td>
+                                        <td th:text="${#temporals.format(doc.fechaVencimiento, 'dd/MM/yyyy')}">15/12/2026</td>
+                                        <td>
+                                            <span class="badge" 
+                                                  th:classappend="${doc.estadoDocumento.name() == 'VIGENTE' ? 'bg-success' : (doc.estadoDocumento.name() == 'POR_VENCER' ? 'bg-warning' : 'bg-danger')}"
+                                                  th:text="${#strings.replace(doc.estadoDocumento, '_', ' ')}">Vigente</span>
+                                        </td>
                                         <td class="text-center">
-                                            <a th:href="@{/documento/detalle/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                            <a th:href="@{/documento/detalle/{id}(id=${doc.id})}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a th:href="@{/documento/descargar/{id}(id=${doc.id})}" class="text-info" download><i class="fa-solid fa-download"></i></a>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>Cédula</td>
-                                        <td>01/01/2025</td>
-                                        <td><span class="badge bg-success">Vigente</span></td>
-                                        <td class="text-center">
-                                            <a th:href="@{/documento/detalle/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Seguro</td>
-                                        <td>20/06/2024</td>
-                                        <td><span class="badge bg-success">Vigente</span></td>
-                                        <td class="text-center">
-                                            <a th:href="@{/documento/detalle/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
-                                        </td>
+                                    <tr th:if="${#lists.isEmpty(documentos)}">
+                                        <td colspan="4" class="text-center">No hay documentos asociados a este vehículo.</td>
                                     </tr>
                                 </tbody>
                             </table>

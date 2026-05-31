@@ -1,6 +1,7 @@
 package Biosidus.GestionDeFlota.repositorios;
 
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
+import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,6 +33,8 @@ public interface ConductorRepositorio extends JpaRepository<Conductor, Long> {
             String mail,
             Sort sort
     );
+
+    List<Conductor> findByUsuarioRol(Rol rol);
 
     Page<Conductor> findAll(Pageable pageable);
 }

@@ -34,10 +34,6 @@ public class Documento {
     @Column(name="estado_documento",nullable = false)
     private EstadoDocumento estadoDocumento;
 
-    public Boolean estaVencido(){
-        return LocalDate.now().isAfter(fechaVencimiento);
-    }
-
     public Boolean esVehiculo(){
         return vehiculo != null;
     }
@@ -46,5 +42,22 @@ public class Documento {
         return conductor != null;
     }
 
+    public EstadoDocumento calcularEstado(int diasAnticipacion) {
 
+        LocalDate hoy = LocalDate.now();
+        LocalDate fechaLimite = hoy.plusDays(diasAnticipacion);
+
+        if (fechaVencimiento.isBefore(hoy)) {
+            return EstadoDocumento.VENCIDO;
+        }
+
+        if (
+                fechaVencimiento.isEqual(hoy)
+                        || fechaVencimiento.isBefore(fechaLimite)
+        ) {
+            return EstadoDocumento.POR_VENCER;
+        }
+
+        return EstadoDocumento.VIGENTE;
+    }
 }

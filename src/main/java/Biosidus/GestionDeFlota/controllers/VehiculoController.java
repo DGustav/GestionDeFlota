@@ -2,6 +2,7 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.VehiculoDTO;
 import Biosidus.GestionDeFlota.domain.vehiculo.*;
 import Biosidus.GestionDeFlota.exceptions.PatenteDuplicadaException;
+import Biosidus.GestionDeFlota.services.DocumentoService;
 import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.VehiculoImportService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
@@ -34,6 +35,8 @@ public class VehiculoController {
 
     @Autowired
     private VehiculoService vehiculoService;
+    @Autowired
+    private DocumentoService documentoService;
     @Autowired
     private VehiculoImportService vehiculoImportService;
     @Autowired
@@ -166,6 +169,7 @@ public class VehiculoController {
         Vehiculo vehiculo = vehiculoService.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
         model.addAttribute("vehiculo", vehiculo);
+        model.addAttribute("documentos", documentoService.listarPorVehiculo(id));
         return "detalleVehiculo";
     }
 

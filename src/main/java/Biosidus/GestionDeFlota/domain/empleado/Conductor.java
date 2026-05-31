@@ -33,4 +33,5 @@ public class Conductor {
     @Enumerated(EnumType.STRING)
     @Column(name = "rango",nullable = false)
     private Rango rango;
+
 }

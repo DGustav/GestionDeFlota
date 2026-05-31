@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "Asignacion")
+@Table(name = "asignacion")
 
 public class Asignacion {
     @Id
@@ -31,6 +31,7 @@ public class Asignacion {
     @Column(name = "fecha_devolucion_estimada")
     private LocalDateTime fechaDevolucionEstimada;
     @Enumerated(EnumType.STRING)
+    @Column(name = "estado",nullable = false)
     private EstadoAsignacion estado;
     @Column(name = "kilometraje_inicial")
     private Integer kilometrajeInicial;

@@ -2,8 +2,7 @@ package Biosidus.GestionDeFlota.domain.documento;
 
 public enum TipoDocumento {
     VTV,
-    CEDULA,
-    SEGURO,
-    LICENCIA,
-    MULTA,
+    CEDULA_VERDE,
+    CEDULA_AZUL,
+    REGISTRO,
 }

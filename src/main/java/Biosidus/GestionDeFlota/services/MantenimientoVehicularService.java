@@ -207,4 +207,9 @@ public class MantenimientoVehicularService {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Transactional
+    public List<MantenimientoVehicular> listarMantenimientosPorVehiculo(Vehiculo vehiculo) {
+        return mantenimientoRepositorio.findByVehiculo(vehiculo);
+    }
 }

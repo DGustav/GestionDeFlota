@@ -45,6 +45,9 @@ public class DocumentoService {
     @Autowired
     private ConductorRepositorio conductorRepositorio;
 
+    @Autowired
+    private AlertaService alertaService;
+
     @Value("${spring.servlet.multipart.location}")
     private String uploadLocation;
 
@@ -114,6 +117,10 @@ public class DocumentoService {
             throw new RuntimeException("Debe seleccionar un vehículo o un conductor");
         }
 
+//        if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento())) {
+//
+//        }
+
         MultipartFile archivo = dto.getArchivo();
         if (archivo != null && !archivo.isEmpty()) {
             String originalFilename = archivo.getOriginalFilename();
@@ -178,4 +185,20 @@ public class DocumentoService {
         }
         return documentoRepositorio.findAll(Sort.by("id").descending());
     }
+
+    @Transactional
+    public List<Documento> listarDocumentos() {
+        return documentoRepositorio.findAll(Sort.by("id").descending());
+    }
+
+    @Transactional
+    public List<Documento> buscarDocumentosAntesDeFecha(LocalDate fechaLimite){
+        return documentoRepositorio.findByFechaVencimientoLessThanEqual(fechaLimite);
+    }
+
+    @Transactional
+    public List<Documento> listarPorVehiculo(Long vehiculoId) {
+        return documentoRepositorio.findByVehiculoId(vehiculoId);
+    }
+
 }

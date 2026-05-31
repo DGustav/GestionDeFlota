@@ -1,6 +1,7 @@
 package Biosidus.GestionDeFlota.repositorios;
 
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -68,4 +69,6 @@ public interface MantenimientoVehicularRepositorio extends JpaRepository<Manteni
                                                  @Param("fechaHasta") LocalDateTime fechaHasta,
                                                  @Param("fechaInicio") LocalDateTime fechaInicio,
                                                  @Param("fechaFin") LocalDateTime fechaFin);
+
+    List<MantenimientoVehicular> findByVehiculo(Vehiculo vehiculo);
 }

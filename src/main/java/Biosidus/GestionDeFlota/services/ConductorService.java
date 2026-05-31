@@ -2,6 +2,7 @@ package Biosidus.GestionDeFlota.services;
 
 import Biosidus.GestionDeFlota.DTOs.ConductorUsuarioDTO;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
+import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import Biosidus.GestionDeFlota.domain.empleado.Usuario;
 import Biosidus.GestionDeFlota.exceptions.ContraseniasSinCoincidirException;
 import Biosidus.GestionDeFlota.exceptions.DniDuplicadoException;
@@ -149,4 +150,10 @@ public class ConductorService {
         usuarioRepositorio.save(usuario);
         conductorRepositorio.save(conductor);
     }
+
+    public List<Conductor> listarConductores() {
+        return conductorRepositorio.findAll();
+    }
+
+
 }
