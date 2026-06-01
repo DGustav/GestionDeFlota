@@ -59,16 +59,14 @@ public class SecurityConfig {
                         .requestMatchers("/asignacion/mis-asignaciones").hasRole("CONDUCTOR")
                         .requestMatchers("/siniestro/mis-siniestros").hasRole("CONDUCTOR")
                         .requestMatchers("/mantenimientoVehicular/mis-mantenimientosVehiculares").hasRole("CONDUCTOR")
-                        .requestMatchers("/asignacion/detalle/{id}").hasAnyRole("CONDUCTOR")
+                        .requestMatchers("/asignacion/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/vehiculo/detalle/{id}").hasRole("CONDUCTOR")
-                        .requestMatchers("/mantenimientoVehicular/detalle/{id}").hasRole("CONDUCTOR")
+                        .requestMatchers("/mantenimientoVehicular/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
                         // El detalle lo pueden ver los 3 roles
                         .requestMatchers("/siniestro/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO", "ADMINISTRADOR")
-                        // El resto de las rutas de siniestros (crear, editar, eliminar, listado general) solo Operario y Administrador.requestMatchers("/siniestro/**").hasAnyRole("OPERARIO", "ADMINISTRADOR")
-                        .requestMatchers("/asignacion/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/vehiculo/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/conductor/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
-                        .requestMatchers("/mantenimientoVehicular/**").hasAnyRole("OPERARIO", "CONDUCTOR","ADMINISTRADOR")
+
 
                         .requestMatchers("/documento/**").hasAnyRole("ADMINISTRADOR")
 

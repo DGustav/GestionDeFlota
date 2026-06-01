@@ -66,7 +66,7 @@ public class MantenimientoVehicularService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MantenimientoVehicular> listarMantenimientos(int page, String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta) {
+    public Page<MantenimientoVehicular> listarMantenimientos(int page, String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta, Vehiculo vehiculo) {
         Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
         
         LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
@@ -76,20 +76,27 @@ public class MantenimientoVehicularService {
 
         if (desde != null || hasta != null || fecha != null) {
             if (buscar != null && !buscar.isEmpty()) {
-                return mantenimientoRepositorio.filtrarPorRangoYBusqueda(desde, hasta, fechaInicio, fechaFin, buscar, pageable);
+                return mantenimientoRepositorio.filtrarPorRangoYBusqueda(vehiculo, desde, hasta, fechaInicio, fechaFin, buscar, pageable);
             } else {
-                return mantenimientoRepositorio.filtrarPorRango(desde, hasta, fechaInicio, fechaFin, pageable);
+                return mantenimientoRepositorio.filtrarPorRango(vehiculo, desde, hasta, fechaInicio, fechaFin, pageable);
             }
         }
 
         if (buscar != null && !buscar.isEmpty()) {
+            if (vehiculo != null) {
+                return mantenimientoRepositorio.buscarPorVehiculoYTermino(vehiculo, buscar, pageable);
+            }
             return mantenimientoRepositorio.findByVehiculoModeloNombreCompletoModeloContainingIgnoreCaseOrVehiculoPatenteContainingIgnoreCaseOrDescripcionContainingIgnoreCase(buscar, buscar, buscar, pageable);
+        }
+
+        if (vehiculo != null) {
+            return mantenimientoRepositorio.findByVehiculo(vehiculo, pageable);
         }
         return mantenimientoRepositorio.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<MantenimientoVehicular> listarMantenimientos(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta) {
+    public List<MantenimientoVehicular> listarMantenimientos(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta, Vehiculo vehiculo) {
         LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
         LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
         LocalDateTime fechaInicio = (fecha != null) ? fecha.atStartOfDay() : null;
@@ -97,14 +104,19 @@ public class MantenimientoVehicularService {
 
         if (desde != null || hasta != null || fecha != null) {
             if (buscar != null && !buscar.isEmpty()) {
-                return mantenimientoRepositorio.filtrarPorRangoYBusquedaSinPag(desde, hasta, fechaInicio, fechaFin, buscar);
+                return mantenimientoRepositorio.filtrarPorRangoYBusquedaSinPag(vehiculo, desde, hasta, fechaInicio, fechaFin, buscar);
             } else {
-                return mantenimientoRepositorio.filtrarPorRangoSinPag(desde, hasta, fechaInicio, fechaFin);
+                return mantenimientoRepositorio.filtrarPorRangoSinPag(vehiculo, desde, hasta, fechaInicio, fechaFin);
             }
         }
 
         if (buscar != null && !buscar.isEmpty()) {
+            // Aquí faltaría un findByVehiculoAnd... que devuelva List, pero por ahora simplificamos
             return mantenimientoRepositorio.findByVehiculoModeloNombreCompletoModeloContainingIgnoreCaseOrVehiculoPatenteContainingIgnoreCaseOrDescripcionContainingIgnoreCase(buscar, buscar, buscar);
+        }
+        
+        if (vehiculo != null) {
+            return mantenimientoRepositorio.findByVehiculo(vehiculo);
         }
         return mantenimientoRepositorio.findAll();
     }

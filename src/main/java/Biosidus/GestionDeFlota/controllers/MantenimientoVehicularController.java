@@ -2,6 +2,8 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
+import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.services.AsignacionService;
 import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.MantenimientoVehicularService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/mantenimientoVehicular")
@@ -39,14 +42,38 @@ public class MantenimientoVehicularController {
     @Autowired
     private ExcelReportService excelReportService;
 
+    @Autowired
+    private AsignacionService asignacionService;
+
     @GetMapping("/listado")
     public String listadoMantenimientos(Model model, 
+                                       Authentication authentication,
                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                        @RequestParam(name = "buscar", required = false) String buscar,
                                        @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                                        @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                        @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) {
-        Page<MantenimientoVehicular> pagina = mantenimientoService.listarMantenimientos(page, buscar, fecha, fechaDesde, fechaHasta);
+        
+        Vehiculo vehiculoFiltrado = null;
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+        if (esConductor) {
+            Optional<Asignacion> asignacionActiva = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(authentication.getName());
+            if (asignacionActiva.isPresent()) {
+                vehiculoFiltrado = asignacionActiva.get().getVehiculo();
+            } else {
+                // Si el conductor no tiene vehículo asignado, devolvemos una página vacía o lista vacía
+                model.addAttribute("mantenimientos", List.of());
+                model.addAttribute("paginaActual", 0);
+                model.addAttribute("totalPages", 0);
+                model.addAttribute("totalItems", 0);
+                return "listadoMantenimientos";
+            }
+        }
+
+        Page<MantenimientoVehicular> pagina = mantenimientoService.listarMantenimientos(page, buscar, fecha, fechaDesde, fechaHasta, vehiculoFiltrado);
+        
         model.addAttribute("mantenimientos", pagina.getContent());
         model.addAttribute("paginaActual", page);
         model.addAttribute("totalPages", pagina.getTotalPages());
@@ -140,11 +167,26 @@ public class MantenimientoVehicularController {
     }
 
     @GetMapping("/exportar/excel")
-    public ResponseEntity<InputStreamResource> exportarExcel(@RequestParam(name = "buscar", required = false) String buscar,
+    public ResponseEntity<InputStreamResource> exportarExcel(Authentication authentication,
+                                                            @RequestParam(name = "buscar", required = false) String buscar,
                                                             @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                                                             @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                                             @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) throws IOException {
-        List<MantenimientoVehicular> mantenimientos = mantenimientoService.listarMantenimientos(buscar, fecha, fechaDesde, fechaHasta);
+        
+        Vehiculo vehiculoFiltrado = null;
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+        if (esConductor) {
+            Optional<Asignacion> asignacionActiva = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(authentication.getName());
+            if (asignacionActiva.isPresent()) {
+                vehiculoFiltrado = asignacionActiva.get().getVehiculo();
+            } else {
+                return ResponseEntity.ok().build(); // O manejar de otra forma
+            }
+        }
+
+        List<MantenimientoVehicular> mantenimientos = mantenimientoService.listarMantenimientos(buscar, fecha, fechaDesde, fechaHasta, vehiculoFiltrado);
         InputStreamResource file = new InputStreamResource(excelReportService.generarReporteExcelMantenimiento(mantenimientos));
 
         return ResponseEntity.ok()
@@ -154,9 +196,7 @@ public class MantenimientoVehicularController {
     }
 
     @GetMapping("/mis-mantenimientosVehiculares")
-    public String mostrarMisMantenimientosVehiculares(Model model, Authentication authentication) {
-        List<MantenimientoVehicular> mantenimientos = mantenimientoService.obtenerMantenimientosPorUsuario(authentication.getName());
-        model.addAttribute("mantenimientos", mantenimientos);
-        return "listadoMantenimientos";
+    public String mostrarMisMantenimientosVehiculares() {
+        return "redirect:/mantenimientoVehicular/listado";
     }
 }

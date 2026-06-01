@@ -49,7 +49,8 @@ public class AsignacionController {
     private ExcelReportService excelReportService;
 
     @GetMapping("/listado")
-    public String listadoAsignaciones(@RequestParam(name = "buscar", required = false) String buscar,
+    public String listadoAsignaciones(Authentication authentication,
+                                     @RequestParam(name = "buscar", required = false) String buscar,
                                      @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                      @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
                                      @RequestParam(name = "fechaParticular", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaParticular,
@@ -59,11 +60,22 @@ public class AsignacionController {
                                      @RequestParam(name = "page", defaultValue = "0") int page,
                                      Model model) {
         
+        Long conductorFiltradoId = conductorId;
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+        if (esConductor) {
+            Biosidus.GestionDeFlota.domain.empleado.Conductor conductor = conductorService.obtenerConductorPorUsuarioNickname(authentication.getName());
+            if (conductor != null) {
+                conductorFiltradoId = conductor.getId();
+            }
+        }
+
         LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
         LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
         LocalDateTime particular = (fechaParticular != null) ? fechaParticular.atStartOfDay() : null;
 
-        Page<Asignacion> pagina = asignacionService.listarAsignaciones(buscar, desde, hasta, particular, vehiculoId, conductorId, estado, page);
+        Page<Asignacion> pagina = asignacionService.listarAsignaciones(buscar, desde, hasta, particular, vehiculoId, conductorFiltradoId, estado, page);
         
         model.addAttribute("asignaciones", pagina.getContent());
         model.addAttribute("paginaActual", page);
@@ -165,6 +177,7 @@ public class AsignacionController {
 
     @GetMapping("/exportar/excel")
     public ResponseEntity<InputStreamResource> exportarExcel(
+            Authentication authentication,
             @RequestParam(name = "buscar", required = false) String buscar,
             @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
             @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
@@ -174,11 +187,22 @@ public class AsignacionController {
             @RequestParam(name = "estado", required = false) EstadoAsignacion estado) {
 
         try {
+            Long conductorFiltradoId = conductorId;
+            boolean esConductor = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+            if (esConductor) {
+                Biosidus.GestionDeFlota.domain.empleado.Conductor conductor = conductorService.obtenerConductorPorUsuarioNickname(authentication.getName());
+                if (conductor != null) {
+                    conductorFiltradoId = conductor.getId();
+                }
+            }
+
             LocalDateTime desde = (fechaDesde != null) ? fechaDesde.atStartOfDay() : null;
             LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
             LocalDateTime particular = (fechaParticular != null) ? fechaParticular.atStartOfDay() : null;
 
-            List<Asignacion> asignacionesFiltradas = asignacionService.listarAsignacionesParaReporte(buscar, desde, hasta, particular, vehiculoId, conductorId, estado);
+            List<Asignacion> asignacionesFiltradas = asignacionService.listarAsignacionesParaReporte(buscar, desde, hasta, particular, vehiculoId, conductorFiltradoId, estado);
 
             ByteArrayInputStream stream = excelReportService.generarReporteExcelAsignacion(asignacionesFiltradas);
 
@@ -196,9 +220,7 @@ public class AsignacionController {
     }
 
     @GetMapping("/mis-asignaciones")
-    public String obtenerMisAsignaciones(Model model, Authentication authentication){
-        List<Asignacion> asignaciones = asignacionService.obtenerAsignacionesPorConductor(conductorService.obtenerConductorPorUsuarioNickname(authentication.getName()).getId());
-        model.addAttribute("asignaciones", asignaciones);
-        return "listadoAsignaciones";
+    public String obtenerMisAsignaciones() {
+        return "redirect:/asignacion/listado";
     }
 }
