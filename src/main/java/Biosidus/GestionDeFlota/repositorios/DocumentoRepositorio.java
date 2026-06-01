@@ -5,6 +5,7 @@ import Biosidus.GestionDeFlota.domain.documento.EstadoDocumento;
 import Biosidus.GestionDeFlota.domain.documento.TipoDocumento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +32,9 @@ public interface DocumentoRepositorio extends JpaRepository<Documento, Long> {
                                       Pageable pageable);
 
     List<Documento> findByVehiculoId(Long vehiculoId);
+    List<Documento> findByConductorId(Long conductorId);
 
     List<Documento> findByFechaVencimientoLessThanEqual(LocalDate fechaLimite);
+
+    List<Documento> findByEstadoDocumento(EstadoDocumento estadoDocumento);
 }

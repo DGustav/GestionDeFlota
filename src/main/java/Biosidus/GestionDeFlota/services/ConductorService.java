@@ -155,5 +155,9 @@ public class ConductorService {
         return conductorRepositorio.findAll();
     }
 
+    public Conductor obtenerConductorPorUsuarioNickname(String nickname) {
+        return conductorRepositorio.findByUsuarioNickname(nickname);
+    }
+
 
 }

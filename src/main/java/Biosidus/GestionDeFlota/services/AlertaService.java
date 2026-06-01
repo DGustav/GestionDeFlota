@@ -1,11 +1,16 @@
 package Biosidus.GestionDeFlota.services;
 
 import Biosidus.GestionDeFlota.domain.alerta.Alerta;
+import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
 import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
+import Biosidus.GestionDeFlota.domain.documento.Documento;
+import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import Biosidus.GestionDeFlota.repositorios.AlertaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class AlertaService {
@@ -23,12 +28,22 @@ public class AlertaService {
     }
 
     @Transactional
-    public Boolean existeAlertaPorDocumentoYtipo(Long id, TipoAlerta tipo) {
-        return alertaRepo.existsByDocumentoIdAndTipo(id, tipo);
+    public Boolean existeAlertaPorDocumentoYtipo(Long id, TipoAlerta tipo, EstadoAlerta estado) {
+        return alertaRepo.existsByDocumentoIdAndTipoAndEstado(id, tipo, estado);
     }
 
     @Transactional
-    public Boolean existeAlertaPorVehiculoYtipo(Long id, TipoAlerta tipo) {
-        return alertaRepo.existsByVehiculoIdAndTipo(id, tipo);
+    public Boolean existeAlertaPorVehiculoYtipo(Long id, TipoAlerta tipo, EstadoAlerta estado) {
+        return alertaRepo.existsByVehiculoIdAndTipoAndEstado(id, tipo, EstadoAlerta.ACTIVA);
+    }
+
+    @Transactional
+    public Optional<Alerta> obtenerDocumentoConAlertaActiva(Documento documento) {
+        return alertaRepo.findFirstByDocumentoIdAndEstado(documento.getId(), EstadoAlerta.ACTIVA);
+    }
+
+    @Transactional
+    public Optional<Alerta> obtenerAlertaActivaPorKm(Vehiculo vehiculo, TipoAlerta tipo, EstadoAlerta estado) {
+        return alertaRepo.findFirstByVehiculoIdAndTipoAndEstado(vehiculo.getId(),tipo, estado);
     }
 }

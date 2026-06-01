@@ -1,11 +1,13 @@
 package Biosidus.GestionDeFlota.controllers;
 
 import Biosidus.GestionDeFlota.DTOs.SiniestroDTO;
+import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import Biosidus.GestionDeFlota.services.ExcelReportService;
 import Biosidus.GestionDeFlota.services.SiniestroService;
 import Biosidus.GestionDeFlota.services.VehiculoService;
+import Biosidus.GestionDeFlota.services.AsignacionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,17 +47,29 @@ public class SiniestroController {
     @Autowired
     private ExcelReportService excelReportService;
 
+    @Autowired
+    private AsignacionService asignacionService;
+
     @GetMapping("/listado")
     public String listadoSiniestros(Model model,
                                     @RequestParam(name = "buscar", required = false) String buscar,
                                     @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                                     @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                     @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
-                                    @RequestParam(defaultValue = "0") int page) {
+                                    @RequestParam(defaultValue = "0") int page,
+                                    Authentication authentication) {
         
+        Long vehiculoId = null;
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"))) {
+            vehiculoId = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
+                    .map(a -> a.getVehiculo().getId())
+                    .orElse(-1L); // -1L para que no devuelva nada si no tiene vehículo
+        }
+
         int pageSize = 5;
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "fechaSiniestro"));
-        Page<Siniestro> siniestrosPage = siniestroService.listarSiniestros(buscar, fecha, fechaDesde, fechaHasta, pageable);
+        Page<Siniestro> siniestrosPage = siniestroService.listarSiniestros(buscar, fecha, fechaDesde, fechaHasta, vehiculoId, pageable);
 
         model.addAttribute("siniestros", siniestrosPage.getContent());
         model.addAttribute("paginaActual", page);
@@ -164,6 +180,11 @@ public class SiniestroController {
         return "detalleSiniestro";
     }
 
+    @GetMapping("/mis-siniestro")
+    public String misSiniestro(Model model, Authentication principal) {
+        return "redirect:/siniestro/listado";
+    }
+
     @GetMapping("/descargar-prueba")
     public ResponseEntity<Resource> descargarPrueba(@RequestParam String ruta) {
         try {
@@ -199,5 +220,9 @@ public class SiniestroController {
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+    @GetMapping("/mis-siniestros")
+    public String obtenerMisSiniestros(Model model, Authentication authentication){
+        return "redirect:/siniestro/listado";
     }
 }

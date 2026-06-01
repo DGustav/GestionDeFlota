@@ -5,6 +5,7 @@ import Biosidus.GestionDeFlota.domain.empleado.Rango;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
 import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import Biosidus.GestionDeFlota.services.ConductorService;
+import Biosidus.GestionDeFlota.services.DocumentoService;
 import Biosidus.GestionDeFlota.services.ExcelReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -28,6 +29,9 @@ public class ConductorController {
 
     @Autowired
     private ConductorService conductorService;
+
+    @Autowired
+    private DocumentoService documentoService;
 
     @Autowired
     private ExcelReportService excelReportService;
@@ -91,6 +95,7 @@ public class ConductorController {
     public String detalleConductor(@PathVariable("id") Long id, Model model) {
         Conductor conductor = conductorService.buscarPorId(id);
         model.addAttribute("conductor", conductor);
+        model.addAttribute("documentos", documentoService.listarPorConductor(id));
         return "detalleConductor";
     }
 

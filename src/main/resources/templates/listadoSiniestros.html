@@ -9,7 +9,7 @@
         extra_css=~{},
         extra_scripts=~{:: script.extra-script},
         searchAction='/siniestro/listado'
-      )}">
+      )}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body>
@@ -98,7 +98,7 @@
                         <a th:href="@{/siniestro/detalle/{id}(id=${siniestro.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/siniestro/modificar/{id}(id=${siniestro.id})}" class="text-primary" title="Modificar">
+                        <a th:href="@{/siniestro/modificar/{id}(id=${siniestro.id})}" class="text-primary" title="Modificar" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -151,7 +151,7 @@
                 </ul>
             </nav>
             <a th:href="@{/siniestro/exportar/excel(buscar=${busqueda}, fecha=${fecha != null ? #temporals.format(fecha, 'yyyy-MM-dd') : ''}, fechaDesde=${fechaDesde != null ? #temporals.format(fechaDesde, 'yyyy-MM-dd') : ''}, fechaHasta=${fechaHasta != null ? #temporals.format(fechaHasta, 'yyyy-MM-dd') : ''})}"
-                class="btn btn-success me-2 text-decoration-none">
+                class="btn btn-success me-2 text-decoration-none" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                 <i class="fa-solid fa-file-excel"></i>
                 <span>Exportar <span class="d-none d-sm-inline">Excel</span></span>
             </a>

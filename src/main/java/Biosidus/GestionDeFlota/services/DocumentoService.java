@@ -1,6 +1,7 @@
 package Biosidus.GestionDeFlota.services;
 
 import Biosidus.GestionDeFlota.DTOs.DocumentoDTO;
+import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
 import Biosidus.GestionDeFlota.domain.documento.Documento;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
@@ -117,9 +118,9 @@ public class DocumentoService {
             throw new RuntimeException("Debe seleccionar un vehículo o un conductor");
         }
 
-//        if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento())) {
-//
-//        }
+        if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
+            alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {alerta.setEstado(EstadoAlerta.RESUELTA);});
+        }
 
         MultipartFile archivo = dto.getArchivo();
         if (archivo != null && !archivo.isEmpty()) {
@@ -199,6 +200,16 @@ public class DocumentoService {
     @Transactional
     public List<Documento> listarPorVehiculo(Long vehiculoId) {
         return documentoRepositorio.findByVehiculoId(vehiculoId);
+    }
+
+    @Transactional
+    public List<Documento> listarPorConductor(Long conductorId) {
+        return documentoRepositorio.findByConductorId(conductorId);
+    }
+
+    @Transactional
+    public List<Documento> listarDocumentosPorEstadoDocumento(EstadoDocumento estadoDocumento) {
+        return documentoRepositorio.findByEstadoDocumento(estadoDocumento);
     }
 
 }

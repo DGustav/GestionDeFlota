@@ -29,7 +29,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label text-white">Documentos Vencidos</div>
-                    <div class="metric-value text-white" th:text="${vencidosCount ?: 12}">12</div>
+                    <div class="metric-value text-white" th:text="${documentosVencidos.size()}">12</div>
                 </div>
                 <i class="fa-solid fa-triangle-exclamation card-decoration"></i>
             </div>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label text-white">Próximos a Vencer</div>
-                    <div class="metric-value text-white" th:text="${aVencerCount ?: 5}">5</div>
+                    <div class="metric-value text-white" th:text="${documentosPorvencer.size()}">5</div>
                 </div>
                 <i class="fa-solid fa-clock card-decoration"></i>
             </div>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label text-white">Documentos al Día</div>
-                    <div class="metric-value text-white" th:text="${alDiaCount ?: 84}">84</div>
+                    <div class="metric-value text-white" th:text="${documentosVigentes.size()}">84</div>
                 </div>
                 <i class="fa-solid fa-circle-check card-decoration"></i>
             </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label">Total Asignaciones</div>
-                    <div class="metric-value" th:text="${asignacionesTotal ?: 45}">45</div>
+                    <div class="metric-value" th:text="${totalAsignaciones}">45</div>
                 </div>
                 <i class="fa-solid fa-car-side card-decoration"></i>
             </div>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label">Total Vehículos</div>
-                    <div class="metric-value" th:text="${vehiculosTotal ?: 52}">52</div>
+                    <div class="metric-value" th:text="${totalVehiculos}">52</div>
                 </div>
                 <i class="fa-solid fa-truck-front card-decoration"></i>
             </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label">Total Siniestros</div>
-                    <div class="metric-value" th:text="${siniestrosTotal ?: 8}">8</div>
+                    <div class="metric-value" th:text="${totalSiniestros}">8</div>
                 </div>
                 <i class="fa-solid fa-car-burst card-decoration"></i>
             </div>
@@ -108,7 +108,7 @@
                 </div>
                 <div class="metric-info">
                     <div class="metric-label">Total Usuarios</div>
-                    <div class="metric-value" th:text="${usuariosTotal ?: 120}">120</div>
+                    <div class="metric-value" th:text="${totalConductores}">120</div>
                 </div>
                 <i class="fa-solid fa-user-gear card-decoration"></i>
             </div>

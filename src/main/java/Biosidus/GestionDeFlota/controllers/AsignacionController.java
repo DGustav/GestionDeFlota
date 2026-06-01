@@ -4,6 +4,8 @@ import Biosidus.GestionDeFlota.DTOs.AsignacionDTO;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import Biosidus.GestionDeFlota.domain.asignacion.EstadoAsignacion;
 import Biosidus.GestionDeFlota.services.AsignacionService;
+import Biosidus.GestionDeFlota.services.ConductorService;
+import Biosidus.GestionDeFlota.services.CustomUserDetailsService;
 import Biosidus.GestionDeFlota.services.ExcelReportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +41,9 @@ public class AsignacionController {
 
     @Autowired
     private AsignacionService asignacionService;
+
+    @Autowired
+    private ConductorService conductorService;
 
     @Autowired
     private ExcelReportService excelReportService;
@@ -186,5 +193,12 @@ public class AsignacionController {
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/mis-asignaciones")
+    public String obtenerMisAsignaciones(Model model, Authentication authentication){
+        List<Asignacion> asignaciones = asignacionService.obtenerAsignacionesPorConductor(conductorService.obtenerConductorPorUsuarioNickname(authentication.getName()).getId());
+        model.addAttribute("asignaciones", asignaciones);
+        return "listadoAsignaciones";
     }
 }

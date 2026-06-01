@@ -43,13 +43,20 @@ public class SiniestroService {
     @Autowired
     private VehiculoRepositorio vehiculoRepositorio;
 
+    @Autowired
+    private AsignacionService asignacionService;
+
     @Value("${spring.servlet.multipart.location}")
     private String uploadLocation;
 
     @Transactional(readOnly = true)
-    public Page<Siniestro> listarSiniestros(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta, Pageable pageable) {
+    public Page<Siniestro> listarSiniestros(String buscar, LocalDate fecha, LocalDate fechaDesde, LocalDate fechaHasta, Long vehiculoId, Pageable pageable) {
         Specification<Siniestro> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (vehiculoId != null) {
+                predicates.add(cb.equal(root.get("vehiculo").get("id"), vehiculoId));
+            }
 
             if (buscar != null && !buscar.isEmpty()) {
                 String likePattern = "%" + buscar.toLowerCase() + "%";
@@ -239,4 +246,17 @@ public class SiniestroService {
         }
     }
 
+    @Transactional
+    public List<Siniestro> listarSiniestros() {
+        return siniestroRepositorio.findAll();
+    }
+
+    @Transactional
+    public List<Siniestro> obtenerSiniestrosPorUsuario(String username) {
+        List<Siniestro> siniestros = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(username)
+                .map(asignacion -> asignacion.getVehiculo()) // Si hay asignación, saca el vehículo
+                .map(vehiculo -> siniestroRepositorio.findByVehiculo(vehiculo)) // Si hay vehículo, busca los siniestros
+                .orElse(new ArrayList<>()); // Si en algún punto algo estuvo vacío, devuelve lista vacía
+        return siniestros;
+    }
 }

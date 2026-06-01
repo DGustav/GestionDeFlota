@@ -141,6 +141,11 @@ public class AsignacionService {
             vehiculo.setDisponible(false);
         }
 
+        if(asignacionDTO.getEstado()==EstadoAsignacion.FINALIZADA)
+        {
+            vehiculo.setDisponible(true);
+        }
+
         mapearDtoAEntidad(asignacionDTO, asignacion, vehiculo, conductor);
         // En actualización permitimos modificar kilometrajes si es necesario
         asignacion.setKilometrajeInicial(asignacionDTO.getKilometrajeInicial());
@@ -243,8 +248,18 @@ public class AsignacionService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Asignacion> filtrarPorVehiculo(Long vehiculoId) {
-        return asignacionRepositorio.findFirstByVehiculoIdAndFechaDevolucionIsNullOrderByFechaAsignacionDesc(vehiculoId);
+    public List<Asignacion> obtenerAsignaciones(){
+        return asignacionRepositorio.findAll();
     }
 
+    @Transactional
+    public List<Asignacion> obtenerAsignacionesPorConductor(Long conductorId) {
+        return asignacionRepositorio.findByConductorId(conductorId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Asignacion> obtenerUltimaAsignacionActivaPorUsuario(String nickname) {
+        // Reemplaza 'ACTIVA' por el nombre real que tenga tu Enum (ej. EN_CURSO, VIGENTE)
+        return asignacionRepositorio.findFirstByConductorUsuarioNicknameAndEstadoOrderByIdDesc(nickname, EstadoAsignacion.ACTIVA);
+    }
 }

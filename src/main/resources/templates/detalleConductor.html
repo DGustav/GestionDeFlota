@@ -71,14 +71,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Licencia</td>
-                                        <td>01/03/2024</td>
-                                        <td><span class="badge bg-danger">Vencido</span></td>
-                                        <td class="text-center">
-                                            <a th:href="@{/documento/detalle/1}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
-                                            <a href="#" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                    <tr th:each="doc : ${documentos}">
+                                        <td th:text="${#strings.replace(doc.tipoDocumento, '_', ' ')}">Licencia</td>
+                                        <td th:text="${#temporals.format(doc.fechaVencimiento, 'dd/MM/yyyy')}">01/03/2024</td>
+                                        <td>
+                                            <span class="badge" 
+                                                  th:classappend="${doc.estadoDocumento.name() == 'VIGENTE' ? 'bg-success' : (doc.estadoDocumento.name() == 'POR_VENCER' ? 'bg-warning' : 'bg-danger')}"
+                                                  th:text="${#strings.replace(doc.estadoDocumento, '_', ' ')}">Vencido</span>
                                         </td>
+                                        <td class="text-center">
+                                            <a th:href="@{/documento/detalle/{id}(id=${doc.id})}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>
+                                            <a th:href="@{/documento/descargar/{id}(id=${doc.id})}" class="text-info" download><i class="fa-solid fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(documentos)}">
+                                        <td colspan="4" class="text-center">No hay documentos asociados a este conductor.</td>
                                     </tr>
                                 </tbody>
                             </table>

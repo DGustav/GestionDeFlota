@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -150,5 +151,12 @@ public class MantenimientoVehicularController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mantenimientos.xlsx")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(file);
+    }
+
+    @GetMapping("/mis-mantenimientosVehiculares")
+    public String mostrarMisMantenimientosVehiculares(Model model, Authentication authentication) {
+        List<MantenimientoVehicular> mantenimientos = mantenimientoService.obtenerMantenimientosPorUsuario(authentication.getName());
+        model.addAttribute("mantenimientos", mantenimientos);
+        return "listadoMantenimientos";
     }
 }

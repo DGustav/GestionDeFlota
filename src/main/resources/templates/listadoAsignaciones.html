@@ -119,7 +119,7 @@
                         <a th:href="@{/asignacion/detalle/{id}(id=${a.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/asignacion/modificar/{id}(id=${a.id})}" class="text-primary" title="Modificar">
+                        <a th:href="@{/asignacion/modificar/{id}(id=${a.id})}" class="text-primary" title="Modificar" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -128,7 +128,7 @@
             </table>
         </div>
 
-        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+        <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
             <p class="m-0">
                 Mostrando asignaciones del <span th:text="${paginaActual * tamanioPagina + 1}"></span>
                 al <span th:text="${(paginaActual + 1) * tamanioPagina > totalItems ? totalItems : (paginaActual + 1) * tamanioPagina}"></span>

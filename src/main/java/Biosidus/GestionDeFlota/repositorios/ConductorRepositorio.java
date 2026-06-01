@@ -37,4 +37,6 @@ public interface ConductorRepositorio extends JpaRepository<Conductor, Long> {
     List<Conductor> findByUsuarioRol(Rol rol);
 
     Page<Conductor> findAll(Pageable pageable);
+
+    Conductor findByUsuarioNickname(String nickname);
 }

@@ -78,12 +78,22 @@
                     <span>Conductores</span>
                 </a>
 
-                <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR','OPERARIO')">
+                <a th:href="@{/mantenimientoVehicular/mis-mantenimientosVehiculares}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('CONDUCTOR')">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Mis services</span>
+                </a>
+
+                <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR','OPERARIO')">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Services</span>
                 </a>
 
-                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'CONDUCTOR')">
+                <a th:href="@{/siniestro/mis-siniestros}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('CONDUCTOR')">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Mis siniestros</span>
+                </a>
+
+                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Siniestros</span>
                 </a>
@@ -102,7 +112,7 @@
 
         <!-- Main Content -->
         <main class="main-content col ps-md-2 pt-2">
-            <header class="topbar d-flex flex-column flex-md-row align-items-md-center">
+            <header class="topbar d-flex flex-column flex-md-row align-items-md-center" >
                 <form method="GET" th:action="${searchAction ?: '#'}" class="flex-grow-1">
                     <div class="search-container mb-3 mb-md-0 d-flex me-md-3" th:if="${searchPlaceholder != null}">
                         <div class="search-box flex-grow-1">
@@ -132,7 +142,7 @@
                                 Cerrar Sesión
                             </button>
                         </form>
-                        <span class="user-label d-none d-md-flex">Gustavo Porcel</span>
+                        <span class="user-label d-none d-md-flex" sec:authentication="name">Usuario</span>
                     </div>
                 </div>
             </header>

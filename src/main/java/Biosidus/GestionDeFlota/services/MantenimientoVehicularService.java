@@ -1,7 +1,11 @@
 package Biosidus.GestionDeFlota.services;
 
 import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
+import Biosidus.GestionDeFlota.domain.alerta.Alerta;
+import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
+import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
 import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
@@ -31,7 +35,9 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,8 +52,13 @@ public class MantenimientoVehicularService {
     @Autowired
     private AsignacionRepositorio asignacionRepositorio;
 
+    @Autowired
+    private AlertaService alertaService;
+
     @Value("${spring.servlet.multipart.location}")
     private String uploadLocation;
+    @Autowired
+    private AsignacionService asignacionService;
 
     @Transactional(readOnly = true)
     public List<MantenimientoVehicular> listarTodos() {
@@ -125,6 +136,7 @@ public class MantenimientoVehicularService {
         if (dto.getId() != null) {
             mantenimiento = mantenimientoRepositorio.findById(dto.getId())
                     .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
+
         } else {
             mantenimiento = new MantenimientoVehicular();
         }
@@ -132,12 +144,17 @@ public class MantenimientoVehicularService {
         Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
                 .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
 
+
+
         mantenimiento.setVehiculo(vehiculo);
         mantenimiento.setKilometrajeActual(dto.getKilometrajeActual());
         mantenimiento.setDescripcion(dto.getDescripcion());
         mantenimiento.setFechaAsignacion(dto.getFechaAsignacion());
         mantenimiento.setFechaDevolucionEstimada(dto.getFechaDevolucionEstimada());
         mantenimiento.setFechaDevolucion(dto.getFechaDevolucion());
+
+//        Optional<Alerta> alerta = alertaService.obtenerAlertaActivaPorKm(mantenimiento.getVehiculo(), TipoAlerta.KILOMETRAJE_SUPERADO,EstadoAlerta.ACTIVA);
+//        alerta.ifPresent(value -> value.setEstado(EstadoAlerta.RESUELTA));
 
         MultipartFile comprobanteArchivo = dto.getComprobanteArchivo();
         if (comprobanteArchivo != null && !comprobanteArchivo.isEmpty()) {
@@ -212,4 +229,14 @@ public class MantenimientoVehicularService {
     public List<MantenimientoVehicular> listarMantenimientosPorVehiculo(Vehiculo vehiculo) {
         return mantenimientoRepositorio.findByVehiculo(vehiculo);
     }
+
+    @Transactional
+    public List<MantenimientoVehicular> obtenerMantenimientosPorUsuario(String username) {
+        List<MantenimientoVehicular> mantenimientoVehiculares = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(username)
+                .map(asignacion -> asignacion.getVehiculo())
+                .map(vehiculo -> mantenimientoRepositorio.findByVehiculo(vehiculo))
+                .orElse(new ArrayList<>());
+        return mantenimientoVehiculares;
+    }
+
 }
