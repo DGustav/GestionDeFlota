@@ -30,18 +30,55 @@
 
             <div class="row g-4">
                 <!-- Vehículo -->
-                <div class="col-12 col-md-6">
+                <!-- Vehículo para ADMIN/OPERARIO -->
+                <div class="col-12 col-md-6" th:if="${!esConductor}">
                     <div class="form-group">
                         <label class="form-label">Vehículo</label>
                         <div class="input-container">
                             <i class="fa-solid fa-car"></i>
-                            <input type="text" th:field="*{nombreVehiculo}" class="form-control-custom" list="vehiculosList" id="vehiculoNombre" placeholder="Seleccione o ingrese un vehículo" required>
-                            <input type="hidden" th:field="*{vehiculoId}" id="vehiculoId">
+
+                            <input type="text"
+                                   th:field="*{nombreVehiculo}"
+                                   class="form-control-custom"
+                                   list="vehiculosList"
+                                   id="vehiculoNombre"
+                                   placeholder="Seleccione o ingrese un vehículo"
+                                   required>
+
+                            <input type="hidden"
+                                   th:field="*{vehiculoId}"
+                                   id="vehiculoId">
+
                             <datalist id="vehiculosList">
-                                <option th:each="v : ${vehiculos}" th:data-id="${v.id}" th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}"></option>
+                                <option th:each="v : ${vehiculos}"
+                                        th:data-id="${v.id}"
+                                        th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}">
+                                </option>
                             </datalist>
                         </div>
-                        <small class="text-muted">El siniestro debe estar vinculado a un vehículo con asignación.</small>
+
+                        <small class="text-muted">
+                            El siniestro debe estar vinculado a un vehículo con asignación.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Vehículo para CONDUCTOR -->
+                <div class="col-12 col-md-6" th:if="${esConductor}">
+                    <div class="form-group">
+                        <label class="form-label">Vehículo Asignado</label>
+
+                        <div class="input-container">
+                            <i class="fa-solid fa-car"></i>
+
+                            <input type="text"
+                                   class="form-control-custom"
+                                   th:value="*{nombreVehiculo}"
+                                   readonly>
+
+                            <input type="hidden"
+                                   th:field="*{vehiculoId}">
+                        </div>
                     </div>
                 </div>
 

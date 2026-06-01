@@ -85,10 +85,34 @@ public class SiniestroController {
     }
 
     @GetMapping("/crear")
-    public String crearSiniestro(Model model) {
-        List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-        model.addAttribute("vehiculos", vehiculos);
-        model.addAttribute("siniestro", new SiniestroDTO());
+    public String crearSiniestro(Model model, Authentication authentication) {
+
+        SiniestroDTO dto = new SiniestroDTO();
+
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+        if (esConductor) {
+
+            Asignacion asignacion = asignacionService
+                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("No posee un vehículo asignado"));
+
+            dto.setVehiculoId(asignacion.getVehiculo().getId());
+            dto.setNombreVehiculo(
+                    STR."\{asignacion.getVehiculo().getPatente()} - \{asignacion.getVehiculo().getModelo().getNombreCompletoModelo()}"
+            );
+
+            model.addAttribute("esConductor", true);
+
+        } else {
+
+            model.addAttribute("vehiculos", vehiculoService.listarVehiculos());
+            model.addAttribute("esConductor", false);
+        }
+
+        model.addAttribute("siniestro", dto);
+
         return "crearSiniestro";
     }
 
@@ -96,30 +120,81 @@ public class SiniestroController {
     public String guardarSiniestro(@Valid @ModelAttribute("siniestro") SiniestroDTO siniestroDTO,
                                    BindingResult result,
                                    Model model,
-                                   RedirectAttributes redirectAttributes) {
-        if (result.hasErrors() || siniestroDTO.getVehiculoId() == null) {
-            if (siniestroDTO.getVehiculoId() == null && !result.hasFieldErrors("vehiculoId")) {
-                model.addAttribute("error", "Debe seleccionar un vehículo de la lista.");
-            }
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-            model.addAttribute("vehiculos", vehiculos);
-            model.addAttribute("siniestro", siniestroDTO); // Asegurar que el objeto vuelva al formulario
-            return "crearSiniestro";
-        }
+                                   RedirectAttributes redirectAttributes,
+                                   Authentication authentication) {
+
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
 
         try {
+
+            // Si es conductor, el vehículo se obtiene automáticamente
+            if (esConductor) {
+                Asignacion asignacion = asignacionService
+                        .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
+                        .orElseThrow(() -> new RuntimeException("No posee vehículo asignado"));
+
+                siniestroDTO.setVehiculoId(asignacion.getVehiculo().getId());
+            }
+
+            // Validaciones
+            if (result.hasErrors() || (!esConductor && siniestroDTO.getVehiculoId() == null)) {
+
+                if (!esConductor &&
+                        siniestroDTO.getVehiculoId() == null &&
+                        !result.hasFieldErrors("vehiculoId")) {
+
+                    model.addAttribute("error",
+                            "Debe seleccionar un vehículo de la lista.");
+                }
+
+                if (!esConductor) {
+                    model.addAttribute("vehiculos",
+                            vehiculoService.listarVehiculos());
+                }
+
+                model.addAttribute("esConductor", esConductor);
+                model.addAttribute("siniestro", siniestroDTO);
+
+                return "crearSiniestro";
+            }
+
             siniestroService.guardarSiniestro(siniestroDTO);
-            redirectAttributes.addFlashAttribute("exito", "El siniestro se ha registrado correctamente.");
+
+            redirectAttributes.addFlashAttribute(
+                    "exito",
+                    "El siniestro se ha registrado correctamente."
+            );
+
             return "redirect:/siniestro/listado";
+
         } catch (IOException e) {
-            model.addAttribute("error", "Error al guardar los archivos de prueba: " + e.getMessage());
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-            model.addAttribute("vehiculos", vehiculos);
+
+            model.addAttribute("error",
+                    "Error al guardar los archivos de prueba: " + e.getMessage());
+
+            if (!esConductor) {
+                model.addAttribute("vehiculos",
+                        vehiculoService.listarVehiculos());
+            }
+
+            model.addAttribute("esConductor", esConductor);
+            model.addAttribute("siniestro", siniestroDTO);
+
             return "crearSiniestro";
+
         } catch (RuntimeException e) {
+
             model.addAttribute("error", e.getMessage());
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-            model.addAttribute("vehiculos", vehiculos);
+
+            if (!esConductor) {
+                model.addAttribute("vehiculos",
+                        vehiculoService.listarVehiculos());
+            }
+
+            model.addAttribute("esConductor", esConductor);
+            model.addAttribute("siniestro", siniestroDTO);
+
             return "crearSiniestro";
         }
     }

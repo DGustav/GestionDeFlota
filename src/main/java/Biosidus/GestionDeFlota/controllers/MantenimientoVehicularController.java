@@ -87,10 +87,31 @@ public class MantenimientoVehicularController {
     }
 
     @GetMapping("/crear")
-    public String crearMantenimiento(Model model) {
-        List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-        model.addAttribute("vehiculos", vehiculos);
-        model.addAttribute("mantenimiento", new MantenimientoVehicularDTO());
+    public String crearMantenimiento(Model model, Authentication authentication) {
+
+        MantenimientoVehicularDTO dto = new MantenimientoVehicularDTO();
+
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
+
+        if (esConductor) {
+
+            Asignacion asignacion = asignacionService
+                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("No posee un vehículo asignado"));
+
+            dto.setVehiculoId(asignacion.getVehiculo().getId());
+            dto.setNombreVehiculo(
+                    STR."\{asignacion.getVehiculo().getPatente()} - \{asignacion.getVehiculo().getModelo().getNombreCompletoModelo()}"
+            );
+
+        } else {
+            model.addAttribute("vehiculos", vehiculoService.listarVehiculos());
+        }
+
+        model.addAttribute("esConductor", esConductor);
+        model.addAttribute("mantenimiento", dto);
+
         return "crearMantenimiento";
     }
 
@@ -98,22 +119,69 @@ public class MantenimientoVehicularController {
     public String guardarMantenimiento(@Valid @ModelAttribute("mantenimiento") MantenimientoVehicularDTO mantenimientoDTO,
                                        BindingResult result,
                                        Model model,
-                                       RedirectAttributes redirectAttributes) {
+                                       RedirectAttributes redirectAttributes,
+                                       Authentication authentication) {
         if (result.hasErrors()) {
             List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
             model.addAttribute("vehiculos", vehiculos);
             return "crearMantenimiento";
         }
-
+        boolean esConductor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
         try {
+
+            if (esConductor) {
+
+                Asignacion asignacion = asignacionService
+                        .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
+                        .orElseThrow(() -> new RuntimeException("No posee vehículo asignado"));
+
+                mantenimientoDTO.setVehiculoId(asignacion.getVehiculo().getId());
+            }
+
+            if (result.hasErrors()
+                    || (!esConductor && mantenimientoDTO.getVehiculoId() == null)) {
+
+                if (!esConductor) {
+                    model.addAttribute("vehiculos",
+                            vehiculoService.listarVehiculos());
+                }
+
+                model.addAttribute("esConductor", esConductor);
+                return "crearMantenimiento";
+            }
+
             mantenimientoService.guardarMantenimiento(mantenimientoDTO);
-            redirectAttributes.addFlashAttribute("exito", "El mantenimiento se ha registrado correctamente.");
+
+            redirectAttributes.addFlashAttribute(
+                    "exito",
+                    "El mantenimiento se ha registrado correctamente.");
+
             return "redirect:/mantenimientoVehicular/listado";
+
         } catch (IOException e) {
-            // Manejar error de guardado de archivo
-            model.addAttribute("error", "Error al guardar el comprobante: " + e.getMessage());
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-            model.addAttribute("vehiculos", vehiculos);
+
+            model.addAttribute("error",
+                    "Error al guardar el comprobante: " + e.getMessage());
+
+            if (!esConductor) {
+                model.addAttribute("vehiculos",
+                        vehiculoService.listarVehiculos());
+            }
+
+            model.addAttribute("esConductor", esConductor);
+            return "crearMantenimiento";
+
+        } catch (RuntimeException e) {
+
+            model.addAttribute("error", e.getMessage());
+
+            if (!esConductor) {
+                model.addAttribute("vehiculos",
+                        vehiculoService.listarVehiculos());
+            }
+
+            model.addAttribute("esConductor", esConductor);
             return "crearMantenimiento";
         }
     }

@@ -25,18 +25,48 @@
 
         <form th:action="@{/mantenimientoVehicular/crear}" th:object="${mantenimiento}" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="row g-4">
-                <!-- Vehículo -->
-                <div class="col-md-6">
+                <!-- ADMIN / OPERARIO -->
+                <div class="col-md-6" th:if="${!esConductor}">
                     <div class="form-group">
                         <label class="form-label">Vehículo</label>
+
                         <div class="input-container">
-                            <input type="text" th:field="*{nombreVehiculo}" class="form-control-custom" list="vehiculosList" id="vehiculoNombre" placeholder="Seleccione o ingrese un vehículo" required>
-                            <input type="hidden" th:field="*{vehiculoId}" id="vehiculoId">
+                            <input type="text"
+                                   th:field="*{nombreVehiculo}"
+                                   class="form-control-custom"
+                                   list="vehiculosList"
+                                   id="vehiculoNombre"
+                                   placeholder="Seleccione o ingrese un vehículo"
+                                   required>
+
+                            <input type="hidden"
+                                   th:field="*{vehiculoId}"
+                                   id="vehiculoId">
+
                             <datalist id="vehiculosList">
-                                <option th:each="v : ${vehiculos}" th:data-id="${v.id}" th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}"></option>
+                                <option th:each="v : ${vehiculos}"
+                                        th:data-id="${v.id}"
+                                        th:value="${v.patente + ' - ' + v.modelo.nombreCompletoModelo}">
+                                </option>
                             </datalist>
                         </div>
-                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('vehiculoId')}" th:errors="*{vehiculoId}"></div>
+                    </div>
+                </div>
+
+                <!-- CONDUCTOR -->
+                <div class="col-md-6" th:if="${esConductor}">
+                    <div class="form-group">
+                        <label class="form-label">Vehículo Asignado</label>
+
+                        <div class="input-container">
+                            <input type="text"
+                                   class="form-control-custom"
+                                   th:value="*{nombreVehiculo}"
+                                   readonly>
+
+                            <input type="hidden"
+                                   th:field="*{vehiculoId}">
+                        </div>
                     </div>
                 </div>
 
@@ -109,32 +139,37 @@
         const vehiculoIdInput = document.getElementById('vehiculoId');
         const vehiculosList = document.getElementById('vehiculosList');
 
-        vehiculoNombreInput.addEventListener('input', function(e) {
-            const val = e.target.value;
-            const options = vehiculosList.options;
-            vehiculoIdInput.value = ""; // Reset by default
-            
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === val) {
-                    vehiculoIdInput.value = options[i].getAttribute('data-id');
-                    break;
-                }
-            }
-        });
+        if (vehiculoNombreInput && vehiculoIdInput && vehiculosList) {
 
-        // Al cargar la página, si hay un valor en vehiculoId, intentar poner el nombre en el input correspondiente
-        window.addEventListener('load', function() {
-            const currentVehiculoId = vehiculoIdInput.value;
-            if (currentVehiculoId) {
+            vehiculoNombreInput.addEventListener('input', function(e) {
+                const val = e.target.value;
                 const options = vehiculosList.options;
+
+                vehiculoIdInput.value = "";
+
                 for (let i = 0; i < options.length; i++) {
-                    if (options[i].getAttribute('data-id') === currentVehiculoId) {
-                        vehiculoNombreInput.value = options[i].value;
+                    if (options[i].value === val) {
+                        vehiculoIdInput.value = options[i].getAttribute('data-id');
                         break;
                     }
                 }
-            }
-        });
+            });
+
+            window.addEventListener('load', function() {
+                const currentVehiculoId = vehiculoIdInput.value;
+
+                if (currentVehiculoId) {
+                    const options = vehiculosList.options;
+
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].getAttribute('data-id') === currentVehiculoId) {
+                            vehiculoNombreInput.value = options[i].value;
+                            break;
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
