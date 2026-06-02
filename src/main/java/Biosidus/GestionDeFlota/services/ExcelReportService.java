@@ -217,7 +217,7 @@ public class ExcelReportService {
                 row.createCell(4).setCellValue(asignacion.getConductor().getLegajo());
                 row.createCell(5).setCellValue(asignacion.getEstado().toString());
                 row.createCell(6).setCellValue(asignacion.getFechaAsignacion().format(formatter));
-                row.createCell(7).setCellValue(asignacion.getFechaDevolucionEstimada().format(formatter));
+                row.createCell(7).setCellValue(asignacion.getFechaDevolucionEstimada() != null ? asignacion.getFechaDevolucionEstimada().format(formatter) : "-");
                 row.createCell(8).setCellValue(asignacion.getFechaDevolucion() != null ? asignacion.getFechaDevolucion().format(formatter) : "-");
                 row.createCell(9).setCellValue(asignacion.getKilometrajeInicial() != null ? asignacion.getKilometrajeInicial() : 0);
                 row.createCell(10).setCellValue(asignacion.getKilometrosRecorridos() != null ? asignacion.getKilometrosRecorridos() : 0);

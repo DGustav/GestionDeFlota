@@ -60,11 +60,12 @@ public class SecurityConfig {
                         .requestMatchers("/siniestro/mis-siniestros").hasRole("CONDUCTOR")
                         .requestMatchers("/mantenimientoVehicular/mis-mantenimientosVehiculares").hasRole("CONDUCTOR")
                         .requestMatchers("/asignacion/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/vehiculo/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
                         .requestMatchers("/vehiculo/detalle/{id}").hasRole("CONDUCTOR")
                         .requestMatchers("/mantenimientoVehicular/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
                         // El detalle lo pueden ver los 3 roles
                         .requestMatchers("/siniestro/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO", "ADMINISTRADOR")
-                        .requestMatchers("/vehiculo/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
+
                         .requestMatchers("/conductor/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
 
 

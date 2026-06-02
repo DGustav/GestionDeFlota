@@ -145,17 +145,24 @@ public class MantenimientoVehicularService {
     @Transactional
     public void guardarMantenimiento(MantenimientoVehicularDTO dto) throws IOException {
         MantenimientoVehicular mantenimiento;
+        Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+
         if (dto.getId() != null) {
+
             mantenimiento = mantenimientoRepositorio.findById(dto.getId())
                     .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
 
         } else {
+
             mantenimiento = new MantenimientoVehicular();
+
+            alertaService.obtenerAlertaActivaPorKm(
+                    vehiculo,
+                    TipoAlerta.KILOMETRAJE_SUPERADO,
+                    EstadoAlerta.ACTIVA
+            ).ifPresent(alerta -> alerta.setEstado(EstadoAlerta.RESUELTA));
         }
-
-        Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
-                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
-
 
 
         mantenimiento.setVehiculo(vehiculo);
