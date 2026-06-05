@@ -4,6 +4,7 @@ import Biosidus.GestionDeFlota.DTOs.DocumentoDTO;
 import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
 import Biosidus.GestionDeFlota.domain.documento.Documento;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
+import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import Biosidus.GestionDeFlota.repositorios.ConductorRepositorio;
 import Biosidus.GestionDeFlota.repositorios.DocumentoRepositorio;
@@ -109,17 +110,24 @@ public class DocumentoService {
                     .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
             documento.setVehiculo(vehiculo);
             documento.setConductor(null);
+            if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
+                alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
+                    alerta.setEstado(EstadoAlerta.RESUELTA);
+                    vehiculo.setDisponible(true);
+                });
+            }
         } else if (dto.getConductorId() != null) {
             Conductor conductor = conductorRepositorio.findById(dto.getConductorId())
                     .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
             documento.setConductor(conductor);
             documento.setVehiculo(null);
+            if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
+                alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
+                    alerta.setEstado(EstadoAlerta.RESUELTA);
+                });
+            }
         } else {
             throw new RuntimeException("Debe seleccionar un vehículo o un conductor");
-        }
-
-        if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
-            alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {alerta.setEstado(EstadoAlerta.RESUELTA);});
         }
 
         MultipartFile archivo = dto.getArchivo();

@@ -77,6 +77,7 @@
                                 doc.getVehiculo().getPatente(),
                                 doc.getFechaVencimiento().toString()
                         );
+                        doc.getVehiculo().setDisponible(false);
                         //  Disparamos el correo
                         administradorOperadoresConductor.forEach(conductor -> {
                             medioDeNotificacion.notificar(conductor.getMail(), msj, "Sistema de Gestión de Flota - Notificación por Documento de vehiculo por vencer");

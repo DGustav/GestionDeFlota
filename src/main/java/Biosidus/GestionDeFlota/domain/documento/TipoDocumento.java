@@ -5,4 +5,5 @@ public enum TipoDocumento {
     CEDULA_VERDE,
     CEDULA_AZUL,
     REGISTRO,
+    RTO
 }
