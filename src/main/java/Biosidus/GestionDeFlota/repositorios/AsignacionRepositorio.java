@@ -17,4 +17,6 @@ public interface AsignacionRepositorio extends JpaRepository<Asignacion, Long>, 
     List<Asignacion> findByConductorId(Long conductorId);
 
     Optional<Asignacion> findFirstByConductorUsuarioNicknameAndEstadoOrderByIdDesc(String nickname, EstadoAsignacion estado);
+
+    Optional<Asignacion> findFirstByVehiculoIdAndEstadoOrderByIdDesc(Long vehiculoId, EstadoAsignacion estado);
 }

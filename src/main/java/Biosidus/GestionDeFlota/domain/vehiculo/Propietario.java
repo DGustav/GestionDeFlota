@@ -4,5 +4,6 @@ public enum Propietario {
     BIOSIDUS_SAU,
     LEASING,
     BIOSIDUS_ARGENTINA,
-    BIOSIDUS_FARMA
+    BIOSIDUS_FARMA,
+    BIOSIDUS
 }

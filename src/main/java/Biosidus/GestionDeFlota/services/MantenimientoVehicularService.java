@@ -154,14 +154,7 @@ public class MantenimientoVehicularService {
                     .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
 
         } else {
-
             mantenimiento = new MantenimientoVehicular();
-
-            alertaService.obtenerAlertaActivaPorKm(
-                    vehiculo,
-                    TipoAlerta.KILOMETRAJE_SUPERADO,
-                    EstadoAlerta.ACTIVA
-            ).ifPresent(alerta -> alerta.setEstado(EstadoAlerta.RESUELTA));
         }
 
 
@@ -201,6 +194,26 @@ public class MantenimientoVehicularService {
             // El service ya finalizó (se cargó la fecha de devolución)
             vehiculo.setEstado(EstadoVehiculo.ACTIVO);
             vehiculo.setDisponible(true);
+
+            List<TipoAlerta> tipos = List.of(
+                    TipoAlerta.SERVICE_3_MESES,
+                    TipoAlerta.SERVICE_6_MESES,
+                    TipoAlerta.SERVICE_9_MESES,
+                    TipoAlerta.SERVICE_VENCIDO
+            );
+
+            for(TipoAlerta tipo : tipos){
+
+                alertaService
+                        .obtenerActivasPorVehiculoYTipo(
+                                vehiculo.getId(),
+                                tipo
+                        )
+                        .ifPresent(alerta -> {
+                            alerta.setEstado(EstadoAlerta.RESUELTA);
+                            alertaService.guardarAlerta(alerta);
+                        });
+            }
         }
 
         mantenimientoRepositorio.save(mantenimiento);
@@ -214,6 +227,7 @@ public class MantenimientoVehicularService {
             asignacion.actualizarKms(kilometrajeActual);
             asignacionRepositorio.save(asignacion);
         }
+
         vehiculoRepositorio.save(vehiculo);
     }
 
@@ -256,6 +270,11 @@ public class MantenimientoVehicularService {
                 .map(vehiculo -> mantenimientoRepositorio.findByVehiculo(vehiculo))
                 .orElse(new ArrayList<>());
         return mantenimientoVehiculares;
+    }
+
+    @Transactional
+    public Optional<MantenimientoVehicular> ultimoMantenimientoPorVehiculoId(Long vehiculoId) {
+        return mantenimientoRepositorio.findTopByVehiculoIdAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(vehiculoId);
     }
 
 }

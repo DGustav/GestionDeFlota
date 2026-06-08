@@ -46,4 +46,9 @@ public class AlertaService {
     public Optional<Alerta> obtenerAlertaActivaPorKm(Vehiculo vehiculo, TipoAlerta tipo, EstadoAlerta estado) {
         return alertaRepo.findFirstByVehiculoIdAndTipoAndEstado(vehiculo.getId(),tipo, estado);
     }
+
+    @Transactional
+    public Optional<Alerta> obtenerActivasPorVehiculoYTipo(Long vehiculoId, TipoAlerta tipo) {
+        return alertaRepo.findFirstByVehiculoIdAndTipoAndEstado(vehiculoId, tipo, EstadoAlerta.ACTIVA);
+    }
 }

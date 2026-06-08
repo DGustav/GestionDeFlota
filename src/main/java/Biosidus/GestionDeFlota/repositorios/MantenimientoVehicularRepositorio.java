@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -88,4 +90,6 @@ public interface MantenimientoVehicularRepositorio extends JpaRepository<Manteni
                                                        @Param("fechaFin") LocalDateTime fechaFin);
 
     List<MantenimientoVehicular> findByVehiculo(Vehiculo vehiculo);
+
+    Optional<MantenimientoVehicular> findTopByVehiculoIdAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(Long vehiculoId);
 }

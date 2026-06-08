@@ -262,4 +262,9 @@ public class AsignacionService {
         // Reemplaza 'ACTIVA' por el nombre real que tenga tu Enum (ej. EN_CURSO, VIGENTE)
         return asignacionRepositorio.findFirstByConductorUsuarioNicknameAndEstadoOrderByIdDesc(nickname, EstadoAsignacion.ACTIVA);
     }
+
+    @Transactional
+    public Optional<Asignacion> obtenerUltimaAsignacionActivaPorVehiculo(Vehiculo vehiculo) {
+        return asignacionRepositorio.findFirstByVehiculoIdAndEstadoOrderByIdDesc(vehiculo.getId(), EstadoAsignacion.ACTIVA);
+    }
 }

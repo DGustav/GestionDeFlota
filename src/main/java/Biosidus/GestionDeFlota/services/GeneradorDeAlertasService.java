@@ -4,6 +4,7 @@
     import Biosidus.GestionDeFlota.domain.alerta.Alerta;
     import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
     import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
+    import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
     import Biosidus.GestionDeFlota.domain.documento.Documento;
     import Biosidus.GestionDeFlota.domain.empleado.Conductor;
     import Biosidus.GestionDeFlota.domain.empleado.Rol;
@@ -18,8 +19,10 @@
 
     import java.time.LocalDate;
     import java.time.LocalDateTime;
+    import java.time.temporal.ChronoUnit;
     import java.util.Comparator;
     import java.util.List;
+    import java.util.Optional;
 
     @Service
     public class GeneradorDeAlertasService {
@@ -43,6 +46,9 @@
 
         @Autowired
         private VehiculoService vehiculoService;
+
+        @Autowired
+        private AsignacionService asignacionService;
 
         @Scheduled(cron = "0 0 23 * * ?")
         @Transactional
@@ -115,64 +121,161 @@
             }
 
         }
-        @Scheduled(cron = "0 0 21 * * ?")
+        @Scheduled(cron = "0 0 8 * * *")
         @Transactional
-        public void generardorDeAlertasPorKilometrajeSuperado(){
-            List<Conductor> administradorOperadoresConductor = new java.util.ArrayList<>(conductorService.listarConductores().stream().filter(conductor -> conductor.getUsuario().getRol().equals(Rol.ADMINISTRADOR) || conductor.getUsuario().getRol().equals(Rol.OPERARIO)).toList());
+        public void verificarServicesPeriodicos() {
 
-            Integer kmLimite =
-                    parametrosGlobalesService.obtenerValorEntero(
-                            "KILOMETRAJE_SUPERADO",
-                            10000
-                    );
+            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();// Interesados a los que notificar sobre los documentos por vencer
+            List<Conductor> destinatarios = new java.util.ArrayList<>(conductorService.listarConductores().stream().filter(conductor -> conductor.getUsuario().getRol().equals(Rol.ADMINISTRADOR) || conductor.getUsuario().getRol().equals(Rol.OPERARIO)).toList());
+            String mensaje = "";
 
-            List<Vehiculo> vehiculos =
-                    vehiculoService.listarVehiculos();
             for (Vehiculo vehiculo : vehiculos) {
 
-                Integer kmActual =
-                        vehiculo.getKilometrajeActual();
+                Optional<MantenimientoVehicular> ultimoServiceOpt =
+                        mantenimientoVehicularService
+                                .ultimoMantenimientoPorVehiculoId(
+                                        vehiculo.getId());
+                Optional<Asignacion> ultimaAsignacionOpt =
+                        asignacionService.obtenerUltimaAsignacionActivaPorVehiculo(vehiculo);
 
-                Integer kmUltimoService =
-                        mantenimientoVehicularService.listarMantenimientosPorVehiculo(vehiculo).stream()
-                                .max(Comparator.comparing(MantenimientoVehicular::getFechaAsignacion))
-                                .map(MantenimientoVehicular::getKilometrajeActual)
-                                .orElse(0);;
+                if (ultimoServiceOpt.isEmpty() || ultimaAsignacionOpt.isEmpty()) {
+                    continue;
+                }
 
-                if (
-                        kmActual - kmUltimoService >= kmLimite
-                ) {
+                destinatarios.add(ultimaAsignacionOpt.get().getConductor());
 
-                    boolean alertaExistente =
-                            alertaService.existeAlertaPorVehiculoYtipo(
-                                    vehiculo.getId(),
-                                    TipoAlerta.KILOMETRAJE_SUPERADO,
-                                    EstadoAlerta.ACTIVA
-                            );
+                MantenimientoVehicular ultimoService = ultimoServiceOpt.get();
 
-                    if (!alertaExistente) {
-
-                        Alerta alerta = new Alerta();
-
-                        alerta.setVehiculo(vehiculo);
-
-                        alerta.setTipo(TipoAlerta.KILOMETRAJE_SUPERADO);
-
-                        alerta.setEstado(EstadoAlerta.ACTIVA);
-
-                        alerta.setFechaEnvio(LocalDateTime.now());
-
-                        alerta.setDescripcion(
-                                STR."El vehículo \{vehiculo.getPatente()} superó el límite de \{kmLimite} km sin mantenimiento."
-                        );
-
-                        alertaService.guardarAlerta(alerta);
-
-                        administradorOperadoresConductor.forEach(conductor -> {
-                            medioDeNotificacion.notificar(conductor.getMail(), STR."El vehículo \{vehiculo.getPatente()} superó el límite de \{kmLimite} km sin mantenimiento.", "Sistema de Gestión de Flota - Notificación por Kilometraje Superado");
-                        });
+                long mesesTranscurridos = ChronoUnit.MONTHS.between(
+                        ultimoService.getFechaAsignacion().toLocalDate(),
+                        LocalDate.now()
+                );
+                boolean alertaCreada = false;
+                if (mesesTranscurridos >= 12) {
+                    alertaCreada = crearAlertaSiNoExiste(
+                            vehiculo,
+                            TipoAlerta.SERVICE_VENCIDO
+                    );
+                    mensaje=String.format(
+                            "Vehículo %s. Ha transcurrido 1 año desde el último service realizado el día: %s. Gestione el próximo service a la brevedad",
+                            vehiculo.getPatente(),
+                            ultimoService.getFechaAsignacion().toLocalDate()
+                    );
+                    if (alertaCreada){
+                        for (Conductor destinatario : destinatarios) {
+                            medioDeNotificacion.notificar(destinatario.getMail(), mensaje, "Service Preventivo");
+                        }
+                        destinatarios.remove(ultimaAsignacionOpt.get().getConductor());
                     }
                 }
+                else if (mesesTranscurridos >= 9) {
+                    alertaCreada = crearAlertaSiNoExiste(
+                            vehiculo,
+                            TipoAlerta.SERVICE_9_MESES
+                    );
+                    mensaje=String.format(
+                            "Vehículo %s. Han transcurrido 9 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            vehiculo.getPatente(),
+                            ultimoService.getFechaAsignacion().toLocalDate(),
+                            ultimoService.getKilometrajeActual() + 10000,
+                            ultimoService.getFechaAsignacion().plusYears(1).toLocalDate()
+                    );
+                    if (alertaCreada){
+                        for (Conductor destinatario : destinatarios) {
+                            medioDeNotificacion.notificar(destinatario.getMail(), mensaje, "Service Preventivo");
+                        }
+                        destinatarios.remove(ultimaAsignacionOpt.get().getConductor());
+                    }
+                }
+                else if (mesesTranscurridos >= 6) {
+                    alertaCreada = crearAlertaSiNoExiste(
+                            vehiculo,
+                            TipoAlerta.SERVICE_6_MESES
+                    );
+                    mensaje=String.format(
+                            "Vehículo %s. Han transcurrido 6 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            vehiculo.getPatente(),
+                            ultimoService.getFechaAsignacion().toLocalDate(),
+                            ultimoService.getKilometrajeActual() + 10000,
+                            ultimoService.getFechaAsignacion().plusYears(1).toLocalDate()
+                    );
+                    if (alertaCreada){
+                        for (Conductor destinatario : destinatarios) {
+                            medioDeNotificacion.notificar(destinatario.getMail(), mensaje, "Service Preventivo");
+                        }
+                        destinatarios.remove(ultimaAsignacionOpt.get().getConductor());
+                    }
+                }
+                else if (mesesTranscurridos >= 3) {
+                    alertaCreada = crearAlertaSiNoExiste(
+                            vehiculo,
+                            TipoAlerta.SERVICE_3_MESES
+                    );
+                    mensaje=String.format(
+                            "Vehículo %s. Han transcurrido 3 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            vehiculo.getPatente(),
+                            ultimoService.getFechaAsignacion().toLocalDate(),
+                            ultimoService.getKilometrajeActual() + 10000,
+                            ultimoService.getFechaAsignacion().plusYears(1).toLocalDate()
+                    );
+                    if (alertaCreada){
+                        for (Conductor destinatario : destinatarios) {
+                            medioDeNotificacion.notificar(destinatario.getMail(), mensaje, "Service Preventivo");
+                        }
+                        destinatarios.remove(ultimaAsignacionOpt.get().getConductor());
+                    }
+                }
+
             }
+        }
+
+        private boolean crearAlertaSiNoExiste(
+                Vehiculo vehiculo,
+                TipoAlerta tipo) {
+
+            boolean existe = alertaService.existeAlertaPorVehiculoYtipo
+                    (
+                            vehiculo.getId(),
+                            tipo,
+                            EstadoAlerta.ACTIVA
+                    );
+
+            if (existe) {
+                return false;
+            }
+
+            Alerta alerta = new Alerta();
+
+            alerta.setVehiculo(vehiculo);
+            alerta.setTipo(tipo);
+            alerta.setEstado(EstadoAlerta.ACTIVA);
+            alerta.setFechaEnvio(LocalDateTime.now());
+
+
+            switch (tipo) {
+
+                case SERVICE_3_MESES ->
+                        alerta.setDescripcion(
+                                "Han transcurrido 3 meses desde el último service."
+                        );
+
+                case SERVICE_6_MESES ->
+                        alerta.setDescripcion(
+                                "Han transcurrido 6 meses desde el último service."
+                        );
+
+                case SERVICE_9_MESES ->
+                        alerta.setDescripcion(
+                                "Han transcurrido 9 meses desde el último service."
+                        );
+
+                case SERVICE_VENCIDO ->
+                        alerta.setDescripcion(
+                                "El service anual se encuentra vencido."
+                        );
+            }
+
+            alertaService.guardarAlerta(alerta);
+            return true;
         }
     }
