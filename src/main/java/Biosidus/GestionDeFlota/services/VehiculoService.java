@@ -123,6 +123,7 @@ public class VehiculoService {
                 .motor(vehiculoDTO.getMotor())
                 .origen(vehiculoDTO.getOrigen())
                 .propietario(vehiculoDTO.getPropietario())
+                .nota(vehiculoDTO.getNota())
                 .build();
 
         if (vehiculoDTO.getModeloId() != null) {
@@ -170,6 +171,7 @@ public class VehiculoService {
         dto.setMotor(v.getMotor());
         dto.setOrigen(v.getOrigen());
         dto.setPropietario(v.getPropietario());
+        dto.setNota(v.getNota());
         
         if (v.getModelo() != null) {
             dto.setModeloId(v.getModelo().getId());
@@ -204,6 +206,7 @@ public class VehiculoService {
         vehiculo.setMotor(vehiculoDTO.getMotor());
         vehiculo.setOrigen(vehiculoDTO.getOrigen());
         vehiculo.setPropietario(vehiculoDTO.getPropietario());
+        vehiculo.setNota(vehiculoDTO.getNota());
 
         if (vehiculoDTO.getModeloId() != null) {
             modeloRepositorio.findById(vehiculoDTO.getModeloId()).ifPresent(m -> {
@@ -230,4 +233,7 @@ public class VehiculoService {
         vehiculoRepositorio.save(vehiculo);
     }
 
+    public boolean existeVehiculo(Long id) {
+        return vehiculoRepositorio.existsById(id);
+    }
 }

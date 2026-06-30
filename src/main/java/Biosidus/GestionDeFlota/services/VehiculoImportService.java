@@ -163,6 +163,12 @@ public class VehiculoImportService {
                 );
 
                 // =========================
+                // NOTA
+                // =========================
+                vehiculo.setNota(
+                        getCellValue(fila.getCell(10)).trim()
+                );
+                // =========================
                 // MODELO
                 // =========================
 

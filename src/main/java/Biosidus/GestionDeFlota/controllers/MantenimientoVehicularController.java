@@ -1,5 +1,6 @@
 package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.MantenimientoVehicularDTO;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.Tipo;
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
@@ -111,6 +112,7 @@ public class MantenimientoVehicularController {
 
         model.addAttribute("esConductor", esConductor);
         model.addAttribute("mantenimiento", dto);
+        model.addAttribute("tipos", Tipo.values());
 
         return "crearMantenimiento";
     }
@@ -121,36 +123,39 @@ public class MantenimientoVehicularController {
                                        Model model,
                                        RedirectAttributes redirectAttributes,
                                        Authentication authentication) {
-        if (result.hasErrors()) {
-            List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
-            model.addAttribute("vehiculos", vehiculos);
-            return "crearMantenimiento";
-        }
         boolean esConductor = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
-        try {
 
-            if (esConductor) {
-
+        if (esConductor) {
+            try {
                 Asignacion asignacion = asignacionService
                         .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
                         .orElseThrow(() -> new RuntimeException("No posee vehículo asignado"));
-
                 mantenimientoDTO.setVehiculoId(asignacion.getVehiculo().getId());
-            }
-
-            if (result.hasErrors()
-                    || (!esConductor && mantenimientoDTO.getVehiculoId() == null)) {
-
-                if (!esConductor) {
-                    model.addAttribute("vehiculos",
-                            vehiculoService.listarVehiculos());
-                }
-
+            } catch (RuntimeException e) {
+                model.addAttribute("error", e.getMessage());
                 model.addAttribute("esConductor", esConductor);
                 return "crearMantenimiento";
             }
+        } else {
+            // Validar que el vehículo exista para Admin/Operario
+            if (mantenimientoDTO.getVehiculoId() == null) {
+                result.rejectValue("vehiculoId", "error.vehiculoId", "Debe seleccionar un vehículo válido");
+            } else if (!vehiculoService.existeVehiculo(mantenimientoDTO.getVehiculoId())) {
+                result.rejectValue("vehiculoId", "error.vehiculoId", "El vehículo seleccionado no existe");
+            }
+        }
 
+        if (result.hasErrors()) {
+            if (!esConductor) {
+                model.addAttribute("vehiculos", vehiculoService.listarVehiculos());
+            }
+            model.addAttribute("esConductor", esConductor);
+            model.addAttribute("tipos", Tipo.values());
+            return "crearMantenimiento";
+        }
+
+        try {
             mantenimientoService.guardarMantenimiento(mantenimientoDTO);
 
             redirectAttributes.addFlashAttribute(
@@ -170,6 +175,7 @@ public class MantenimientoVehicularController {
             }
 
             model.addAttribute("esConductor", esConductor);
+            model.addAttribute("tipos", Tipo.values());
             return "crearMantenimiento";
 
         } catch (RuntimeException e) {
@@ -182,6 +188,7 @@ public class MantenimientoVehicularController {
             }
 
             model.addAttribute("esConductor", esConductor);
+            model.addAttribute("tipos", Tipo.values());
             return "crearMantenimiento";
         }
     }
@@ -192,6 +199,7 @@ public class MantenimientoVehicularController {
         List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
         model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("mantenimiento", mantenimientoDTO);
+        model.addAttribute("tipos", Tipo.values());
         return "modificarMantenimiento";
     }
 
@@ -203,6 +211,7 @@ public class MantenimientoVehicularController {
         if (result.hasErrors()) {
             List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
             model.addAttribute("vehiculos", vehiculos);
+            model.addAttribute("tipos", Tipo.values());
             return "modificarMantenimiento";
         }
 
@@ -214,6 +223,7 @@ public class MantenimientoVehicularController {
             model.addAttribute("error", "Error al actualizar el comprobante: " + e.getMessage());
             List<Vehiculo> vehiculos = vehiculoService.listarVehiculos();
             model.addAttribute("vehiculos", vehiculos);
+            model.addAttribute("tipos", Tipo.values());
             return "modificarMantenimiento";
         }
     }

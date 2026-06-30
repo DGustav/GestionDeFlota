@@ -59,5 +59,5 @@ public class VehiculoDTO {
     @NotNull(message = "El propietario del vehículo es obligatorio")
     private Propietario propietario;
 
-
+    private String nota;
 }

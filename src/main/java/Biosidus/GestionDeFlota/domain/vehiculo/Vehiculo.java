@@ -56,5 +56,8 @@ public class Vehiculo {
     @Enumerated(EnumType.STRING)
     private Propietario propietario;
 
+    @Column (name = "nota")
+    private String nota;
+
 
 }

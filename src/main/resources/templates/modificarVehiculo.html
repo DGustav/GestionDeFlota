@@ -156,6 +156,16 @@
                         </div>
                     </div>
                     
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Nota</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-comment-dots"></i>
+                                <textarea th:field="*{nota}" id="nota" class="form-control-custom" placeholder="Notas adicionales sobre el vehículo" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="col-md-12 d-flex align-items-center mt-4">
                         <div class="form-check form-switch ms-2">
                             <input class="form-check-input" type="checkbox" role="switch" id="disponible" th:field="*{disponible}">
@@ -195,6 +205,21 @@
                 }
             }
         });
+        
+        // Auto-expandir el textarea de notas
+        const notaTextarea = document.getElementById('nota');
+        if (notaTextarea) {
+            notaTextarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Ajustar altura inicial si tiene contenido
+            if (notaTextarea.value) {
+                notaTextarea.style.height = 'auto';
+                notaTextarea.style.height = (notaTextarea.scrollHeight) + 'px';
+            }
+        }
 
         // Al cargar la página, si hay un valor en modeloId, intentar poner el nombre en modeloNombre
         window.addEventListener('load', function() {

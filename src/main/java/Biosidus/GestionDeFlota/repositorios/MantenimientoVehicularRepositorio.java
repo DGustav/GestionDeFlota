@@ -1,6 +1,7 @@
 package Biosidus.GestionDeFlota.repositorios;
 
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.Tipo;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,5 +92,5 @@ public interface MantenimientoVehicularRepositorio extends JpaRepository<Manteni
 
     List<MantenimientoVehicular> findByVehiculo(Vehiculo vehiculo);
 
-    Optional<MantenimientoVehicular> findTopByVehiculoIdAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(Long vehiculoId);
+    Optional<MantenimientoVehicular> findTopByVehiculoIdAndTipoAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(Long vehiculoId, Tipo tipo);
 }

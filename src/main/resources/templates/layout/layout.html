@@ -80,12 +80,12 @@
 
                 <a th:href="@{/mantenimientoVehicular/mis-mantenimientosVehiculares}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('CONDUCTOR')">
                     <i class="fa-solid fa-gauge-high"></i>
-                    <span>Mis services</span>
+                    <span>Mis services y mantenimientos</span>
                 </a>
 
                 <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR','OPERARIO')">
                     <i class="fa-solid fa-gauge-high"></i>
-                    <span>Services</span>
+                    <span>Services y mantenimientos</span>
                 </a>
 
                 <a th:href="@{/siniestro/mis-siniestros}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('CONDUCTOR')">
@@ -101,11 +101,6 @@
                 <a th:href="@{/documento/listado}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
                     <i class="fa-solid fa-folder"></i>
                     <span>Documentos</span>
-                </a>
-
-                <a th:href="@{/alertas}" class="menu-item" th:classappend="${currentPage == 'alertas' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>Alertas</span>
                 </a>
             </nav>
         </aside>

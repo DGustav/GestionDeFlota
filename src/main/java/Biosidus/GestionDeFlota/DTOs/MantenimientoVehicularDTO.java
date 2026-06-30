@@ -1,5 +1,6 @@
 package Biosidus.GestionDeFlota.DTOs;
 
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.Tipo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,9 @@ public class MantenimientoVehicularDTO {
     @Min(value = 0, message = "El kilometraje no puede ser negativo")
     private Integer kilometrajeActual;
 
+    @NotNull(message = "El tipo de mantenimiento es obligatorio")
+    private Tipo tipo;
+
     private String descripcion;
 
     @NotNull(message = "La fecha de asignación es obligatoria")
@@ -34,6 +38,7 @@ public class MantenimientoVehicularDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime fechaDevolucionEstimada;
 
+    @NotNull(message = "La fecha de devolución es obligatoria")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime fechaDevolucion;
 

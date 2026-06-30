@@ -105,29 +105,35 @@ public class DocumentoService {
         documento.setFechaVencimiento(dto.getFechaVencimiento());
         documento.setEstadoDocumento(dto.getEstadoDocumento());
 
-        if (dto.getVehiculoId() != null) {
+        if (dto.getTipoDocumento() == TipoDocumento.REGISTRO) {
+            if (dto.getConductorId() == null) {
+                throw new RuntimeException("Para el tipo REGISTRO debe seleccionar un conductor");
+            }
+            Conductor conductor = conductorRepositorio.findById(dto.getConductorId())
+                    .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
+            documento.setConductor(conductor);
+            documento.setVehiculo(null);
+            
+            if (dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) { 
+                 alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
+                    alerta.setEstado(EstadoAlerta.RESUELTA);
+                });
+            }
+        } else {
+            if (dto.getVehiculoId() == null) {
+                throw new RuntimeException("Para este tipo de documento debe seleccionar un vehículo");
+            }
             Vehiculo vehiculo = vehiculoRepositorio.findById(dto.getVehiculoId())
                     .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
             documento.setVehiculo(vehiculo);
             documento.setConductor(null);
-            if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
+            
+            if (dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
                 alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
                     alerta.setEstado(EstadoAlerta.RESUELTA);
                     vehiculo.setDisponible(true);
                 });
             }
-        } else if (dto.getConductorId() != null) {
-            Conductor conductor = conductorRepositorio.findById(dto.getConductorId())
-                    .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
-            documento.setConductor(conductor);
-            documento.setVehiculo(null);
-            if(dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
-                alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
-                    alerta.setEstado(EstadoAlerta.RESUELTA);
-                });
-            }
-        } else {
-            throw new RuntimeException("Debe seleccionar un vehículo o un conductor");
         }
 
         MultipartFile archivo = dto.getArchivo();
@@ -176,11 +182,6 @@ public class DocumentoService {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @Transactional
-    public void eliminarDocumento(Long id) {
-        documentoRepositorio.deleteById(id);
     }
 
     @Transactional(readOnly = true)

@@ -121,7 +121,7 @@
             }
 
         }
-        @Scheduled(cron = "0 0 8 * * *")
+        @Scheduled(cron = "0 0 8 * * ?")
         @Transactional
         public void verificarServicesPeriodicos() {
 
@@ -133,7 +133,7 @@
 
                 Optional<MantenimientoVehicular> ultimoServiceOpt =
                         mantenimientoVehicularService
-                                .ultimoMantenimientoPorVehiculoId(
+                                .ultimoServicePorVehiculoId(
                                         vehiculo.getId());
                 Optional<Asignacion> ultimaAsignacionOpt =
                         asignacionService.obtenerUltimaAsignacionActivaPorVehiculo(vehiculo);
@@ -150,9 +150,18 @@
                         ultimoService.getFechaAsignacion().toLocalDate(),
                         LocalDate.now()
                 );
+
                 boolean alertaCreada = false;
+
+                System.out.println("--------------------------------");
+                System.out.println("Vehiculo: " + vehiculo.getPatente());
+                System.out.println("Fecha mantenimiento: " +
+                        ultimoService.getFechaAsignacion().toLocalDate());
+                System.out.println("Hoy: " + LocalDate.now());
+                System.out.println("Meses transcurridos: " + mesesTranscurridos);
+
                 if (mesesTranscurridos >= 12) {
-                    alertaCreada = crearAlertaSiNoExiste(
+                    alertaCreada = noExisteAlerta(
                             vehiculo,
                             TipoAlerta.SERVICE_VENCIDO
                     );
@@ -169,12 +178,12 @@
                     }
                 }
                 else if (mesesTranscurridos >= 9) {
-                    alertaCreada = crearAlertaSiNoExiste(
+                    alertaCreada = noExisteAlerta(
                             vehiculo,
                             TipoAlerta.SERVICE_9_MESES
                     );
                     mensaje=String.format(
-                            "Vehículo %s. Han transcurrido 9 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            "Vehículo %s. Han transcurrido 9 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse al superar los: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
                             vehiculo.getPatente(),
                             ultimoService.getFechaAsignacion().toLocalDate(),
                             ultimoService.getKilometrajeActual() + 10000,
@@ -188,12 +197,12 @@
                     }
                 }
                 else if (mesesTranscurridos >= 6) {
-                    alertaCreada = crearAlertaSiNoExiste(
+                    alertaCreada = noExisteAlerta(
                             vehiculo,
                             TipoAlerta.SERVICE_6_MESES
                     );
                     mensaje=String.format(
-                            "Vehículo %s. Han transcurrido 6 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            "Vehículo %s. Han transcurrido 6 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse al superar los: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
                             vehiculo.getPatente(),
                             ultimoService.getFechaAsignacion().toLocalDate(),
                             ultimoService.getKilometrajeActual() + 10000,
@@ -207,12 +216,12 @@
                     }
                 }
                 else if (mesesTranscurridos >= 3) {
-                    alertaCreada = crearAlertaSiNoExiste(
+                    alertaCreada = noExisteAlerta(
                             vehiculo,
                             TipoAlerta.SERVICE_3_MESES
                     );
                     mensaje=String.format(
-                            "Vehículo %s. Han transcurrido 3 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse el día: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            "Vehículo %s. Han transcurrido 3 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse al superar los: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
                             vehiculo.getPatente(),
                             ultimoService.getFechaAsignacion().toLocalDate(),
                             ultimoService.getKilometrajeActual() + 10000,
@@ -229,7 +238,7 @@
             }
         }
 
-        private boolean crearAlertaSiNoExiste(
+        private boolean noExisteAlerta(
                 Vehiculo vehiculo,
                 TipoAlerta tipo) {
 

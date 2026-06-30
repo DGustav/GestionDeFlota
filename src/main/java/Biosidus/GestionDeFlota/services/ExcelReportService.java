@@ -314,7 +314,7 @@ public class ExcelReportService {
     }
 
     public ByteArrayInputStream generarReporteExcelMantenimiento(List<MantenimientoVehicular> mantenimientos) throws IOException {
-        String[] columnas = {"ID", "Patente", "Modelo", "Descripción", "Fecha de Service", "Devolución Estimada", "Devolución Real", "Kilometraje"};
+        String[] columnas = {"ID", "Patente", "Modelo", "Tipo", "Descripción", "Fecha de Service", "Devolución Estimada", "Devolución Real", "Kilometraje"};
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Mantenimientos");
@@ -368,28 +368,33 @@ public class ExcelReportService {
                 cellModelo.setCellValue(m.getVehiculo().getModelo().getNombreCompletoModelo());
                 cellModelo.setCellStyle(dataCellStyle);
 
+                // Tipo
+                Cell cellTipo = row.createCell(3);
+                cellTipo.setCellValue(m.getTipo() != null ? m.getTipo().toString() : "-");
+                cellTipo.setCellStyle(dataCellStyle);
+
                 // Descripción
-                Cell cellDesc = row.createCell(3);
+                Cell cellDesc = row.createCell(4);
                 cellDesc.setCellValue(m.getDescripcion() != null ? m.getDescripcion() : "-");
                 cellDesc.setCellStyle(dataCellStyle);
 
                 // Fecha Service
-                Cell cellFecha = row.createCell(4);
+                Cell cellFecha = row.createCell(5);
                 cellFecha.setCellValue(m.getFechaAsignacion() != null ? m.getFechaAsignacion().format(formatter) : "-");
                 cellFecha.setCellStyle(dataCellStyle);
 
                 // Devolución Estimada
-                Cell cellEstimada = row.createCell(5);
+                Cell cellEstimada = row.createCell(6);
                 cellEstimada.setCellValue(m.getFechaDevolucionEstimada() != null ? m.getFechaDevolucionEstimada().format(formatter) : "-");
                 cellEstimada.setCellStyle(dataCellStyle);
 
                 // Devolución Real
-                Cell cellReal = row.createCell(6);
+                Cell cellReal = row.createCell(7);
                 cellReal.setCellValue(m.getFechaDevolucion() != null ? m.getFechaDevolucion().format(formatter) : "-");
                 cellReal.setCellStyle(dataCellStyle);
 
                 // Kilometraje
-                Cell cellKm = row.createCell(7);
+                Cell cellKm = row.createCell(8);
                 cellKm.setCellValue(m.getKilometrajeActual() != null ? m.getKilometrajeActual() : 0);
                 cellKm.setCellStyle(dataCellStyle);
             }

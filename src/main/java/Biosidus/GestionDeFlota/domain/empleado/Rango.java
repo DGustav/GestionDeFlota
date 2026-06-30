@@ -8,5 +8,6 @@ public enum Rango {
     JEFE_APM,
     ASISTENTE,
     KAM,
-    JEFE_COMERCIAL
+    JEFE_COMERCIAL,
+    OTRO
 }

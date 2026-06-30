@@ -35,7 +35,7 @@
                             <label class="form-label">Tipo de Documento</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-tag"></i>
-                                <select th:field="*{tipoDocumento}" class="form-control-custom" required>
+                                <select th:field="*{tipoDocumento}" class="form-control-custom" id="tipoDocumento" required>
                                     <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option>
                                 </select>
                             </div>
@@ -135,6 +135,28 @@
         const conductorNombreInput = document.getElementById('conductorNombre');
         const conductorIdInput = document.getElementById('conductorId');
         const conductoresList = document.getElementById('conductoresList');
+        const tipoDocumentoSelect = document.getElementById('tipoDocumento');
+
+        function actualizarHabilitacion() {
+            const tipo = tipoDocumentoSelect.value;
+            if (tipo === 'REGISTRO') {
+                // Solo habilitar conductor
+                vehiculoNombreInput.disabled = true;
+                vehiculoNombreInput.value = "";
+                vehiculoIdInput.value = "";
+                
+                conductorNombreInput.disabled = false;
+            } else {
+                // Solo habilitar vehículo (para otros tipos: VTV, CEDULAS, RTO)
+                conductorNombreInput.disabled = true;
+                conductorNombreInput.value = "";
+                conductorIdInput.value = "";
+                
+                vehiculoNombreInput.disabled = false;
+            }
+        }
+
+        tipoDocumentoSelect.addEventListener('change', actualizarHabilitacion);
 
         vehiculoNombreInput.addEventListener('input', function(e) {
             const val = e.target.value;
@@ -167,18 +189,53 @@
         });
 
         document.querySelector('form').addEventListener('submit', function(e) {
-            if (!vehiculoIdInput.value && !conductorIdInput.value) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Debe seleccionar un vehículo o un conductor',
-                    confirmButtonColor: '#004b81'
-                });
+            const tipo = tipoDocumentoSelect.value;
+            if (tipo === 'REGISTRO') {
+                if (!conductorIdInput.value) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Para el tipo REGISTRO debe seleccionar un conductor',
+                        confirmButtonColor: '#004b81'
+                    });
+                    return;
+                }
+            } else if (tipo) {
+                if (!vehiculoIdInput.value) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Para este tipo de documento debe seleccionar un vehículo',
+                        confirmButtonColor: '#004b81'
+                    });
+                    return;
+                }
+            } else {
+                if (!vehiculoIdInput.value && !conductorIdInput.value) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Debe seleccionar un tipo de documento y su correspondiente vehículo o conductor',
+                        confirmButtonColor: '#004b81'
+                    });
+                }
             }
         });
 
         window.addEventListener('load', function() {
+            // No limpiar campos al cargar en modificación si ya tienen valores
+            const tipo = tipoDocumentoSelect.value;
+            if (tipo === 'REGISTRO') {
+                vehiculoNombreInput.disabled = true;
+                conductorNombreInput.disabled = false;
+            } else if (tipo) {
+                conductorNombreInput.disabled = true;
+                vehiculoNombreInput.disabled = false;
+            }
+
             if (vehiculoIdInput.value) {
                 const options = vehiculosList.options;
                 for (let i = 0; i < options.length; i++) {

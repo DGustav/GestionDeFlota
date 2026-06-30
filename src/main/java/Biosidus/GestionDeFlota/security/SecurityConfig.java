@@ -1,8 +1,11 @@
 package Biosidus.GestionDeFlota.security;
 
+import Biosidus.GestionDeFlota.domain.empleado.Conductor;
+import Biosidus.GestionDeFlota.domain.empleado.Rango;
 import Biosidus.GestionDeFlota.domain.empleado.Rol;
 import Biosidus.GestionDeFlota.domain.empleado.Usuario;
-import Biosidus.GestionDeFlota.repositorios.UsuarioRepositorio;
+import Biosidus.GestionDeFlota.repositorios.ConductorRepositorio;
+import Biosidus.GestionDeFlota.services.ConductorService;
 import Biosidus.GestionDeFlota.services.CustomUserDetailsService;
 import Biosidus.GestionDeFlota.services.UsuarioService;
 import org.springframework.boot.CommandLineRunner;
@@ -11,13 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import java.util.Map;
 
 @Configuration
 /* Esta anotación es de Spring Core (no es exclusiva de seguridad).
@@ -96,7 +96,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public CommandLineRunner initAdmin(PasswordEncoder passwordEncoder, UsuarioService usuarioService) {
+    public CommandLineRunner initAdmin(PasswordEncoder passwordEncoder, UsuarioService usuarioService, ConductorService conductorService, ConductorRepositorio conductorRepository) {
         return args -> {
             if (usuarioService.buscarPorNickname("admin").isEmpty()) {
                 Usuario usuario = new Usuario();
@@ -121,6 +121,58 @@ public class SecurityConfig {
                 usuario.setRol(Rol.CONDUCTOR);
 
                 usuarioService.guardar(usuario);
+            }
+            if(conductorService.obtenerConductorPorUsuarioNickname("daruichj")==null){
+                Conductor javier = new Conductor();
+                Usuario usuarioDeJavi = new Usuario();
+                usuarioDeJavi.setNickname("daruichj");
+                usuarioDeJavi.setPassword(passwordEncoder.encode("javi321"));
+                usuarioDeJavi.setRol(Rol.ADMINISTRADOR);
+                usuarioService.guardar(usuarioDeJavi);
+
+                javier.setMail("j.daruich@biosidus.com.ar");
+                javier.setRango(Rango.OTRO);
+                javier.setUsuario(usuarioDeJavi);
+                conductorRepository.save(javier);
+            }
+            if(conductorService.obtenerConductorPorUsuarioNickname("albam")==null){
+                Conductor mario = new Conductor();
+                Usuario usuarioDeMario = new Usuario();
+                usuarioDeMario.setNickname("albam");
+                usuarioDeMario.setPassword(passwordEncoder.encode("alba352"));
+                usuarioDeMario.setRol(Rol.ADMINISTRADOR);
+                usuarioService.guardar(usuarioDeMario);
+
+                mario.setMail("m.alba@biosidus.com.ar");
+                mario.setRango(Rango.OTRO);
+                mario.setUsuario(usuarioDeMario);
+                conductorRepository.save(mario);
+            }
+            if(conductorService.obtenerConductorPorUsuarioNickname("foscof")==null){
+                Conductor fabi = new Conductor();
+                Usuario usuarioDeFabi = new Usuario();
+                usuarioDeFabi.setNickname("foscof");
+                usuarioDeFabi.setPassword(passwordEncoder.encode("foscof582"));
+                usuarioDeFabi.setRol(Rol.ADMINISTRADOR);
+                usuarioService.guardar(usuarioDeFabi);
+
+                fabi.setMail("f.fosco@biosidus.com.ar");
+                fabi.setRango(Rango.OTRO);
+                fabi.setUsuario(usuarioDeFabi);
+                conductorRepository.save(fabi);
+            }
+            if(conductorService.obtenerConductorPorUsuarioNickname("velazquezs")==null){
+                Conductor sil = new Conductor();
+                Usuario usuarioDeSil = new Usuario();
+                usuarioDeSil.setNickname("velazquezs");
+                usuarioDeSil.setPassword(passwordEncoder.encode("velazquezs916"));
+                usuarioDeSil.setRol(Rol.ADMINISTRADOR);
+                usuarioService.guardar(usuarioDeSil);
+
+                sil.setMail("s.velazquez@biosidus.com.ar");
+                sil.setRango(Rango.OTRO);
+                sil.setUsuario(usuarioDeSil);
+                conductorRepository.save(sil);
             }
         };
     }

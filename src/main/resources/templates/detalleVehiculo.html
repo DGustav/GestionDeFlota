@@ -75,6 +75,10 @@
                             <div class="col-sm-4 fw-bold">Motor:</div>
                             <div class="col-sm-8" th:text="${vehiculo.motor != null ? vehiculo.motor : 'N/A'}">987654321</div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Nota:</div>
+                            <div class="col-sm-8" th:text="${vehiculo.nota != null && !vehiculo.nota.isEmpty() ? vehiculo.nota : 'N/A'}">Notas...</div>
+                        </div>
                     </div>
                 </div>
             </div>

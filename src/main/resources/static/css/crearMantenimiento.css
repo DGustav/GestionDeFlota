@@ -128,3 +128,14 @@ textarea.form-control-custom {
     color: var(--text-dark);
     border-color: var(--text-soft);
 }
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}

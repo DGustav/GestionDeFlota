@@ -5,6 +5,7 @@ import Biosidus.GestionDeFlota.domain.alerta.Alerta;
 import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
 import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.Tipo;
 import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
 import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
@@ -135,6 +136,7 @@ public class MantenimientoVehicularService {
         dto.setVehiculoId(mantenimiento.getVehiculo().getId());
         dto.setNombreVehiculo(mantenimiento.getVehiculo().getPatente() + " - " + mantenimiento.getVehiculo().getModelo().getNombreCompletoModelo());
         dto.setKilometrajeActual(mantenimiento.getKilometrajeActual());
+        dto.setTipo(mantenimiento.getTipo());
         dto.setDescripcion(mantenimiento.getDescripcion());
         dto.setFechaAsignacion(mantenimiento.getFechaAsignacion());
         dto.setFechaDevolucionEstimada(mantenimiento.getFechaDevolucionEstimada());
@@ -160,13 +162,11 @@ public class MantenimientoVehicularService {
 
         mantenimiento.setVehiculo(vehiculo);
         mantenimiento.setKilometrajeActual(dto.getKilometrajeActual());
+        mantenimiento.setTipo(dto.getTipo());
         mantenimiento.setDescripcion(dto.getDescripcion());
         mantenimiento.setFechaAsignacion(dto.getFechaAsignacion());
         mantenimiento.setFechaDevolucionEstimada(dto.getFechaDevolucionEstimada());
         mantenimiento.setFechaDevolucion(dto.getFechaDevolucion());
-
-//        Optional<Alerta> alerta = alertaService.obtenerAlertaActivaPorKm(mantenimiento.getVehiculo(), TipoAlerta.KILOMETRAJE_SUPERADO,EstadoAlerta.ACTIVA);
-//        alerta.ifPresent(value -> value.setEstado(EstadoAlerta.RESUELTA));
 
         MultipartFile comprobanteArchivo = dto.getComprobanteArchivo();
         if (comprobanteArchivo != null && !comprobanteArchivo.isEmpty()) {
@@ -185,36 +185,40 @@ public class MantenimientoVehicularService {
         } else if (dto.getId() == null) {
             mantenimiento.setRuta_comprobante("");
         }
-        // El service inició (no se cargó la fecha de devolución)
-        if (dto.getFechaDevolucion() == null) {
-            vehiculo.setEstado(EstadoVehiculo.EN_SERVICE);
-            vehiculo.setDisponible(false);
 
-        }else {
-            // El service ya finalizó (se cargó la fecha de devolución)
-            vehiculo.setEstado(EstadoVehiculo.ACTIVO);
-            vehiculo.setDisponible(true);
+        if (dto.getTipo().equals(Tipo.SERVICE)){
+            // El service inició (no se cargó la fecha de devolución)
+            if (dto.getFechaDevolucion() == null) {
+                vehiculo.setEstado(EstadoVehiculo.EN_SERVICE);
+                vehiculo.setDisponible(false);
 
-            List<TipoAlerta> tipos = List.of(
-                    TipoAlerta.SERVICE_3_MESES,
-                    TipoAlerta.SERVICE_6_MESES,
-                    TipoAlerta.SERVICE_9_MESES,
-                    TipoAlerta.SERVICE_VENCIDO
-            );
+            }else {
+                // El service ya finalizó (se cargó la fecha de devolución)
+                vehiculo.setEstado(EstadoVehiculo.ACTIVO);
+                vehiculo.setDisponible(true);
 
-            for(TipoAlerta tipo : tipos){
+                List<TipoAlerta> tipos = List.of(
+                        TipoAlerta.SERVICE_3_MESES,
+                        TipoAlerta.SERVICE_6_MESES,
+                        TipoAlerta.SERVICE_9_MESES,
+                        TipoAlerta.SERVICE_VENCIDO
+                );
 
-                alertaService
-                        .obtenerActivasPorVehiculoYTipo(
-                                vehiculo.getId(),
-                                tipo
-                        )
-                        .ifPresent(alerta -> {
-                            alerta.setEstado(EstadoAlerta.RESUELTA);
-                            alertaService.guardarAlerta(alerta);
-                        });
+                for(TipoAlerta tipo : tipos){
+
+                    alertaService
+                            .obtenerActivasPorVehiculoYTipo(
+                                    vehiculo.getId(),
+                                    tipo
+                            )
+                            .ifPresent(alerta -> {
+                                alerta.setEstado(EstadoAlerta.RESUELTA);
+                                alertaService.guardarAlerta(alerta);
+                            });
+                }
             }
         }
+
 
         mantenimientoRepositorio.save(mantenimiento);
         
@@ -259,22 +263,8 @@ public class MantenimientoVehicularService {
     }
 
     @Transactional
-    public List<MantenimientoVehicular> listarMantenimientosPorVehiculo(Vehiculo vehiculo) {
-        return mantenimientoRepositorio.findByVehiculo(vehiculo);
-    }
-
-    @Transactional
-    public List<MantenimientoVehicular> obtenerMantenimientosPorUsuario(String username) {
-        List<MantenimientoVehicular> mantenimientoVehiculares = asignacionService.obtenerUltimaAsignacionActivaPorUsuario(username)
-                .map(asignacion -> asignacion.getVehiculo())
-                .map(vehiculo -> mantenimientoRepositorio.findByVehiculo(vehiculo))
-                .orElse(new ArrayList<>());
-        return mantenimientoVehiculares;
-    }
-
-    @Transactional
-    public Optional<MantenimientoVehicular> ultimoMantenimientoPorVehiculoId(Long vehiculoId) {
-        return mantenimientoRepositorio.findTopByVehiculoIdAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(vehiculoId);
+    public Optional<MantenimientoVehicular> ultimoServicePorVehiculoId(Long vehiculoId) {
+        return mantenimientoRepositorio.findTopByVehiculoIdAndTipoAndFechaAsignacionIsNotNullOrderByFechaAsignacionDesc(vehiculoId, Tipo.SERVICE);
     }
 
 }

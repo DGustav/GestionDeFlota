@@ -44,11 +44,23 @@
                 </div>
 
                 <!-- Kilometraje Actual -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="form-label">Kilometraje Actual</label>
                         <input type="number" th:field="*{kilometrajeActual}" class="form-control-custom" th:classappend="${#fields.hasErrors('kilometrajeActual')} ? 'is-invalid' : ''" placeholder="Ej: 45000" required>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('kilometrajeActual')}" th:errors="*{kilometrajeActual}"></div>
+                    </div>
+                </div>
+
+                <!-- Tipo de Mantenimiento -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Mantenimiento</label>
+                        <select th:field="*{tipo}" class="form-control-custom" th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid' : ''" required>
+                            <option value="" disabled>Seleccione un tipo</option>
+                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}" th:selected="${t == mantenimiento.tipo}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
                     </div>
                 </div>
 
@@ -81,7 +93,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="form-label">Fecha Devolución Real</label>
-                        <input type="datetime-local" th:field="*{fechaDevolucion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaDevolucion')} ? 'is-invalid' : ''">
+                        <input type="datetime-local" th:field="*{fechaDevolucion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaDevolucion')} ? 'is-invalid' : ''" required>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaDevolucion')}" th:errors="*{fechaDevolucion}"></div>
                     </div>
                 </div>

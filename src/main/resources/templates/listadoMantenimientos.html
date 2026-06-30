@@ -79,6 +79,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Vehículo</th>
+                    <th>Tipo</th>
                     <th>Descripción</th>
                     <th class="d-none d-lg-table-cell">Fecha de service</th>
                     <th class="d-none d-lg-table-cell">Devolución Estimada</th>
@@ -96,6 +97,7 @@
                         <div class="desc-title" th:text="${mantenimiento.vehiculo.modelo.nombreCompletoModelo}">Renault Kangoo</div>
                         <div class="desc-subtitle" th:text="${mantenimiento.vehiculo.patente}">AB 123 CD</div>
                     </td>
+                    <td th:text="${mantenimiento.tipo}">SERVICE</td>
                     <td th:text="${mantenimiento.descripcion}">Cambio de aceite y filtros</td>
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(mantenimiento.fechaAsignacion, 'dd/MM/yyyy')}">10/03/2025</td>
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(mantenimiento.fechaDevolucionEstimada, 'dd/MM/yyyy')}">12/03/2025</td>
