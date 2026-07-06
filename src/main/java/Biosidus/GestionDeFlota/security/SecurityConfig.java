@@ -109,7 +109,7 @@ public class SecurityConfig {
             if (usuarioService.buscarPorNickname("operario").isEmpty()) {
                 Usuario usuario = new Usuario();
                 usuario.setNickname("operario");
-                usuario.setPassword(passwordEncoder.encode("admin123"));
+                usuario.setPassword(passwordEncoder.encode("operario123"));
                 usuario.setRol(Rol.OPERARIO);
 
                 usuarioService.guardar(usuario);
@@ -117,7 +117,7 @@ public class SecurityConfig {
             if (usuarioService.buscarPorNickname("conductor").isEmpty()) {
                 Usuario usuario = new Usuario();
                 usuario.setNickname("conductor");
-                usuario.setPassword(passwordEncoder.encode("admin123"));
+                usuario.setPassword(passwordEncoder.encode("conductor123"));
                 usuario.setRol(Rol.CONDUCTOR);
 
                 usuarioService.guardar(usuario);

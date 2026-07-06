@@ -17,6 +17,7 @@ public class AdapterEmailConcreto implements AdapterEmail{
             SimpleMailMessage email = new SimpleMailMessage();
 
             // Configuramos los datos principales
+            email.setFrom("biosistemas@biosidus.com.ar");
             email.setTo(correo);
             email.setSubject(asunto);
             email.setText(mensaje); // Aquí insertamos directamente el String que llega por parámetro

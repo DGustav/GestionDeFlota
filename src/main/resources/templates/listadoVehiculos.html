@@ -3,7 +3,7 @@
       th:replace="~{layout/layout :: layout(
         title='Listado de Vehículos - Gestión de Flota',
         currentPage='vehiculos',
-        searchPlaceholder='Buscar vehículos (patente, marca, modelo...)',
+        searchPlaceholder='Buscar vehículos (patente, marca o modelo)',
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
@@ -24,25 +24,25 @@
         <div class="filters-bar">
             <form th:action="@{/vehiculo/listado}" method="GET">
                 <input type="hidden" name="buscar" th:value="${busqueda}">
-                <div class="row g-3">
-                    <div class="col-12 col-sm-4 col-lg-2">
+                <div class="row g-2 align-items-end">
+                    <div class="col-lg-2">
                         <div class="filter-group">
-                            <label>Tipo</label>
+                            <label class="small mb-1">Tipo</label>
                             <div class="filter-input-group">
                                 <i class="fa-solid fa-car"></i>
                                 <select name="tipoVehiculo" class="form-select-custom">
                                     <option value="" th:selected="${tipoVehiculoSeleccionado == null}">Todos</option>
-                                    <option th:each="tipo : ${tiposVehiculo}" 
-                                            th:value="${tipo}" 
-                                            th:text="${#strings.replace(tipo, '_', ' ')}" 
+                                    <option th:each="tipo : ${tiposVehiculo}"
+                                            th:value="${tipo}"
+                                            th:text="${#strings.replace(tipo, '_', ' ')}"
                                             th:selected="${tipoVehiculoSeleccionado == tipo}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-3">
+                    <div class="col-lg-2">
                         <div class="filter-group">
-                            <label>Disponibilidad</label>
+                            <label class="small mb-1">Disponibilidad</label>
                             <div class="filter-input-group">
                                 <i class="fa-solid fa-circle-info"></i>
                                 <select name="disponible" class="form-select-custom">
@@ -53,57 +53,63 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-lg-2">
                         <div class="filter-group">
-                            <label>Estado</label>
+                            <label class="small mb-1">Estado</label>
                             <div class="filter-input-group">
                                 <i class="fa-solid fa-signal"></i>
                                 <select name="estado" class="form-select-custom">
                                     <option value="" th:selected="${estadoSeleccionado == null}">Todos</option>
-                                    <option th:each="est : ${estados}" 
-                                            th:value="${est}" 
-                                            th:text="${est}" 
+                                    <option th:each="est : ${estados}"
+                                            th:value="${est}"
+                                            th:text="${est}"
                                             th:selected="${estadoSeleccionado == est}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-lg-2">
                         <div class="filter-group">
-                            <label>Origen</label>
+                            <label class="small mb-1">Origen</label>
                             <div class="filter-input-group">
                                 <i class="fa-solid fa-earth-americas"></i>
                                 <select name="origen" class="form-select-custom">
                                     <option value="" th:selected="${origenSeleccionado == null}">Todos</option>
-                                    <option th:each="orig : ${origenes}" 
-                                            th:value="${orig}" 
-                                            th:text="${#strings.replace(orig, '_', ' ')}" 
+                                    <option th:each="orig : ${origenes}"
+                                            th:value="${orig}"
+                                            th:text="${#strings.replace(orig, '_', ' ')}"
                                             th:selected="${origenSeleccionado == orig}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-2">
+                    <div class="col-lg-2">
                         <div class="filter-group">
-                            <label>Propietario</label>
+                            <label class="small mb-1">Propietario</label>
                             <div class="filter-input-group">
                                 <i class="fa-solid fa-building"></i>
                                 <select name="propietario" class="form-select-custom">
                                     <option value="" th:selected="${propietarioSeleccionado == null}">Todos</option>
-                                    <option th:each="prop : ${propietarios}" 
-                                            th:value="${prop}" 
-                                            th:text="${#strings.replace(prop, '_', ' ')}" 
+                                    <option th:each="prop : ${propietarios}"
+                                            th:value="${prop}"
+                                            th:text="${#strings.replace(prop, '_', ' ')}"
                                             th:selected="${propietarioSeleccionado == prop}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-4 col-lg-1">
-                        <div class="filter-group h-100 d-flex flex-column justify-content-end">
-                            <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
-                                <i class="fa-solid fa-filter"></i>
-                                Filtrar
-                            </button>
+                    <div class="col-lg-2">
+                        <div class="filter-group">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-2">
+                                    <i class="fa-solid fa-filter"></i>
+                                    Filtrar
+                                </button>
+                                <a th:href="@{/vehiculo/listado}" class="btn btn-secondary w-100 py-2" style="background-color: #6c757d; color: white; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                                    <i class="fa-solid fa-eraser"></i>
+                                    Borrar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

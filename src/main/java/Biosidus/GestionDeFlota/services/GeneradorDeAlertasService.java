@@ -6,6 +6,7 @@
     import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
     import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
     import Biosidus.GestionDeFlota.domain.documento.Documento;
+    import Biosidus.GestionDeFlota.domain.documento.EstadoDocumento;
     import Biosidus.GestionDeFlota.domain.empleado.Conductor;
     import Biosidus.GestionDeFlota.domain.empleado.Rol;
     import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
@@ -49,6 +50,26 @@
 
         @Autowired
         private AsignacionService asignacionService;
+
+        @Scheduled(cron = "0 0 12 * * ?")
+        @Transactional
+        public void actualizarEstadoDocumentos() {
+            LocalDate hoy = LocalDate.now();
+            List<Documento> documentos = documentoService.listarDocumentos();
+
+            for (Documento doc : documentos) {
+
+                if (doc.getFechaVencimiento().isBefore(hoy)) {
+                    doc.setEstadoDocumento(EstadoDocumento.VENCIDO);
+                } else if (!doc.getFechaVencimiento().isAfter(hoy.plusDays(30))) {
+                    doc.setEstadoDocumento(EstadoDocumento.POR_VENCER);
+                } else {
+                    doc.setEstadoDocumento(EstadoDocumento.VIGENTE);
+                }
+
+                documentoService.guardarDocumento(doc);
+            }
+        }
 
         @Scheduled(cron = "0 0 23 * * ?")
         @Transactional

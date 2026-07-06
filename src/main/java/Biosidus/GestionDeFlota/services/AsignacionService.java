@@ -126,6 +126,20 @@ public class AsignacionService {
             throw new RuntimeException("El vehículo o conductor seleccionado no existe");
         }
 
+        if (asignacionDTO.getKilometrajeInicial() != null && asignacionDTO.getKilometrajeInicial() < 0) {
+            result.rejectValue("kilometrajeInicial", "error.kilometrajeInicial", "El kilometraje inicial no puede ser negativo");
+        }
+        if (asignacionDTO.getKilometrosRecorridos() != null && asignacionDTO.getKilometrosRecorridos() < 0) {
+            result.rejectValue("kilometrosRecorridos", "error.kilometrosRecorridos", "Los kilómetros recorridos no pueden ser negativos");
+        }
+        if (asignacionDTO.getKilometrajeFinal() != null && asignacionDTO.getKilometrajeFinal() < 0) {
+            result.rejectValue("kilometrajeFinal", "error.kilometrajeFinal", "El kilometraje final no puede ser negativo");
+        }
+
+        if (result.hasErrors()) {
+            throw new RuntimeException("Error en las validaciones de la asignación");
+        }
+
         Asignacion asignacion = asignacionRepositorio.findById(asignacionDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
 

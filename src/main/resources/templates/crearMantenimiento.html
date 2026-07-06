@@ -96,7 +96,7 @@
                 <!-- Descripción -->
                 <div class="col-12">
                     <div class="form-group">
-                        <label class="form-label">Descripción del Mantenimiento</label>
+                        <label class="form-label">Descripción del service o mantenimiento</label>
                         <textarea th:field="*{descripcion}" class="form-control-custom" th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''" rows="3" placeholder="Detalle los trabajos realizados..."></textarea>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
                     </div>
@@ -105,7 +105,7 @@
                 <!-- Fechas -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="form-label">Fecha de Service</label>
+                        <label class="form-label">Fecha de Service o Mantenimientos</label>
                         <input type="datetime-local" th:field="*{fechaAsignacion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaAsignacion')} ? 'is-invalid' : ''" required>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaAsignacion')}" th:errors="*{fechaAsignacion}"></div>
                     </div>

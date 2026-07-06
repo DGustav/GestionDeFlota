@@ -3,7 +3,7 @@
       th:replace="~{layout/layout :: layout(
         title='Listado de Documentos - Gestión de Flota',
         currentPage='documentos',
-        searchPlaceholder='Buscar documentos (tipo, patente, conductor...)',
+        searchPlaceholder='Buscar documentos (patente del vehiculo, nombre y apellido, legajo o usuario del conductor)',
         searchAction=${searchAction},
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
@@ -109,7 +109,13 @@
                         </span>
                     </td>
                     <td class="d-none d-lg-table-cell">
-                        <span class="badge" th:classappend="${doc.estadoDocumento.name() == 'VIGENTE' ? 'bg-success' : 'bg-danger'}" th:text="${doc.estadoDocumento}"></span>
+                            <span class="badge"
+                                  th:classappend="${
+                                      doc.estadoDocumento.name() == 'VIGENTE' ? 'bg-success' :
+                                      (doc.estadoDocumento.name() == 'POR_VENCER' ? 'bg-warning text-dark' : 'bg-danger')
+                                  }"
+                                  th:text="${doc.estadoDocumento}">
+                            </span>
                     </td>
                     <td class="text-center">
                         <a th:href="@{/documento/detalle/{id}(id=${doc.id})}" class="text-info me-2"><i class="fa-solid fa-eye"></i></a>

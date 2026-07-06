@@ -15,7 +15,7 @@ public class SiniestroDTO {
     
     private Long id;
 
-    @NotNull(message = "El vehiculo es obligatorio")
+    @NotNull(message = "Debe seleccionar un vehículo de la lista")
     private Long vehiculoId;
 
     private String nombreVehiculo; // Para el datalist

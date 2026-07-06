@@ -113,10 +113,9 @@ public class SiniestroService {
     @Transactional
     public void actualizarSiniestro(SiniestroDTO dto) throws IOException {
         Siniestro siniestro = obtenerSiniestroPorId(dto.getId());
-        
-        // El vehículo no se suele cambiar en una modificación de siniestro según la UI estática, 
-        // pero si se permitiera, deberíamos validar la asignación de nuevo.
-        // Por ahora, actualizamos fecha y descripción.
+
+
+        siniestro.setVehiculo(siniestro.getVehiculo());
         siniestro.setFechaSiniestro(dto.getFechaSiniestro());
         siniestro.setDescripcion(dto.getDescripcion());
 

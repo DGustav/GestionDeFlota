@@ -69,10 +69,16 @@
                     </div>
                     <div class="col-12 col-sm-12 col-lg-3">
                         <div class="filter-group h-100 d-flex flex-column justify-content-end">
-                            <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
-                                <i class="fa-solid fa-filter"></i>
-                                Filtrar
-                            </button>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-2 mt-auto">
+                                    <i class="fa-solid fa-filter"></i>
+                                    Filtrar
+                                </button>
+                                <a th:href="@{/asignacion/listado}" class="btn btn-secondary w-100 py-2 mt-auto" style="background-color: #6c757d; color: white; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                                    <i class="fa-solid fa-eraser me-2"></i>
+                                    Limpiar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,7 +118,7 @@
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(a.fechaAsignacion, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${#temporals.format(a.fechaDevolucionEstimada, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${a.fechaDevolucion != null ? #temporals.format(a.fechaDevolucion, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-                    <td class="d-none d-lg-table-cell" th:text="${a.kilometrajeInicial}"></td>
+                    <td class="d-none d-lg-table-cell" th:text="${#numbers.formatInteger(a.kilometrajeInicial, 0, 'POINT')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${#numbers.formatInteger(a.kilometrosRecorridos, 0, 'POINT')}"></td>
                     <td class="d-none d-lg-table-cell" th:text="${a.kilometrajeFinal != null ? #numbers.formatInteger(a.kilometrajeFinal, 0, 'POINT') : '-'}"></td>
                     <td class="d-none d-lg-table-cell text-center">

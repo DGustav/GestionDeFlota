@@ -207,6 +207,11 @@ public class DocumentoService {
     }
 
     @Transactional
+    public void guardarDocumento(Documento documento) {
+        documentoRepositorio.save(documento);
+    }
+
+    @Transactional
     public List<Documento> listarPorVehiculo(Long vehiculoId) {
         return documentoRepositorio.findByVehiculoId(vehiculoId);
     }

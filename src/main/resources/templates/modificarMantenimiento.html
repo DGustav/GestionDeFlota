@@ -19,7 +19,7 @@
         <div class="panel-header">
             <h2 class="panel-title">
                 <i class="fa-solid fa-pen-to-square"></i>
-                Modificar Mantenimiento <span th:text="'#' + ${mantenimiento.id}"></span>
+                Modificar Service o mantenimiento <span th:text="'#' + ${mantenimiento.id}"></span>
             </h2>
             <p class="panel-subtitle">Actualice la información del registro de mantenimiento seleccionado.</p>
         </div>
@@ -55,7 +55,7 @@
                 <!-- Tipo de Mantenimiento -->
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="form-label">Tipo de Mantenimiento</label>
+                        <label class="form-label">Tipo</label>
                         <select th:field="*{tipo}" class="form-control-custom" th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid' : ''" required>
                             <option value="" disabled>Seleccione un tipo</option>
                             <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}" th:selected="${t == mantenimiento.tipo}"></option>
@@ -67,7 +67,7 @@
                 <!-- Descripción -->
                 <div class="col-12">
                     <div class="form-group">
-                        <label class="form-label">Descripción del Mantenimiento</label>
+                        <label class="form-label">Descripción del service o mantenimiento</label>
                         <textarea th:field="*{descripcion}" class="form-control-custom" th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''" rows="3" placeholder="Detalle los trabajos realizados..."></textarea>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
                     </div>
@@ -76,7 +76,7 @@
                 <!-- Fechas -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="form-label">Fecha de Service</label>
+                        <label class="form-label">Fecha de service o mantenimiento</label>
                         <input type="datetime-local" th:field="*{fechaAsignacion}" class="form-control-custom" th:classappend="${#fields.hasErrors('fechaAsignacion')} ? 'is-invalid' : ''" required>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaAsignacion')}" th:errors="*{fechaAsignacion}"></div>
                     </div>
