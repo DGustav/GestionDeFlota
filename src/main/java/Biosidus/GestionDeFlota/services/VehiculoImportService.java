@@ -111,6 +111,8 @@ public class VehiculoImportService {
                 filasVaciasSeguidas = 0;
 
                 String patente = getCellValue(fila.getCell(7))
+                        .replaceAll("\n+", "")
+                        .strip()
                         .trim()
                         .toUpperCase();
 

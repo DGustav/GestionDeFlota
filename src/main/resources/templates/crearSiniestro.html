@@ -106,7 +106,7 @@
                     <div class="form-group">
                         <label class="form-label">Carga de Pruebas (Fotos/Documentos)</label>
                         <div class="input-group">
-                            <input type="file" class="form-control-custom" th:field="*{pruebasArchivos}" multiple accept="image/*,.pdf">
+                            <input type="file" class="form-control-custom" id="archivo" th:field="*{pruebasArchivos}" multiple accept="image/*,.pdf">
                         </div>
                         <small class="text-muted">Puede seleccionar varios archivos a la vez (fotos o PDF).</small>
                     </div>
@@ -126,6 +126,7 @@
         </form>
     </section>
 
+    <script class="extra-scripts" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script class="extra-scripts" th:inline="javascript">
         const vehiculoNombreInput = document.getElementById('vehiculoNombre');
         const vehiculoIdInput = document.getElementById('vehiculoId');
@@ -158,6 +159,34 @@
             }
         });
 
+        const MAX_SIZE = 10 * 1024 * 1024;
+
+        document.getElementById("archivo").addEventListener("change", function () {
+
+            const archivosGrandes = [];
+
+            for (const archivo of this.files) {
+                if (archivo.size > MAX_SIZE) {
+                    archivosGrandes.push(archivo.name);
+                }
+            }
+
+            if (archivosGrandes.length > 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Archivos demasiado grandes',
+                    html: `
+                Los siguientes archivos superan los 10 MB:
+                <br><br>
+                <b>${archivosGrandes.join("<br>")}</b>
+            `,
+                    confirmButtonColor: '#004b81'
+                });
+
+                this.value = "";
+            }
+        });
+
         /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
             var exito = /*[[${exito}]]*/ null;
@@ -182,6 +211,7 @@
             }
         });
         /*]]>*/
+
     </script>
 </body>
 </html>

@@ -47,6 +47,9 @@ public class ConductorController {
 
     @GetMapping("/listado")
     public String listadoConductores(@RequestParam(name="buscar", required=false) String buscar, Model model, @RequestParam(name = "page", defaultValue = "0") int page){
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
         Page<Conductor> pagina = conductorService.listarConductores(buscar, page);
         model.addAttribute("conductores", pagina.getContent()); // Los registros de la página actual
         model.addAttribute("paginaActual", page);

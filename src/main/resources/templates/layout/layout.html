@@ -49,12 +49,12 @@
             </div>
 
             <nav class="menu">
-                <a th:href="@{/tableroDeControl}" class="menu-item" th:classappend="${currentPage == 'tableroDeControl' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
+                <a th:href="@{/tableroDeControl}" class="menu-item" th:classappend="${currentPage == 'tableroDeControl' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'AUDITOR')">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Tablero de control</span>
                 </a>
 
-                <a th:href="@{/asignacion/listado}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/asignacion/listado}" class="menu-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-car-side"></i>
                     <span>Asignaciones</span>
                 </a>
@@ -63,7 +63,7 @@
                     <span>Mis Asignaciones</span>
                 </a>
 
-                <a th:href="@{/vehiculo/listado}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/vehiculo/listado}" class="menu-item" th:classappend="${currentPage == 'vehiculos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-bus"></i>
                     <span>Vehículos</span>
                 </a>
@@ -73,7 +73,7 @@
                     <span>Importar Vehículos</span>
                 </a>
 
-                <a th:href="@{/conductor/listado}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/conductor/listado}" class="menu-item" th:classappend="${currentPage == 'conductores' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-id-badge"></i>
                     <span>Conductores</span>
                 </a>
@@ -83,7 +83,7 @@
                     <span>Mis services y mantenimientos</span>
                 </a>
 
-                <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR','OPERARIO')">
+                <a th:href="@{/mantenimientoVehicular/listado}" class="menu-item" th:classappend="${currentPage == 'mantenimientos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR','OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Services y mantenimientos</span>
                 </a>
@@ -93,12 +93,12 @@
                     <span>Mis siniestros</span>
                 </a>
 
-                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+                <a th:href="@{/siniestro/listado}" class="menu-item" th:classappend="${currentPage == 'siniestros' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Siniestros</span>
                 </a>
 
-                <a th:href="@{/documento/listado}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR')">
+                <a th:href="@{/documento/listado}" class="menu-item" th:classappend="${currentPage == 'documentos' ? 'active' : ''}" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
                     <i class="fa-solid fa-folder"></i>
                     <span>Documentos</span>
                 </a>
@@ -129,6 +129,7 @@
 
                 <div class="topbar-actions d-flex align-items-center justify-content-between justify-content-md-end flex-shrink-0">
                     <!-- Fragmento para botón de acción principal variable -->
+
                     <th:block th:replace="${topbar_action} ?: ~{}"></th:block>
 
                     <div class="d-flex align-items-center gap-2">

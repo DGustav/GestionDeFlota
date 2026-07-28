@@ -158,6 +158,7 @@ public class AsignacionService {
         if(asignacionDTO.getEstado()==EstadoAsignacion.FINALIZADA)
         {
             vehiculo.setDisponible(true);
+            vehiculo.setKilometrajeActual(asignacion.getKilometrajeFinal());
         }
 
         mapearDtoAEntidad(asignacionDTO, asignacion, vehiculo, conductor);

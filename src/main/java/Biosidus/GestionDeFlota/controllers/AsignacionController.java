@@ -3,6 +3,9 @@ package Biosidus.GestionDeFlota.controllers;
 import Biosidus.GestionDeFlota.DTOs.AsignacionDTO;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import Biosidus.GestionDeFlota.domain.asignacion.EstadoAsignacion;
+import Biosidus.GestionDeFlota.domain.documento.EstadoDocumento;
+import Biosidus.GestionDeFlota.domain.documento.TipoDocumento;
+import Biosidus.GestionDeFlota.repositorios.DocumentoRepositorio;
 import Biosidus.GestionDeFlota.services.AsignacionService;
 import Biosidus.GestionDeFlota.services.ConductorService;
 import Biosidus.GestionDeFlota.services.CustomUserDetailsService;
@@ -47,6 +50,8 @@ public class AsignacionController {
 
     @Autowired
     private ExcelReportService excelReportService;
+    @Autowired
+    private DocumentoRepositorio documentoRepositorio;
 
     @GetMapping("/listado")
     public String listadoAsignaciones(Authentication authentication,
@@ -75,6 +80,9 @@ public class AsignacionController {
         LocalDateTime hasta = (fechaHasta != null) ? fechaHasta.atTime(LocalTime.MAX) : null;
         LocalDateTime particular = (fechaParticular != null) ? fechaParticular.atStartOfDay() : null;
 
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
         Page<Asignacion> pagina = asignacionService.listarAsignaciones(buscar, desde, hasta, particular, vehiculoId, conductorFiltradoId, estado, page);
         
         model.addAttribute("asignaciones", pagina.getContent());
@@ -102,7 +110,7 @@ public class AsignacionController {
     public String crearAsignacion(Model model) {
         model.addAttribute("asignacion", new AsignacionDTO());
         model.addAttribute("vehiculos", asignacionService.listarVehiculosDisponibles());
-        model.addAttribute("conductores", asignacionService.listarConductores());
+        model.addAttribute("conductores", documentoRepositorio.findConductoresDisponibles(TipoDocumento.REGISTRO));
         model.addAttribute("estados", EstadoAsignacion.values());
         return "crearAsignacion";
     }

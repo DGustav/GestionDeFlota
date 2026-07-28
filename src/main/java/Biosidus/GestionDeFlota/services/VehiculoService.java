@@ -35,7 +35,7 @@ public class VehiculoService {
 
     @Transactional(readOnly = true)
     public Page<Vehiculo> listarVehiculos(String busqueda, Boolean disponible, EstadoVehiculo estado, OrigenVehiculo origen, Propietario propietario, TipoVehiculo tipoVehiculo, int numeroPagina) {
-        Pageable pageable = PageRequest.of(numeroPagina, 7, Sort.by("patente").ascending());
+        Pageable pageable = PageRequest.of(numeroPagina, 7, Sort.by("id").ascending());
         Specification<Vehiculo> spec = crearSpecification(busqueda, disponible, estado, origen, propietario, tipoVehiculo);
         return vehiculoRepositorio.findAll(spec, pageable);
     }

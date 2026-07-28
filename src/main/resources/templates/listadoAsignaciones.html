@@ -135,7 +135,7 @@
         </div>
 
         <div class="panel-footer mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
-            <p class="m-0" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
+            <p class="m-0">
                 Mostrando asignaciones del <span th:text="${paginaActual * tamanioPagina + 1}"></span>
                 al <span th:text="${(paginaActual + 1) * tamanioPagina > totalItems ? totalItems : (paginaActual + 1) * tamanioPagina}"></span>
                 de un total de <span th:text="${totalItems}"></span>

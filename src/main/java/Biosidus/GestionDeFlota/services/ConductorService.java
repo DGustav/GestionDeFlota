@@ -9,6 +9,7 @@ import Biosidus.GestionDeFlota.exceptions.DniDuplicadoException;
 import Biosidus.GestionDeFlota.exceptions.LegajoDuplicadoException;
 import Biosidus.GestionDeFlota.exceptions.NicknameDuplicadoException;
 import Biosidus.GestionDeFlota.repositorios.ConductorRepositorio;
+import Biosidus.GestionDeFlota.repositorios.DocumentoRepositorio;
 import Biosidus.GestionDeFlota.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +35,9 @@ public class ConductorService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DocumentoRepositorio documentoRepositorio;
 
     @Transactional(readOnly = true)
     public Page<Conductor> listarConductores(String busqueda, int numeroPagina) {

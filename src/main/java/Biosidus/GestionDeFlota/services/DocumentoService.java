@@ -94,9 +94,11 @@ public class DocumentoService {
     @Transactional
     public void guardarDocumento(DocumentoDTO dto) throws IOException {
         Documento documento;
+        LocalDate fechaVencimientoAnterior = null;
         if (dto.getId() != null) {
             documento = documentoRepositorio.findById(dto.getId())
                     .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+            fechaVencimientoAnterior = documento.getFechaVencimiento();
         } else {
             documento = new Documento();
         }
@@ -113,8 +115,9 @@ public class DocumentoService {
                     .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
             documento.setConductor(conductor);
             documento.setVehiculo(null);
-            
-            if (dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) { 
+
+            if (fechaVencimientoAnterior != null &&
+                    dto.getFechaVencimiento().isAfter(fechaVencimientoAnterior.plusDays(30))) {
                  alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
                     alerta.setEstado(EstadoAlerta.RESUELTA);
                 });
@@ -127,8 +130,9 @@ public class DocumentoService {
                     .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
             documento.setVehiculo(vehiculo);
             documento.setConductor(null);
-            
-            if (dto.getFechaVencimiento().isAfter(documento.getFechaVencimiento().plusDays(30))) {
+
+            if (fechaVencimientoAnterior != null &&
+                    dto.getFechaVencimiento().isAfter(fechaVencimientoAnterior.plusDays(30))) {
                 alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
                     alerta.setEstado(EstadoAlerta.RESUELTA);
                     vehiculo.setDisponible(true);

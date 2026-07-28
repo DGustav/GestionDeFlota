@@ -7,14 +7,14 @@
         topbar_action=~{:: .topbar-btn},
         content=~{:: .content-section},
         extra_css=~{},
-        extra_scripts=~{},
+        extra_scripts=~{:: script.extra-script},
         searchAction='/conductor/listado'
-      )}">
+      )}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body>
 
-    <a th:href="@{/conductor/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/conductor/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'AUDITOR')">
         <i class="fa-solid fa-plus"></i>
         <span>Nuevo <span class="d-none d-sm-inline">conductor</span></span>
     </a>
@@ -59,7 +59,7 @@
                         <a th:href="@{/conductor/detalle/{id}(id=${conductor.id})}" class="text-info me-2" title="Ver detalle">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a th:href="@{/conductor/modificar/{id}(id=${conductor.id})}" class="text-primary" title="Modificar">
+                        <a th:href="@{/conductor/modificar/{id}(id=${conductor.id})}" class="text-primary" title="Modificar" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO')">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -118,6 +118,22 @@
             </a>
         </div>
     </section>
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            const exito = /*[[${exito}]]*/ null;
 
+            if (exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: exito,
+                    confirmButtonColor: '#004b81'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
 </body>
 </html>

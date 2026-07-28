@@ -7,7 +7,7 @@
         topbar_action=~{},
         content=~{:: .content-section},
         extra_css=~{:: link.extra-css},
-        extra_scripts=~{:: script.extra-scripts}
+        extra_scripts=~{:: script.extra-script}
       )}">
 <head>
     <link class="extra-css" rel="stylesheet" th:href="@{/css/crearVehiculo.css}" />
@@ -17,9 +17,11 @@
     <section class="panel mt-4 content-section">
 
         <form th:action="@{/documento/guardar}" th:object="${documento}" method="POST" enctype="multipart/form-data">
-            <div th:if="${#fields.hasAnyErrors() || (error != null)}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <div th:each="err : ${#fields.allErrors()}" th:text="${err} + '.'"></div>
+            <div th:if="${error != null or #fields.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <div th:if="${error != null}" th:text="${error}"></div>
+                <ul th:if="${#fields.hasErrors('*')}">
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <section class="panel">
@@ -102,7 +104,7 @@
                             <label class="form-label">Archivo del Documento</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-file-arrow-up"></i>
-                                <input type="file" th:field="*{archivo}" class="form-control-custom" required />
+                                <input type="file" th:field="*{archivo}" id="archivo" class="form-control-custom" required />
                             </div>
                         </div>
                     </div>
@@ -122,7 +124,8 @@
         </form>
     </section>
 
-    <script class="extra-scripts" th:inline="javascript">
+    <script class="extra-script" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script class="extra-script" th:inline="javascript">
         const vehiculoNombreInput = document.getElementById('vehiculoNombre');
         const vehiculoIdInput = document.getElementById('vehiculoId');
         const vehiculosList = document.getElementById('vehiculosList');
@@ -139,14 +142,14 @@
                 vehiculoNombreInput.disabled = true;
                 vehiculoNombreInput.value = "";
                 vehiculoIdInput.value = "";
-                
+
                 conductorNombreInput.disabled = false;
             } else {
                 // Solo habilitar vehículo (para otros tipos: VTV, CEDULAS, RTO)
                 conductorNombreInput.disabled = true;
                 conductorNombreInput.value = "";
                 conductorIdInput.value = "";
-                
+
                 vehiculoNombreInput.disabled = false;
             }
         }
@@ -156,8 +159,8 @@
         vehiculoNombreInput.addEventListener('input', function(e) {
             const val = e.target.value;
             const options = vehiculosList.options;
-            vehiculoIdInput.value = ""; 
-            
+            vehiculoIdInput.value = "";
+
             for (let i = 0; i < options.length; i++) {
                 if (options[i].value === val) {
                     vehiculoIdInput.value = options[i].getAttribute('data-id');
@@ -172,8 +175,8 @@
         conductorNombreInput.addEventListener('input', function(e) {
             const val = e.target.value;
             const options = conductoresList.options;
-            conductorIdInput.value = ""; 
-            
+            conductorIdInput.value = "";
+
             for (let i = 0; i < options.length; i++) {
                 if (options[i].value === val) {
                     conductorIdInput.value = options[i].getAttribute('data-id');
@@ -245,30 +248,22 @@
             }
         });
 
-        /*<![CDATA[*/
-        document.addEventListener('DOMContentLoaded', function() {
-            var exito = /*[[${exito}]]*/ null;
-            var error = /*[[${error}]]*/ null;
+        document.getElementById("archivo").addEventListener("change", function () {
+            const archivo = this.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10 MB
 
-            if (exito) {
+
+            if (archivo && archivo.size > maxSize) {
                 Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: exito,
+                    icon: 'warning',
+                    title: 'Archivo demasiado grande',
+                    text: 'El archivo seleccionado supera el tamaño máximo permitido de 10 MB.',
                     confirmButtonColor: '#004b81'
                 });
-            }
 
-            if (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error,
-                    confirmButtonColor: '#004b81'
-                });
+                this.value = ""; // Limpia la selección
             }
         });
-        /*]]>*/
     </script>
 </body>
 </html>

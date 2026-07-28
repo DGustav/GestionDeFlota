@@ -54,7 +54,10 @@ public class MantenimientoVehicularController {
                                        @RequestParam(name = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                                        @RequestParam(name = "fechaDesde", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                                        @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta) {
-        
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
+
         Vehiculo vehiculoFiltrado = null;
         boolean esConductor = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"));
@@ -88,7 +91,7 @@ public class MantenimientoVehicularController {
     }
 
     @GetMapping("/crear")
-    public String crearMantenimiento(Model model, Authentication authentication) {
+    public String crearMantenimiento(Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
 
         MantenimientoVehicularDTO dto = new MantenimientoVehicularDTO();
 
@@ -97,9 +100,18 @@ public class MantenimientoVehicularController {
 
         if (esConductor) {
 
-            Asignacion asignacion = asignacionService
-                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("No posee un vehículo asignado"));
+            Optional<Asignacion> asignacionOpt = asignacionService
+                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName());
+
+            if (asignacionOpt.isEmpty()) {
+                model.addAttribute("error", "No posee un vehículo asignado. Debe tener una asignación activa para registrar un mantenimiento.");
+                model.addAttribute("esConductor", esConductor);
+                model.addAttribute("mantenimiento", dto);
+                model.addAttribute("tipos", Tipo.values());
+                return "crearMantenimiento";
+            }
+
+            Asignacion asignacion = asignacionOpt.get();
 
             dto.setVehiculoId(asignacion.getVehiculo().getId());
             dto.setNombreVehiculo(

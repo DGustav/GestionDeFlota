@@ -48,6 +48,9 @@ public class Documento {
         LocalDate fechaLimite = hoy.plusDays(diasAnticipacion);
 
         if (fechaVencimiento.isBefore(hoy)) {
+            if (this.esVehiculo()){
+                this.vehiculo.setDisponible(false);
+            }
             return EstadoDocumento.VENCIDO;
         }
 
@@ -55,9 +58,15 @@ public class Documento {
                 fechaVencimiento.isEqual(hoy)
                         || fechaVencimiento.isBefore(fechaLimite)
         ) {
+            if (this.esVehiculo()){
+                this.vehiculo.setDisponible(true);
+            }
             return EstadoDocumento.POR_VENCER;
         }
 
+        if (this.esVehiculo()){
+            this.vehiculo.setDisponible(true);
+        }
         return EstadoDocumento.VIGENTE;
     }
 }

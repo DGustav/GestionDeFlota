@@ -17,6 +17,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             "ROLE_ADMINISTRADOR", "/tableroDeControl",
             "ROLE_OPERARIO", "/asignacion/listado",
             "ROLE_CONDUCTOR", "/asignacion/mis-asignaciones"
+            , "ROLE_AUDITOR", "/tableroDeControl"
     );
 
     @Override

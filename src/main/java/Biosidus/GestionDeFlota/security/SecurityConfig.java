@@ -55,22 +55,40 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/forbidden", "/css/**", "/js/**", "/images/**").permitAll()
 
                         // Vista principal de asignaciones para usuarios autenticados
-                        .requestMatchers("/tableroDeControl").hasAnyRole("ADMINISTRADOR")
-                        .requestMatchers("/asignacion/mis-asignaciones").hasRole("CONDUCTOR")
-                        .requestMatchers("/siniestro/mis-siniestros").hasRole("CONDUCTOR")
+                        .requestMatchers("/tableroDeControl").hasAnyRole("ADMINISTRADOR", "AUDITOR")
+
+                        .requestMatchers("/mantenimientoVehicular/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR", "AUDITOR")
                         .requestMatchers("/mantenimientoVehicular/mis-mantenimientosVehiculares").hasRole("CONDUCTOR")
-                        .requestMatchers("/asignacion/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
-                        .requestMatchers("/vehiculo/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
-                        .requestMatchers("/vehiculo/detalle/{id}").hasRole("CONDUCTOR")
-                        .requestMatchers("/mantenimientoVehicular/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO","ADMINISTRADOR")
-                        // El detalle lo pueden ver los 3 roles
-                        .requestMatchers("/siniestro/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO", "ADMINISTRADOR")
+                        .requestMatchers("/mantenimientoVehicular/listado").hasAnyRole("OPERARIO","ADMINISTRADOR", "AUDITOR", "CONDUCTOR")
+                        .requestMatchers("/mantenimientoVehicular/crear").hasAnyRole("OPERARIO","ADMINISTRADOR", "CONDUCTOR")
+                        .requestMatchers("/mantenimientoVehicular/modificar/{id}").hasAnyRole("OPERARIO","ADMINISTRADOR")
 
-                        .requestMatchers("/conductor/**").hasAnyRole("OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/vehiculo/modificar/{id}").hasAnyRole("OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/vehiculo/listado").hasAnyRole("OPERARIO","ADMINISTRADOR", "AUDITOR")
+                        .requestMatchers("/vehiculo/detalle/{id}").hasAnyRole("AUDITOR","OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/vehiculo/crear").hasAnyRole("OPERARIO","ADMINISTRADOR")
+
+                        .requestMatchers("/siniestro/modificar/{id}").hasAnyRole("OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/siniestro/listado").hasAnyRole("OPERARIO","ADMINISTRADOR", "AUDITOR", "CONDUCTOR")
+                        .requestMatchers("/siniestro/crear").hasAnyRole("CONDUCTOR", "OPERARIO", "ADMINISTRADOR")
+                        .requestMatchers("/siniestro/mis-siniestros").hasRole("CONDUCTOR")
+                        .requestMatchers("/siniestro/detalle/{id}").hasAnyRole("CONDUCTOR", "OPERARIO", "ADMINISTRADOR", "AUDITOR")
+
+                        .requestMatchers("/conductor/listado").hasAnyRole("OPERARIO","ADMINISTRADOR", "AUDITOR")
+                        .requestMatchers("/conductor/crear").hasAnyRole("OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/conductor/modificar/{id}").hasAnyRole("OPERARIO", "ADMINISTRADOR")
+                        .requestMatchers("/conductor/detalle/{id}").hasAnyRole("OPERARIO", "ADMINISTRADOR", "AUDITOR")
+
+                        .requestMatchers("/documento/listado").hasAnyRole("OPERARIO","ADMINISTRADOR", "AUDITOR")
+                        .requestMatchers("/documento/crear").hasAnyRole("OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/documento/modificar/{id}").hasAnyRole("OPERARIO", "ADMINISTRADOR")
+                        .requestMatchers("/documento/detalle/{id}").hasAnyRole("OPERARIO", "ADMINISTRADOR", "AUDITOR")
 
 
-                        .requestMatchers("/documento/**").hasAnyRole("ADMINISTRADOR")
-
+                        .requestMatchers("/asignacion/modificar/{id}").hasAnyRole( "OPERARIO","ADMINISTRADOR")
+                        .requestMatchers("/asignacion/listado").hasAnyRole("AUDITOR","ADMINISTRADOR", "OPERARIO", "CONDUCTOR")
+                        .requestMatchers("/asignacion/detalle/{id}").hasAnyRole("AUDITOR","ADMINISTRADOR","OPERARIO","CONDUCTOR")
+                        .requestMatchers("/asignacion/mis-asignaciones").hasRole("CONDUCTOR")
 
                         .anyRequest().authenticated()
                 )
@@ -124,11 +142,17 @@ public class SecurityConfig {
             }
             if(conductorService.obtenerConductorPorUsuarioNickname("daruichj")==null){
                 Conductor javier = new Conductor();
+                javier.setNomApe("Javier Daruichj");
+                javier.setDni("12345678");
+                javier.setLegajo("1234");
+
+
                 Usuario usuarioDeJavi = new Usuario();
                 usuarioDeJavi.setNickname("daruichj");
                 usuarioDeJavi.setPassword(passwordEncoder.encode("javi321"));
                 usuarioDeJavi.setRol(Rol.ADMINISTRADOR);
                 usuarioService.guardar(usuarioDeJavi);
+
 
                 javier.setMail("j.daruich@biosidus.com.ar");
                 javier.setRango(Rango.OTRO);
@@ -137,11 +161,17 @@ public class SecurityConfig {
             }
             if(conductorService.obtenerConductorPorUsuarioNickname("albam")==null){
                 Conductor mario = new Conductor();
+                mario.setNomApe("Maria Alba");
+                mario.setDni("12345678");
+                mario.setLegajo("1234");
+                mario.setRango(Rango.OTRO);
+
                 Usuario usuarioDeMario = new Usuario();
                 usuarioDeMario.setNickname("albam");
                 usuarioDeMario.setPassword(passwordEncoder.encode("alba352"));
                 usuarioDeMario.setRol(Rol.ADMINISTRADOR);
                 usuarioService.guardar(usuarioDeMario);
+
 
                 mario.setMail("m.alba@biosidus.com.ar");
                 mario.setRango(Rango.OTRO);
@@ -150,11 +180,17 @@ public class SecurityConfig {
             }
             if(conductorService.obtenerConductorPorUsuarioNickname("foscof")==null){
                 Conductor fabi = new Conductor();
+                fabi.setNomApe("Fabian Fosco");
+                fabi.setDni("12345678");
+                fabi.setLegajo("1234");
+                fabi.setRango(Rango.OTRO);
+
                 Usuario usuarioDeFabi = new Usuario();
                 usuarioDeFabi.setNickname("foscof");
                 usuarioDeFabi.setPassword(passwordEncoder.encode("foscof582"));
                 usuarioDeFabi.setRol(Rol.ADMINISTRADOR);
                 usuarioService.guardar(usuarioDeFabi);
+
 
                 fabi.setMail("f.fosco@biosidus.com.ar");
                 fabi.setRango(Rango.OTRO);
@@ -163,8 +199,14 @@ public class SecurityConfig {
             }
             if(conductorService.obtenerConductorPorUsuarioNickname("velazquezs")==null){
                 Conductor sil = new Conductor();
+                sil.setNomApe("Silvina Velazquez");
+                sil.setDni("12345678");
+                sil.setLegajo("1234");
+                sil.setRango(Rango.OTRO);
+
                 Usuario usuarioDeSil = new Usuario();
                 usuarioDeSil.setNickname("velazquezs");
+
                 usuarioDeSil.setPassword(passwordEncoder.encode("velazquezs916"));
                 usuarioDeSil.setRol(Rol.ADMINISTRADOR);
                 usuarioService.guardar(usuarioDeSil);
@@ -173,6 +215,15 @@ public class SecurityConfig {
                 sil.setRango(Rango.OTRO);
                 sil.setUsuario(usuarioDeSil);
                 conductorRepository.save(sil);
+
+            }
+            if (usuarioService.buscarPorNickname("auditor").isEmpty()) {
+                Usuario usuario = new Usuario();
+                usuario.setNickname("auditor");
+                usuario.setPassword(passwordEncoder.encode("auditor123"));
+                usuario.setRol(Rol.AUDITOR);
+
+                usuarioService.guardar(usuario);
             }
         };
     }

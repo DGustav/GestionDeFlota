@@ -89,7 +89,7 @@ public class AuthController {
         try {
             conductorService.registrarConductor(dto);
             redirectAttributes.addFlashAttribute("exito", "Conductor y usuario creados exitosamente");
-            return "redirect:/tableroDeControl";
+            return "redirect:/conductor/listado";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             redirectAttributes.addFlashAttribute("conductorDto", dto);

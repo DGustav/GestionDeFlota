@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/siniestro")
@@ -58,7 +59,7 @@ public class SiniestroController {
                                     @RequestParam(name = "fechaHasta", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
                                     @RequestParam(defaultValue = "0") int page,
                                     Authentication authentication) {
-        
+
         Long vehiculoId = null;
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_CONDUCTOR"))) {
@@ -70,6 +71,10 @@ public class SiniestroController {
         int pageSize = 5;
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "fechaSiniestro"));
         Page<Siniestro> siniestrosPage = siniestroService.listarSiniestros(buscar, fecha, fechaDesde, fechaHasta, vehiculoId, pageable);
+
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
 
         model.addAttribute("siniestros", siniestrosPage.getContent());
         model.addAttribute("paginaActual", page);
@@ -85,7 +90,7 @@ public class SiniestroController {
     }
 
     @GetMapping("/crear")
-    public String crearSiniestro(Model model, Authentication authentication) {
+    public String crearSiniestro(Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
 
         SiniestroDTO dto = new SiniestroDTO();
 
@@ -94,10 +99,17 @@ public class SiniestroController {
 
         if (esConductor) {
 
-            Asignacion asignacion = asignacionService
-                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("No posee un vehículo asignado"));
+            Optional<Asignacion> asignacionOpt = asignacionService
+                    .obtenerUltimaAsignacionActivaPorUsuario(authentication.getName());
 
+            if (asignacionOpt.isEmpty()) {
+                model.addAttribute("error", "No posee un vehículo asignado. Debe tener una asignación activa para registrar un siniestro.");
+                model.addAttribute("esConductor", true);
+                model.addAttribute("siniestro", dto);
+                return "crearSiniestro";
+            }
+
+            Asignacion asignacion = asignacionOpt.get();
             dto.setVehiculoId(asignacion.getVehiculo().getId());
             dto.setNombreVehiculo(
                     STR."\{asignacion.getVehiculo().getPatente()} - \{asignacion.getVehiculo().getModelo().getNombreCompletoModelo()}"

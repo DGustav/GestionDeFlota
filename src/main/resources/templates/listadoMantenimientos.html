@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <a th:href="@{/mantenimientoVehicular/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn">
+    <a th:href="@{/mantenimientoVehicular/crear}" class="btn btn-primary-custom me-2 text-decoration-none topbar-btn" sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERARIO', 'CONDUCTOR')">
         <i class="fa-solid fa-plus"></i>
         <span>Nuevo <span class="d-none d-sm-inline">mantenimiento</span></span>
     </a>

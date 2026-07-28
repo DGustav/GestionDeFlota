@@ -5,6 +5,7 @@ import Biosidus.GestionDeFlota.domain.alerta.Alerta;
 import Biosidus.GestionDeFlota.domain.alerta.EstadoAlerta;
 import Biosidus.GestionDeFlota.domain.alerta.TipoAlerta;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
+import Biosidus.GestionDeFlota.domain.asignacion.EstadoAsignacion;
 import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.Tipo;
 import Biosidus.GestionDeFlota.domain.siniestro.Siniestro;
 import Biosidus.GestionDeFlota.domain.vehiculo.EstadoVehiculo;
@@ -225,10 +226,11 @@ public class MantenimientoVehicularService {
         // Actualizar el kilometraje del vehículo si es mayor al actual
         Integer kilometrajeActual = dto.getKilometrajeActual();
         if (kilometrajeActual != null && (vehiculo.getKilometrajeActual() == null || kilometrajeActual > vehiculo.getKilometrajeActual())) {
-           Asignacion asignacion = asignacionRepositorio.findFirstByVehiculoIdAndFechaDevolucionIsNullOrderByFechaAsignacionDesc(
-                    vehiculo.getId()
+           Asignacion asignacion = asignacionRepositorio.findFirstByVehiculoIdAndFechaDevolucionIsNullAndEstadoOrderByFechaAsignacionDesc(
+                    vehiculo.getId(), EstadoAsignacion.ACTIVA
             ).get();
             asignacion.actualizarKms(kilometrajeActual);
+            asignacion.getVehiculo().setKilometrajeActual(kilometrajeActual);
             asignacionRepositorio.save(asignacion);
         }
 

@@ -51,6 +51,10 @@ public class VehiculoController {
                                  @RequestParam(name="tipoVehiculo", required=false) TipoVehiculo tipoVehiculo,
                                  Model model,
                                  @RequestParam(name = "page", defaultValue = "0") int page){
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
+
         Page<Vehiculo> pagina = vehiculoService.listarVehiculos(buscar, disponible, estado, origen, propietario, tipoVehiculo, page);
         model.addAttribute("vehiculos", pagina.getContent());
         model.addAttribute("paginaActual", page);

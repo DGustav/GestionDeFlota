@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface AsignacionRepositorio extends JpaRepository<Asignacion, Long>, JpaSpecificationExecutor<Asignacion> {
-    Optional<Asignacion> findFirstByVehiculoIdAndFechaDevolucionIsNullOrderByFechaAsignacionDesc(Long vehiculoId);
+    Optional<Asignacion> findFirstByVehiculoIdAndFechaDevolucionIsNullAndEstadoOrderByFechaAsignacionDesc(Long vehiculoId, EstadoAsignacion estadoAsignacion);
 
     List<Asignacion> findByConductorId(Long conductorId);
 

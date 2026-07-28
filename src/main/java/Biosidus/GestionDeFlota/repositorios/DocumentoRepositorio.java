@@ -3,6 +3,7 @@ package Biosidus.GestionDeFlota.repositorios;
 import Biosidus.GestionDeFlota.domain.documento.Documento;
 import Biosidus.GestionDeFlota.domain.documento.EstadoDocumento;
 import Biosidus.GestionDeFlota.domain.documento.TipoDocumento;
+import Biosidus.GestionDeFlota.domain.empleado.Conductor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,4 +38,18 @@ public interface DocumentoRepositorio extends JpaRepository<Documento, Long> {
     List<Documento> findByFechaVencimientoLessThanEqual(LocalDate fechaLimite);
 
     List<Documento> findByEstadoDocumento(EstadoDocumento estadoDocumento);
+
+    @Query("""
+    SELECT DISTINCT c
+    FROM Conductor c
+    JOIN Documento d ON d.conductor = c
+    WHERE d.tipoDocumento = :tipoDocumento
+      AND (
+            d.estadoDocumento = "VIGENTE"
+            OR d.estadoDocumento = "POR_VENCER"
+          )
+""")
+    List<Conductor> findConductoresDisponibles(
+            @Param("tipoDocumento") TipoDocumento tipoDocumento);
 }
+

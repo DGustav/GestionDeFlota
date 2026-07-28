@@ -49,7 +49,11 @@ public class DocumentoController {
                                    @RequestParam(name = "estado", required = false) EstadoDocumento estado,
                                    @RequestParam(name = "tipo", required = false) TipoDocumento tipo,
                                    @RequestParam(name = "buscar", required = false) String buscar) {
-        
+
+        if(buscar != null){
+            buscar = buscar.strip();
+        }
+
         Page<Documento> pagina = documentoService.listarTodosLosDocumentos(page, estado, tipo, buscar);
         
         model.addAttribute("documentos", pagina.getContent());
@@ -96,7 +100,7 @@ public class DocumentoController {
             documentoService.guardarDocumento(documentoDTO);
             redirectAttributes.addFlashAttribute("exito", "Documento guardado correctamente");
             return "redirect:/documento/listado";
-        } catch (Exception e) {
+            } catch (Exception e) {
             model.addAttribute("error", "Error al guardar el documento: " + e.getMessage());
             model.addAttribute("tipos", TipoDocumento.values());
             model.addAttribute("estados", EstadoDocumento.values());
@@ -104,6 +108,7 @@ public class DocumentoController {
             model.addAttribute("conductores", asignacionService.listarConductores());
             return "crearDocumento";
         }
+
     }
 
     @GetMapping("/modificar/{id}")
