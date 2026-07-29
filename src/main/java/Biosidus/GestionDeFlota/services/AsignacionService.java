@@ -4,29 +4,46 @@ import Biosidus.GestionDeFlota.DTOs.AsignacionDTO;
 import Biosidus.GestionDeFlota.domain.asignacion.Asignacion;
 import Biosidus.GestionDeFlota.domain.asignacion.EstadoAsignacion;
 import Biosidus.GestionDeFlota.domain.empleado.Conductor;
+import Biosidus.GestionDeFlota.domain.mantenimientoVehicular.MantenimientoVehicular;
 import Biosidus.GestionDeFlota.domain.vehiculo.Vehiculo;
 import Biosidus.GestionDeFlota.repositorios.AsignacionRepositorio;
 import Biosidus.GestionDeFlota.repositorios.ConductorRepositorio;
 import Biosidus.GestionDeFlota.repositorios.VehiculoRepositorio;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AsignacionService {
+
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadLocation;
 
     @Autowired
     private AsignacionRepositorio asignacionRepositorio;
@@ -88,7 +105,7 @@ public class AsignacionService {
     }
 
     @Transactional
-    public void guardarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) {
+    public void guardarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) throws IOException {
         if (asignacionDTO.getVehiculoId() == null || asignacionDTO.getConductorId() == null) {
             if (asignacionDTO.getVehiculoId() == null) result.rejectValue("vehiculoId", "error.vehiculoId", "El vehículo seleccionado no existe");
             if (asignacionDTO.getConductorId() == null) result.rejectValue("conductorId", "error.conductorId", "El conductor seleccionado no existe");
@@ -115,7 +132,7 @@ public class AsignacionService {
     }
 
     @Transactional
-    public void actualizarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) {
+    public void actualizarAsignacion(AsignacionDTO asignacionDTO, BindingResult result) throws IOException {
         if (asignacionDTO.getId() == null) {
             throw new RuntimeException("ID de asignación no proporcionado");
         }
@@ -170,13 +187,31 @@ public class AsignacionService {
         asignacionRepositorio.save(asignacion);
     }
 
-    private void mapearDtoAEntidad(AsignacionDTO dto, Asignacion entidad, Vehiculo vehiculo, Conductor conductor) {
+    private void mapearDtoAEntidad(AsignacionDTO dto, Asignacion entidad, Vehiculo vehiculo, Conductor conductor) throws IOException {
         entidad.setVehiculo(vehiculo);
         entidad.setConductor(conductor);
         entidad.setFechaAsignacion(dto.getFechaAsignacion());
         entidad.setFechaDevolucion(dto.getFechaDevolucion());
         entidad.setFechaDevolucionEstimada(dto.getFechaDevolucionEstimada());
         entidad.setEstado(dto.getEstado());
+
+        MultipartFile comprobanteArchivo = dto.getDocumento_asignacion();
+        if (comprobanteArchivo != null && !comprobanteArchivo.isEmpty()) {
+            String originalFilename = comprobanteArchivo.getOriginalFilename();
+            String nuevoNombre = UUID.randomUUID().toString() + "_" + originalFilename;
+            String rutaRelativa = "/notasDeAsignacion/" + nuevoNombre;
+            Path rutaCompleta = Paths.get(uploadLocation, "notasDeAsignacion", nuevoNombre);
+
+            File directorio = rutaCompleta.getParent().toFile();
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            Files.copy(comprobanteArchivo.getInputStream(), rutaCompleta);
+            entidad.setDocumento_asignacion(rutaRelativa);
+        } else if (dto.getId() == null) {
+            entidad.setDocumento_asignacion("");
+        }
     }
 
     public AsignacionDTO convertirADataTransferObject(Asignacion asignacion) {
@@ -193,6 +228,9 @@ public class AsignacionService {
         dto.setKilometrajeInicial(asignacion.getKilometrajeInicial());
         dto.setKilometrajeFinal(asignacion.getKilometrajeFinal());
         dto.setKilometrosRecorridos(asignacion.getKilometrosRecorridos());
+        // El atributo documento_asignacion en AsignacionDTO es de tipo MultipartFile.
+        // La entidad Asignacion almacena la ruta del archivo en String.
+        // No asignamos la ruta al MultipartFile ya que son tipos incompatibles.
         return dto;
     }
 
@@ -281,5 +319,33 @@ public class AsignacionService {
     @Transactional
     public Optional<Asignacion> obtenerUltimaAsignacionActivaPorVehiculo(Vehiculo vehiculo) {
         return asignacionRepositorio.findFirstByVehiculoIdAndEstadoOrderByIdDesc(vehiculo.getId(), EstadoAsignacion.ACTIVA);
+    }
+
+    public ResponseEntity<Resource> descargarComprobante(Long id) throws MalformedURLException {
+
+        Asignacion asignacion = obtenerPorId(id);
+        String rutaRelativa = asignacion.getDocumento_asignacion();
+
+        if (rutaRelativa == null || rutaRelativa.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Path path = Paths.get(uploadLocation, rutaRelativa);
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            String filename = path.getFileName().toString();
+            // Intentar remover el UUID del nombre para la descarga
+            if (filename.contains("_")) {
+                filename = filename.substring(filename.indexOf("_") + 1);
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }

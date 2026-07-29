@@ -98,6 +98,16 @@
                                             <div class="col-sm-6" th:text="${asignacion.kilometrosRecorridos != null ? #numbers.formatInteger(asignacion.kilometrosRecorridos, 0, 'POINT') + ' km' : '-'}">-</div>
                                         </div>
                                     </div>
+                                    <div class="col-md-4" th:if="${asignacion.documento_asignacion != null and !asignacion.documento_asignacion.empty}">
+                                        <div class="row mb-3">
+                                            <div class="col-sm-6 fw-bold">Documento:</div>
+                                            <div class="col-sm-6">
+                                                <a th:href="@{/asignacion/descargar-comprobante/{id}(id=${asignacion.id})}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fa-solid fa-file-pdf me-1"></i>Ver Documento
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

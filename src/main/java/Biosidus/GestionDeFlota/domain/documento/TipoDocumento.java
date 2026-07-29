@@ -5,5 +5,7 @@ public enum TipoDocumento {
     CEDULA_VERDE,
     CEDULA_AZUL,
     REGISTRO,
-    RTO
+    RTO,
+    PATENTE_PROVISORIA,
+    TITULO_DE_AUTOMOTOR
 }

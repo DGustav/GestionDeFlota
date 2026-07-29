@@ -40,6 +40,9 @@ public class Asignacion {
     @Column(name = "kilometros_recorridos")
     private Integer kilometrosRecorridos;
 
+    @Column(name = "documento_asignacion")
+    private String documento_asignacion;
+
     public void actualizarKms(Integer kilometrajeActual){
 
         this.kilometrosRecorridos = kilometrajeActual - this.kilometrajeInicial;

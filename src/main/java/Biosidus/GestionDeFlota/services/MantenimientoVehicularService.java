@@ -160,7 +160,6 @@ public class MantenimientoVehicularService {
             mantenimiento = new MantenimientoVehicular();
         }
 
-
         mantenimiento.setVehiculo(vehiculo);
         mantenimiento.setKilometrajeActual(dto.getKilometrajeActual());
         mantenimiento.setTipo(dto.getTipo());

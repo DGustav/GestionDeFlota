@@ -267,9 +267,7 @@
     </form>
 </section>
 
-<script class="extra-scripts"
-        src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script class="extra-scripts" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script class="extra-scripts" th:inline="javascript">
 
     function actualizarListaArchivos(input) {
@@ -322,7 +320,33 @@
         }
     });
     /*]]>*/
+    const MAX_SIZE = 10 * 1024 * 1024;
 
+    document.getElementById("pruebasArchivos").addEventListener("change", function () {
+
+        const archivosGrandes = [];
+
+        for (const archivo of this.files) {
+            if (archivo.size > MAX_SIZE) {
+                archivosGrandes.push(archivo.name);
+            }
+        }
+
+        if (archivosGrandes.length > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Archivos demasiado grandes',
+                html: `
+                Los siguientes archivos superan los 10 MB:
+                <br><br>
+                <b>${archivosGrandes.join("<br>")}</b>
+            `,
+                confirmButtonColor: '#004b81'
+            });
+
+            this.value = "";
+        }
+    });
 </script>
 
 </body>

@@ -13,6 +13,7 @@ import Biosidus.GestionDeFlota.services.ExcelReportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -226,6 +228,16 @@ public class AsignacionController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/descargar-comprobante/{id}")
+    public ResponseEntity<Resource> descargarComprobante(@PathVariable Long id) {
+        try {
+            return asignacionService.descargarComprobante(id);
+        } catch (MalformedURLException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @GetMapping("/mis-asignaciones")
     public String obtenerMisAsignaciones() {

@@ -102,7 +102,7 @@
                             <label class="form-label">Archivo del Documento (Dejar vacío para mantener el actual)</label>
                             <div class="input-container">
                                 <i class="fa-solid fa-file-arrow-up"></i>
-                                <input type="file" th:field="*{archivo}" class="form-control-custom" />
+                                <input type="file" th:field="*{archivo}" id="archivo" class="form-control-custom" />
                             </div>
                             <div class="mt-2" th:if="${documento.ruta_archivo != null && !documento.ruta_archivo.isEmpty()}">
                                 <a th:href="@{/documento/descargar/{id}(id=${documento.id})}" class="btn btn-sm btn-outline-primary">
@@ -127,6 +127,7 @@
         </form>
     </section>
 
+    <script class="extra-scripts" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script class="extra-scripts" th:inline="javascript">
         const vehiculoNombreInput = document.getElementById('vehiculoNombre');
         const vehiculoIdInput = document.getElementById('vehiculoId');
@@ -280,6 +281,23 @@
             }
         });
         /*]]>*/
+
+        document.getElementById("archivo").addEventListener("change", function () {
+            const archivo = this.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10 MB
+
+
+            if (archivo && archivo.size > maxSize) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Archivo demasiado grande',
+                    text: 'El archivo seleccionado supera el tamaño máximo permitido de 10 MB.',
+                    confirmButtonColor: '#004b81'
+                });
+
+                this.value = ""; // Limpia la selección
+            }
+        });
     </script>
 </body>
 </html>
