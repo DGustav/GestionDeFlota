@@ -21,7 +21,7 @@ public class ActualizadorEstadoDocumentosService {
     @Autowired
     private ParametrosGlobalesService parametrosGlobalesService;
 
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     @Transactional
     public void actualizarEstadoDocumentos() {
 

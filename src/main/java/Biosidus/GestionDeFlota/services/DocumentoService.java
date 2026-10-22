@@ -135,8 +135,11 @@ public class DocumentoService {
                     dto.getFechaVencimiento().isAfter(fechaVencimientoAnterior.plusDays(30))) {
                 alertaService.obtenerDocumentoConAlertaActiva(documento).ifPresent(alerta -> {
                     alerta.setEstado(EstadoAlerta.RESUELTA);
-                    vehiculo.setDisponible(true);
+
                 });
+                vehiculo.setDisponible(true);
+            }else{
+                vehiculo.setDisponible(false);
             }
         }
 

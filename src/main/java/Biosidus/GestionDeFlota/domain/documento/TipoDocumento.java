@@ -7,5 +7,6 @@ public enum TipoDocumento {
     REGISTRO,
     RTO,
     PATENTE_PROVISORIA,
-    TITULO_DE_AUTOMOTOR
+    TITULO_DE_AUTOMOTOR,
+    CREDENCIAL_SEGURO
 }

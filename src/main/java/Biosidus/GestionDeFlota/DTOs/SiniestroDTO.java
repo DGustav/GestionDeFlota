@@ -1,5 +1,6 @@
 package Biosidus.GestionDeFlota.DTOs;
 
+import Biosidus.GestionDeFlota.validations.NotEmptyFiles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -26,5 +27,6 @@ public class SiniestroDTO {
 
     private String descripcion;
 
+    @NotEmptyFiles(message = "Debe seleccionar al menos un archivo")
     private MultipartFile[] pruebasArchivos;
 }

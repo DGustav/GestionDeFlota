@@ -51,7 +51,7 @@
         @Autowired
         private AsignacionService asignacionService;
 
-        @Scheduled(cron = "0 0 12 * * ?")
+        @Scheduled(cron = "0 0 6 * * ?")
         @Transactional
         public void actualizarEstadoDocumentos() {
             LocalDate hoy = LocalDate.now();
@@ -142,7 +142,7 @@
             }
 
         }
-        @Scheduled(cron = "0 0 8 * * ?")
+        @Scheduled(cron = "0 0 7 * * ?")
         @Transactional
         public void verificarServicesPeriodicos() {
 
@@ -204,7 +204,7 @@
                             TipoAlerta.SERVICE_9_MESES
                     );
                     mensaje=String.format(
-                            "Vehículo %s. Han transcurrido 9 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse al superar los: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
+                            "Vehículo %s. Han transcurrido 9 meses desde el último service realizado el %s. El próximo mantenimiento debe realizarse al cumplir los: %d km o al cumplirse un año, el día: %s. Lo que ocurra primero.",
                             vehiculo.getPatente(),
                             ultimoService.getFechaAsignacion().toLocalDate(),
                             ultimoService.getKilometrajeActual() + 10000,
